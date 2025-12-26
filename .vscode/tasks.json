@@ -1,0 +1,46 @@
+{
+    "tasks": [
+        {
+            "label": "C/C++: Compile Full Project (Raylib)", 
+            "type": "cppbuild",
+            "command": "C:\\mingw64\\bin\\gcc.exe", 
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g", 
+                
+                // 1. کامپایل تمام فایل‌های C در پوشه 'build'
+              //     "${workspaceFolder}/build/*.c",
+                                                                                //اگه سورسی بوردی تو بیلد 
+
+                // 2. کامپایل تمام فایل‌های C در پوشه 'Source'
+                "${workspaceFolder}/Source/*.c",
+                
+                // 3. افزودن پوشه 'include' به مسیرهای جستجوی هدر
+                "-I${workspaceFolder}/include", 
+                
+                "-o",
+                // 4. خروجی (EXE) را در پوشه 'build' قرار می‌دهیم.
+                "${workspaceFolder}/build/PlantsVsZombies.exe",
+                
+                // لینک کردن به Raylib و کتابخانه‌های سیستمی
+                "-lraylib",
+                "-lopengl32",
+                "-lwinmm",
+                "-lgdi32",
+                "-static"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "کامپایل تمامی فایل‌های سورس پروژه، با لینک کردن Raylib."
+        }
+    ],
+    "version": "2.0.0"
+}

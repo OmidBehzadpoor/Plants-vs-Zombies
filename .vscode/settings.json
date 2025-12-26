@@ -1,0 +1,110 @@
+{
+    "workbench.iconTheme": "vscode-icons",
+    "workbench.colorTheme": "Visual Studio 2017 Dark - C++",
+    "editor.mouseWheelZoom": true,
+    "code-runner.clearPreviousOutput": true,
+    "code-runner.ignoreSelection": true,
+    "code-runner.saveAllFilesBeforeRun": true,
+    "code-runner.saveFileBeforeRun": true,
+    "code-runner.showExecutionMessage": false,
+    "code-runner.focusOnTerminal": true,
+    
+    // ***************************************************************
+    // ** اصلاحات نهایی Code Runner: دستور سازگار با PowerShell (;) **
+    // ***************************************************************
+    "code-runner.executorMap": {
+        // از عملگرهای PowerShell استفاده می‌شود: (;) برای جداسازی دستورات
+        // و از عملگر فراخوانی (&) و نقل قول تکی (''') برای مسیرها و آرگومان‌ها
+        // تا PowerShell بتواند مسیرها و متغیرها را به درستی به GCC بدهد.
+        "c": "cd '${workspaceFolder}' ; & 'C:\\mingw64\\bin\\gcc.exe' -fdiagnostics-color=always -g '-I${workspaceFolder}/include' '${workspaceFolder}/build/*.c' '${workspaceFolder}/Source/*.c' -o '${workspaceFolder}/build/PlantsVsZombies.exe' -lraylib -lopengl32 -lwinmm -lgdi32 -static ; if ($?) { & '${workspaceFolder}/build/PlantsVsZombies.exe' }",
+        "cpp": "cd '${workspaceFolder}' ; & 'C:\\mingw64\\bin\\gcc.exe' -fdiagnostics-color=always -g '-I${workspaceFolder}/include' '${workspaceFolder}/build/*.c' '${workspaceFolder}/Source/*.c' -o '${workspaceFolder}/build/PlantsVsZombies.exe' -lraylib -lopengl32 -lwinmm -lgdi32 -static ; if ($?) { & '${workspaceFolder}/build/PlantsVsZombies.exe' }"
+    },
+    // ***************************************************************
+    
+    "C_Cpp.clang_format_style": "Microsoft",
+    "terminal.integrated.profiles.windows": {
+        "MinGW64": {
+            "path": "C:\\mingw64\\bin\\bash.exe",
+            "args": []
+        },
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        }
+    },
+    "terminal.integrated.defaultProfile.windows": "PowerShell", // این را نگه می‌داریم تا تداخل نداشته باشد.
+    "code-runner.runInTerminal": true,
+    "terminal.integrated.focusAfterRun": "terminal",
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "initializer_list": "c",
+        "xiosbase": "c",
+        "xstring": "c",
+        "xutility": "c",
+        "cmath": "c"
+    },
+    "C_Cpp_Runner.cCompilerPath": "gcc",
+    "C_Cpp_Runner.cppCompilerPath": "g++",
+    "C_Cpp_Runner.debuggerPath": "gdb",
+    "C_Cpp_Runner.cStandard": "",
+    "C_Cpp_Runner.cppStandard": "",
+    "C_Cpp_Runner.msvcBatchPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvarsall.bat",
+    "C_Cpp_Runner.useMsvc": false,
+    "C_Cpp_Runner.warnings": [
+        "-Wall",
+        "-Wextra",
+        "-Wpedantic",
+        "-Wshadow",
+        "-Wformat=2",
+        "-Wcast-align",
+        "-Wconversion",
+        "-Wsign-conversion",
+        "-Wnull-dereference"
+    ],
+    "C_Cpp_Runner.msvcWarnings": [
+        "/W4",
+        "/permissive-",
+        "/w14242",
+        "/w14287",
+        "/w14296",
+        "/w14311",
+        "/w14826",
+        "/w44062",
+        "/w44242",
+        "/w14905",
+        "/w14906",
+        "/w14263",
+        "/w44265",
+        "/w14928"
+    ],
+    "C_Cpp_Runner.enableWarnings": true,
+    "C_Cpp_Runner.warningsAsError": false,
+    "C_Cpp_Runner.compilerArgs": [],
+    "C_Cpp_Runner.linkerArgs": [],
+    "C_Cpp_Runner.includePaths": [],
+    "C_Cpp_Runner.includeSearch": [
+        "*",
+        "**/*"
+    ],
+    "C_Cpp_Runner.excludeSearch": [
+        "**/build",
+        "**/build/**",
+        "**/.*",
+        "**/.*/**",
+        "**/.vscode",
+        "**/.vscode/**"
+    ],
+    "C_Cpp_Runner.useAddressSanitizer": false,
+    "C_Cpp_Runner.useUndefinedSanitizer": false,
+    "C_Cpp_Runner.useLeakSanitizer": false,
+    "C_Cpp_Runner.showCompilationTime": false,
+    "C_Cpp_Runner.useLinkTimeOptimization": false,
+    "C_Cpp_Runner.msvcSecureNoWarnings": false
+}

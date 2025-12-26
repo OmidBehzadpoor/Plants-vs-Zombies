@@ -1,0 +1,56 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        // ----------------------------------------------------------------------
+        // 1. پیکربندی GDB (استفاده از دیباگر پیش‌فرض VS Code)
+        // ----------------------------------------------------------------------
+        {
+            "name": "01. Debug (GDB)",
+            "type": "cppdbg",
+            "request": "launch",
+            // مسیر فایل اجرایی نهایی
+            "program": "${workspaceFolder}/build/PlantsVsZombies.exe",
+            
+            "args": [],
+            "stopAtEntry": false,
+            
+            // پوشه کاری: روی build/ تنظیم شده تا Assets به درستی پیدا شوند.
+            "cwd": "${workspaceFolder}/build", 
+            
+            // مسیر دیباگر GDB
+            "miDebuggerPath": "C:\\mingw64\\bin\\gdb.exe",
+            "environment": [],
+            "externalConsole": true,
+            "MIMode": "gdb",
+            
+            "setupCommands": [
+                {
+                    "description": "Enable pretty printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            // این Task قبل از اجرای برنامه اجرا می‌شود و آن را می‌سازد.
+            "preLaunchTask": "C/C++: Compile Full Project (Raylib)"
+        },
+
+        // ----------------------------------------------------------------------
+        // 2. پیکربندی CodeLLDB (دیباگر جایگزین و پیشنهادی)
+        // ----------------------------------------------------------------------
+        {
+            "name": "02. Debug (CodeLLDB)",
+            "type": "lldb", 
+            "request": "launch",
+            
+            // مسیر فایل اجرایی نهایی
+            "program": "${workspaceFolder}/build/PlantsVsZombies.exe",
+            
+            // پوشه کاری: روی build/ تنظیم شده تا Assets به درستی پیدا شوند.
+            "cwd": "${workspaceFolder}/build", 
+            
+            "preLaunchTask": "C/C++: Compile Full Project (Raylib)",
+            "args": [],
+            "stopOnEntry": false
+        }
+    ]
+}

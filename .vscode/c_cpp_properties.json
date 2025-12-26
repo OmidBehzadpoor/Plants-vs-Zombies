@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "MinGW-GCC Raylib Project",
+            "includePath": [
+                "${workspaceFolder}/**",
+                // مسیر هدرهای Raylib
+                "C:\\mingw64\\include", 
+                // *********************************************************
+                // خطوط اضافه شده:
+                // 1. مسیر هدرهای پروژه (مثل menu.h در include)
+                "${workspaceFolder}/include", 
+                // 2. مسیر فایل‌های سورس (برای شناسایی تعاریف درون Source)
+                "${workspaceFolder}/Source"
+                // *********************************************************
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:\\mingw64\\bin\\gcc.exe", 
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
