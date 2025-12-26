@@ -1,5 +1,0 @@
-# فایل اجرایی پروژه C/C++
-PlantsVsZombies.exe
-
-# پوشه های ساخت (Build) و موقت CMake
-cmake-build-debug/
