@@ -3,3 +3,4 @@ PlantsVsZombies.exe
 
 # پوشه های ساخت (Build) و موقت CMake
 cmake-build-debug/
+build/
