@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <levelselect.h>
 Texture2D BackgroundLevelselect;
 Texture2D LVL1Picture;
 Texture2D LVL2Picture;
