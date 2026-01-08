@@ -62,7 +62,7 @@ void DrawAnimatedObject(const AnimatedObject *obj, Color tint)
 
     
     
-        DrawTextureRec(obj->texture, obj->frames[obj->currentFrame], (Vector2){obj->posX, obj->posY}, WHITE);
+DrawTextureRec(obj->texture, obj->frames[obj->currentFrame], (Vector2){obj->posX, obj->posY}, WHITE);
     
 }
 void UnloadAnimatedObject(AnimatedObject *obj)

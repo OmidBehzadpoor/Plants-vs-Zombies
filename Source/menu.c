@@ -89,5 +89,5 @@ void MouseSelection(void)
     char coordText[50];
     sprintf(coordText, "X: %.0f, Y: %.0f", mousePos.x, mousePos.y);
 
-    DrawText(coordText, 10, 10, 40, RED);
+    DrawText(coordText, 10, 850, 40, RED);
 }

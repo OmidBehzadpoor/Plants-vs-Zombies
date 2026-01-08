@@ -27,6 +27,8 @@ extern float RadiusBackButton;
     float scaleSpeed;
     Vector2 CenterPosition;
 } Button ;
+extern Button BackButton;
+
 void ButtonAnimation(void);
 void Initlevelselect(void);
 void Drawlevelselect(void);
