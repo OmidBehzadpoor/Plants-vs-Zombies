@@ -25,21 +25,34 @@ typedef struct SunflowerElement
     AnimatedObject SunFlowerObj;
     Rectangle Coordinates;
     float Cooldown;
-    int Health;
+    float Health;
+    int X_Cell;
+    int Y_Cell;
     bool isAlive;
 } SunflowerElement;
-extern SunflowerElement SunFlower[MAXNUMITEMS];
+struct PeaFire
+{
+    AnimatedObject Pea;
+    bool isActive;
+   
+
+};
 typedef struct PeashooterElement
 {
     AnimatedObject PeashooterObj;
+    struct PeaFire Pea[5];
 
     Rectangle Coordinates;
 
     float Firingspeed;
-    int Health;
+    float FireTimer;
+    float Health;
+    int X_Cell;
+    int Y_Cell;
     bool isAlive;
+    bool Firing;
+
 } PeashooterElement;
-extern PeashooterElement Peashooter[MAXNUMITEMS];
 
 typedef struct ChomperElement
 {
@@ -47,10 +60,11 @@ typedef struct ChomperElement
 
     Rectangle Coordinates;
     float Lifespan;
-    int Health;
+    float Health;
+    int X_Cell;
+    int Y_Cell;
     bool isAlive;
 } ChomperElement;
-extern ChomperElement Chomper[MAXNUMITEMS];
 
 typedef struct RoseElement
 {
@@ -58,11 +72,22 @@ typedef struct RoseElement
 
     Rectangle Coordinates;
     float Lifespan;
-    int Health;
+    float Health;
+    int X_Cell;
+    int Y_Cell;
     bool isAlive;
 } RoseElement;
-extern RoseElement Rose[MAXNUMITEMS];
+typedef struct LawnMowerElement
+{
+    AnimatedObject LawnMowerObj;
 
+
+    int X_Cell;
+    int Y_Cell;
+    Vector2 Markaz;
+    bool isActive;
+    bool Available;
+} LawnMowerElement;
 typedef enum
 {
     EMPTY = 0,
@@ -74,21 +99,26 @@ typedef enum
 
 } MapContent;
 
-extern MapContent CellContent[ROWS][COLUMNS];
-
 typedef struct SunElementInfo
 {
     int Value;
     float DisplayTime;
     float Regenerate;
 } SunElementInfo;
+typedef struct ZombieInfo
+{
+
+    
+    float Regenerate;
+        float Timer;
+
+} ZombieInfo;
 typedef struct SunElement
 {
     AnimatedObject sun;
     float time;
     bool Available;
 } SunElement;
-
 
 typedef struct
 {
@@ -105,8 +135,7 @@ struct SunFlowertInfo
     int price;
     float Cooldown;
     float Timer;
-        bool Lock;
-
+    bool Lock;
 };
 struct PeashooterInfo
 {
@@ -122,8 +151,7 @@ struct ChompertInfo
 
     float Cooldown;
     float Timer;
-        bool Lock;
-
+    bool Lock;
 };
 struct RosetInfo
 {
@@ -131,9 +159,19 @@ struct RosetInfo
 
     float Cooldown;
     float Timer;
-        bool Lock;
-
+    bool Lock;
 };
+typedef struct Zombies
+{
+    AnimatedObject ZombieObj;
+    float Health;
+    float Damege ;
+    int X_Cell;
+    int Y_Cell;
+    Vector2 Markaz ;
+    bool isAlive; 
+    bool Attack;
+}Zombies;
 typedef struct LevelInfo
 {
 
@@ -142,14 +180,25 @@ typedef struct LevelInfo
     struct ChompertInfo ChompertInfoLevel;
     struct RosetInfo RosetInfoLevel;
     struct SunElementInfo SunElementInfoLevel;
+    struct ZombieInfo ZombieNormal ;
 
 } LevelInfo;
-extern LevelInfo Level1Info;
+
 extern float RectangleWidth;
 extern float RectangleHeight;
-extern Texture2D Map;
+extern LevelInfo Level1Info;
+extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4];
+extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet;
+extern AnimatedObject  icon[4];
+extern Color GoldOrange;
+extern WarningMessage LackSunWarning;
 extern Rectangle MapCell[ROWS][COLUMNS];
-
+extern MapContent CellContent[ROWS][COLUMNS];
+extern SunflowerElement SunFlower[MAXNUMITEMS];
+extern PeashooterElement Peashooter[MAXNUMITEMS];
+extern ChomperElement Chomper[MAXNUMITEMS];
+extern RoseElement Rose[MAXNUMITEMS];
+extern LawnMowerElement LawnMower[ROWLAWNMOWER];
 void InitLevel1(void);
 void DrawLevel1(void);
 void UpdateLevel1(void);
@@ -175,4 +224,14 @@ void UpdateLackSunWarning(void);
 void UpdateSelectionItems(void);
 void UpdatePlantsAnimation(void);
 void CollectSunElement(void);
+void InitLevel1Texture(void);
+void InitLevel1Font(void);
+void InitLevel1Animation(void);
+void InitLevel1MapCell(void);
+void InitLevel1Info(void);
+void DrawLockWarning(void);
+void ShowLockWarning(void);
+void UpdateLockWarning(void);
+void GenerateZombies(Zombies *obj);
+void GeneratePea(PeashooterElement *obj);
 #endif

@@ -6,116 +6,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-Texture2D Map, OFFlawnMowerRow[ROWLAWNMOWER], SunBankPic, Frame, selectpic, Price[4];
-AnimatedObject LawnMower[ROWLAWNMOWER], icon[4];
-bool SetuplawnMower = false;
-bool FirstRun = true;
+Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4];
+Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, ZombieNormal1,
+    ZombieNormalAttack1, ZombieNormal2, pea;
+AnimatedObject icon[4];
+LawnMowerElement LawnMower[ROWLAWNMOWER];
 LevelInfo Level1Info;
 Color GoldOrange = {255, 188, 0, 255};
-int SunBank = 0;
-float RectangleWidth = (float)(END_X - START_X) / COLUMNS; // 107.5
-float RectangleHeight = (float)(END_Y - START_Y) / ROWS;   // 122
-float SunTimer;
-Font HorrorFont;
-WarningMessage LackSunWarning;
-double lvl1Runtime = 0;
-int CurrentSunIndex = 0;
+WarningMessage LackSunWarning, LockWarning;
 Rectangle MapCell[ROWS][COLUMNS];
 MapContent CellContent[ROWS][COLUMNS] = {EMPTY};
-SunElement SunElementArray[MAXSUNELEMENT];
 MapContent Selection = EMPTY;
+SunElement SunElementArray[MAXSUNELEMENT];
 SunflowerElement SunFlower[MAXNUMITEMS];
 PeashooterElement Peashooter[MAXNUMITEMS];
-RoseElement Rose[MAXNUMITEMS];
 ChomperElement Chomper[MAXNUMITEMS];
+RoseElement Rose[MAXNUMITEMS];
+Zombies ZombieNormal[30];
+Font HorrorFont;
+int SunBank = 9999;
+int CurrentSunIndex = 0;
+double lvl1Runtime = 0;
+float RectangleWidth = (float)(END_X - START_X) / COLUMNS; // 107.5
+float RectangleHeight = (float)(END_Y - START_Y) / ROWS;   // 122
+float SunTimer, ZombieTimer;
+bool FirstRun = true;
+
 void InitLevel1(void)
 {
-    Map = LoadTexture("../assets/map/level1_map.png");
-    SunBankPic = LoadTexture("../assets/Level1/SunBack.png");
-    selectpic = LoadTexture("../assets/Level1/Select.png");
-    Frame = LoadTexture("../assets/Level1/Frame.png");
-    LackSunWarning.isActive = false;
-    LackSunWarning.duration = 2.0f;
-    LackSunWarning.baseSize = 30.0f;
-    LackSunWarning.startPos = (Vector2){(float)GetScreenWidth() / 2.0f, 150};
-    HorrorFont = LoadFont("../assets/Level1/houseofterrormedium.ttf");
-    for (int i = 0; i < ROWLAWNMOWER; i++)
-    {
-        LawnMower[i] = LoadAnimatedObject("../assets/Level1/lawnMower_Active-Sheet.png", 70, 57, 80, 210,
-                                          270 + RectangleHeight * i, 50, 0, 320, 270 + RectangleHeight * i);
-        OFFlawnMowerRow[i] = LoadTexture("../assets/Level1/lawnMower_Idle.png");
-        CellContent[i][0] = LAWNMOWER;
-    }
-    for (int i = 0; i < 4; i++)
-    {
-        int pixel = (i == 2) ? 100 : 71;
-        int pixelY = (i == 2) ? 0 : 25;
-        int k = (i == 2) ? 12 : 0;
-        char temp[100];
-        sprintf(temp, "../assets/Level1/icon%d.png", i);
-        icon[i] = LoadAnimatedObject(temp, pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
-                                     370 - k + Frame.width * i, 25);
-        sprintf(temp, "../assets/Level1/price%d.png", i);
-        Price[i] = LoadTexture(temp);
-    }
-    //-------------------------------------------------
-    Level1Info.SunFlowertInfoLevel.price = 50;
-    Level1Info.PeashooterInfoLevel.price = 100;
-    Level1Info.ChompertInfoLevel.price = 125;
-    Level1Info.RosetInfoLevel.price = 150;
-    Level1Info.SunFlowertInfoLevel.Cooldown = 45;
-    Level1Info.PeashooterInfoLevel.Cooldown = 45;
-    Level1Info.ChompertInfoLevel.Cooldown = 60;
-    Level1Info.RosetInfoLevel.Cooldown = 70;
-    Level1Info.SunFlowertInfoLevel.Timer = 0;
-    Level1Info.PeashooterInfoLevel.Timer = 0;
-    Level1Info.ChompertInfoLevel.Timer = 0;
-    Level1Info.RosetInfoLevel.Timer = 0;
-    Level1Info.SunFlowertInfoLevel.Lock = false;
-    Level1Info.PeashooterInfoLevel.Lock = false;
-    Level1Info.ChompertInfoLevel.Lock = false;
-    Level1Info.RosetInfoLevel.Lock = false;
-    Level1Info.SunElementInfoLevel.Value = VALUESUN;
-    Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
-    Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
-
-    for (int Y = START_Y, i = 0, j = 0; Y <= END_Y - RectangleHeight; Y = Y + RectangleHeight)
-    {
-        j = 0;
-        for (int X = START_X; X <= END_X - RectangleWidth; X = X + RectangleWidth)
-        {
-            MapCell[i][j].x = X;
-            MapCell[i][j].y = Y;
-            MapCell[i][j].width = RectangleWidth;
-            MapCell[i][j].height = RectangleHeight;
-            j++;
-        }
-        i++;
-    }
-    for (int i = 0; i < MAXNUMITEMS; i++)
-    {
-        SunFlower[i].SunFlowerObj = LoadAnimatedObject("../assets/Level1/SunFlower.png", 80, 80, 80, 0, 0, 0, 0, 0, 0);
-        SunFlower[i].isAlive = false;
-        SunFlower[i].Health = 100;
-        Rose[i].RoseObj = LoadAnimatedObject("../assets/Level1/SunFlower.png", 80, 80, 80, 0, 0, 0, 0, 0, 0);
-        Rose[i].Health = 100;
-        Rose[i].isAlive = false;
-        Chomper[i].ChomperObj = LoadAnimatedObject("../assets/Level1/SunFlower.png", 80, 80, 80, 0, 0, 0, 0, 0, 0);
-        Chomper[i].isAlive = false;
-        Peashooter[i].PeashooterObj =
-            LoadAnimatedObject("../assets/Level1/SunFlower.png", 80, 80, 80, 0, 0, 0, 0, 0, 0);
-        Peashooter[i].isAlive = false;
-    }
-
-    //------------- SUN ELEMENT   INFO -----------------
-    SunTimer = 0;
-    for (int i = 0; i < MAXSUNELEMENT; i++)
-    {
-        SunElementArray[i].sun = LoadAnimatedObject("../assets/Level1/Sun_Sheet.png", 79, 79, 60, 0, 0, 0, 45, 0, 0);
-        SunElementArray[i].Available = false;
-        SunElementArray[i].time = 0.0f;
-    }
-    //------------------------------
+    InitLevel1Texture();
+    InitLevel1Font();
+    InitLevel1Animation();
+    InitLevel1MapCell();
+    InitLevel1Info();
 }
 
 void DrawLevel1(void)
@@ -132,6 +55,43 @@ void DrawLevel1(void)
     {
         DrawLackSunWarning();
     }
+    if (LockWarning.isActive)
+    {
+        DrawLockWarning();
+    }
+    for (int i = 0; i < 30; i++)
+    {
+        if (ZombieNormal[i].isAlive)
+        {
+            DrawAnimatedObject(&ZombieNormal[i].ZombieObj, WHITE);
+        }
+    }
+
+    for (int i = 0; i < MAXNUMITEMS; i++)
+    {
+        for (int k = 0; k < 5; k++)
+        {
+            if (Peashooter[i].Pea[k].isActive)
+            {
+                DrawAnimatedObject(&Peashooter[i].Pea[k].Pea, WHITE);
+            }
+        }
+    }
+
+    for (int i = 0; i < 30; i++) // for debug
+    {
+        if (ZombieNormal[i].isAlive)
+        {
+            DrawText("O", ZombieNormal[i].ZombieObj.posX + ZombieNormal[i].ZombieObj.frames->width / 2,
+                     ZombieNormal[i].ZombieObj.posY + ZombieNormal[i].ZombieObj.frames->height / 2, 20, RED);
+        }
+    }
+    /*
+    for (int i = 0; i < 10; i++)
+    {
+       for(int j=0 ; j<5;j++){DrawTexture(pea,385+i*RectangleWidth , 735-j*RectangleHeight , WHITE);}
+    }
+    */
 
     CellularNetworkMap(); // for debug
 }
@@ -147,21 +107,258 @@ void UpdateLevel1(void)
     {
         UpdateLackSunWarning();
     }
+    if (LockWarning.isActive)
+    {
+        UpdateLockWarning();
+    }
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         CheckSelect();
         UpdateSelectionItems();
         CollectSunElement();
     }
+    ZombieTimer += GetFrameTime();
+    if (ZombieTimer >= Level1Info.ZombieNormal.Regenerate)
+    {
+        ZombieTimer = 0;
+        for (int i = 0; i < 30; i++)
+        {
+            if (!ZombieNormal[i].isAlive)
+            {
+                GenerateZombies(&ZombieNormal[i]);
+                break;
+            }
+        }
+    }
+    for (int i = 0; i < 30; i++)
+    {
+        if (ZombieNormal[i].isAlive)
+        {
+            UpdateAnimatedObject(&ZombieNormal[i].ZombieObj);
+            ZombieNormal[i].Markaz.x = (ZombieNormal[i].ZombieObj.posX + ZombieNormal[i].ZombieObj.frames[0].width / 2);
+            ZombieNormal[i].Markaz.y =
+                (ZombieNormal[i].ZombieObj.posY + ZombieNormal[i].ZombieObj.frames[0].height / 2);
+            if (ZombieNormal[i].Markaz.x < END_X)
+            {
+                ZombieNormal[i].X_Cell = (ZombieNormal[i].Markaz.x - START_X) / (RectangleWidth);
+                // printf("%d\n" , ZombieNormal[0].Y_Cell );
+            }
+            if (ZombieNormal[i].Markaz.x < END_X &&
+                CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] != EMPTY)
+            {
+                if (!ZombieNormal[i].Attack)
+                {
+                    ZombieNormal[i].ZombieObj =
+                        GenerateAnimatedObject(&ZombieNormalAttack1, 107, 122, 40, ZombieNormal[i].ZombieObj.posX,
+                                               ZombieNormal[i].ZombieObj.posY, 0, 0, ZombieNormal[i].ZombieObj.finalX,
+                                               ZombieNormal[i].ZombieObj.finalY);
+                    ZombieNormal[i].ZombieObj.speedX = 0;
+                    ZombieNormal[i].Attack = true;
+                }
+                if (CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] == SUNFLOWER)
+                {
+
+                    for (int j = 0; j < MAXNUMITEMS; j++)
+                    {
+                        if (SunFlower[j].isAlive && SunFlower[j].X_Cell == ZombieNormal[i].X_Cell &&
+                            SunFlower[j].Y_Cell == ZombieNormal[i].Y_Cell)
+                        {
+                            SunFlower[j].Health -= ZombieNormal[i].Damege;
+                            // printf("%f\n",SunFlower[j].Health);
+                            if (SunFlower[j].Health <= 0)
+                            {
+                                CellContent[SunFlower[j].Y_Cell][SunFlower[j].X_Cell] = EMPTY;
+                                SunFlower[j].isAlive = false;
+                            }
+                        }
+                    }
+                }
+                else if (CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] == PEASHOOTER)
+                {
+
+                    for (int j = 0; j < MAXNUMITEMS; j++)
+                    {
+                        if (Peashooter[j].isAlive && Peashooter[j].X_Cell == ZombieNormal[i].X_Cell &&
+                            Peashooter[j].Y_Cell == ZombieNormal[i].Y_Cell)
+                        {
+                            Peashooter[j].Health -= ZombieNormal[i].Damege;
+                            // printf("%f\n",Peashooter[j].Health);
+                            if (Peashooter[j].Health <= 0)
+                            {
+                                CellContent[Peashooter[j].Y_Cell][Peashooter[j].X_Cell] = EMPTY;
+                                Peashooter[j].Firing = false;
+                                Peashooter[j].isAlive = false;
+                            }
+                        }
+                    }
+                }
+                else if (CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] == CHOMPER)
+                {
+
+                    for (int j = 0; j < MAXNUMITEMS; j++)
+                    {
+                        if (Chomper[j].isAlive && Chomper[j].X_Cell == ZombieNormal[i].X_Cell &&
+                            Chomper[j].Y_Cell == ZombieNormal[i].Y_Cell)
+                        {
+                            Chomper[j].Health -= ZombieNormal[i].Damege;
+                            // printf("%f\n",Chomper[j].Health);
+                            if (Chomper[j].Health <= 0)
+                            {
+                                CellContent[Chomper[j].Y_Cell][Chomper[j].X_Cell] = EMPTY;
+                                Chomper[j].isAlive = false;
+                            }
+                        }
+                    }
+                }
+                else if (CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] == ROSE)
+                {
+
+                    for (int j = 0; j < MAXNUMITEMS; j++)
+                    {
+                        if (Rose[j].isAlive && Rose[j].X_Cell == ZombieNormal[i].X_Cell &&
+                            Rose[j].Y_Cell == ZombieNormal[i].Y_Cell)
+                        {
+                            Rose[j].Health -= ZombieNormal[i].Damege;
+                            // printf("%f\n",Rose[j].Health);
+                            if (Rose[j].Health <= 0)
+                            {
+                                CellContent[Rose[j].Y_Cell][Rose[j].X_Cell] = EMPTY;
+                                Rose[j].isAlive = false;
+                            }
+                        }
+                    }
+                }
+                else if (CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] == LAWNMOWER)
+                {
+                    CellContent[ZombieNormal[i].Y_Cell][ZombieNormal[i].X_Cell] = EMPTY;
+                    LawnMower[ZombieNormal[i].Y_Cell].LawnMowerObj = GenerateAnimatedObject(
+                        &LawnMowerSheet, 70, 57, 80, 320, 270 + RectangleHeight * ZombieNormal[i].Y_Cell, 500, 0, END_X,
+                        270 + RectangleHeight * ZombieNormal[i].Y_Cell);
+                    LawnMower[ZombieNormal[i].Y_Cell].isActive = true;
+                }
+            }
+            else
+            {
+                if (ZombieNormal[i].Attack)
+                {
+                    ZombieNormal[i].ZombieObj = GenerateAnimatedObject(
+                        &ZombieNormal1, 107, 122, 40, ZombieNormal[i].ZombieObj.posX, ZombieNormal[i].ZombieObj.posY,
+                        -20, 0, ZombieNormal[i].ZombieObj.finalX, ZombieNormal[i].ZombieObj.finalY);
+
+                    ZombieNormal[i].Attack = false;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < MAXNUMITEMS; i++)
+    {
+        if (Peashooter[i].isAlive)
+        {
+            bool onfire = false;
+            if (Peashooter[i].Firing == false)
+            {
+                for (int j = 0; j < 30; j++)
+                {
+                    for (int k = Peashooter[i].X_Cell; k < COLUMNS; k++)
+                    {
+                        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X &&
+                            ZombieNormal[j].Y_Cell == Peashooter[i].Y_Cell)
+                        {
+                            if (Peashooter[i].X_Cell <= ZombieNormal[j].X_Cell)
+                                onfire = true;
+
+                            break;
+                        }
+                    }
+                    if (onfire)
+                    {
+                        // printf("Peashooter %d : on by ZombieNormal %d x=%f \n ", i, j, ZombieNormal[j].Markaz.x);
+                        Peashooter[i].Firing = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                bool OFFfire = true;
+                for (int j = 0; j < 30; j++)
+                {
+
+                    for (int k = Peashooter[i].X_Cell; k < COLUMNS; k++)
+                    {
+                        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X && ZombieNormal[j].Y_Cell ==Peashooter[i].Y_Cell )
+                        {
+                            if (Peashooter[i].X_Cell <= ZombieNormal[j].X_Cell)
+                            {
+                                OFFfire = false;
+                                j = 30;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (OFFfire)
+                {
+                    Peashooter[i].Firing = false;
+                }
+            }
+        }
+        if (Peashooter[i].Firing)
+        {
+            Peashooter[i].FireTimer += GetFrameTime();
+            if (Peashooter[i].FireTimer >= Peashooter[i].Firingspeed)
+            {
+                Peashooter[i].FireTimer = 0;
+                GeneratePea(&Peashooter[i]);
+            }
+        }
+        for (int k = 0; k < 5; k++)
+        {
+            if (Peashooter[i].Pea[k].isActive)
+            {
+                UpdateAnimatedObject(&Peashooter[i].Pea[k].Pea);
+                if (Peashooter[i].Pea[k].Pea.posX >= END_X)
+                {
+                    Peashooter[i].Pea[k].isActive = false;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < ROWLAWNMOWER; i++)
+    {
+        if (LawnMower[i].isActive)
+        {
+            if (LawnMower[i].Markaz.x >= END_X || LawnMower[i].LawnMowerObj.posX == LawnMower[i].LawnMowerObj.finalX)
+            {
+                LawnMower[i].isActive = false;
+            }
+            for (int j = 0; j < 30; j++)
+            {
+                if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X &&
+                    ZombieNormal[j].Y_Cell == LawnMower[i].Y_Cell && ZombieNormal[j].X_Cell == LawnMower[i].X_Cell)
+                {
+                    ZombieNormal[j].isAlive = false;
+                }
+            }
+        }
+    }
 }
 void UnloadLevel1(void)
 {
     UnloadTexture(Map);
+    UnloadTexture(SunBankPic);
+    UnloadTexture(selectpic);
+    UnloadTexture(SunFlowerSheet);
+    UnloadTexture(LawnMowerSheet);
+    UnloadTexture(SunElementSheet);
+    UnloadTexture(Frame);
+
     for (int i = 0; i < ROWLAWNMOWER; i++)
     {
-        UnloadAnimatedObject(&LawnMower[i]);
-        UnloadTexture(OFFlawnMowerRow[i]);
+        UnloadAnimatedObject(&LawnMower[i].LawnMowerObj);
     }
+    UnloadTexture(OFFlawnMowerRow);
+
     for (int i = 0; i < MAXSUNELEMENT; i++)
     {
         UnloadAnimatedObject(&SunElementArray[i].sun);
@@ -169,7 +366,9 @@ void UnloadLevel1(void)
     for (int i = 0; i < 4; i++)
     {
         UnloadAnimatedObject(&icon[i]);
+        UnloadTexture(Price[i]);
     }
+
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
         UnloadAnimatedObject(&SunFlower[i].SunFlowerObj);
@@ -179,12 +378,14 @@ void UnloadLevel1(void)
     }
     UnloadFont(HorrorFont);
 }
+// ---------------------- Generate Functions-----------------------  //
+
 void GenerateSun(SunElement *obj, int x, int y)
 {
     if (x == GENERATERANDOM && y == GENERATERANDOM)
     {
-        int xstart = rand() % SCREEN_WIDTH;
-        int yfinal = rand() % SCREEN_HEIGHT;
+        int xstart = rand() % (SCREEN_WIDTH - 80);  //  کمتر از  طول صفحه باشد تا از کادر خارج نشود
+        int yfinal = rand() % (SCREEN_HEIGHT - 80); //  کمتر از  عرض صفحه باشد تا از کادر خارج نشود
         obj->sun.posY = 0;
         obj->sun.speedY = 45;
         obj->sun.posX = obj->sun.finalX = xstart;
@@ -215,6 +416,105 @@ void GenerateSun(SunElement *obj, int x, int y)
         return;
     }
 }
+
+void GenerateSunFlower(SunflowerElement *obj, int X_Cell, int Y_Cell)
+{
+    obj->Cooldown = 30;
+    obj->Health = 100;
+    obj->SunFlowerObj.posX = obj->SunFlowerObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
+    obj->SunFlowerObj.posY = obj->SunFlowerObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
+    obj->X_Cell = X_Cell;
+    obj->Y_Cell = Y_Cell;
+    obj->isAlive = true;
+
+    return;
+}
+void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
+{
+    obj->Lifespan = 10;
+    obj->Health = 100;
+    obj->RoseObj.posX = obj->RoseObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
+    obj->RoseObj.posY = obj->RoseObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
+    obj->X_Cell = X_Cell;
+    obj->Y_Cell = Y_Cell;
+    obj->isAlive = true;
+
+    return;
+}
+void GenerateChomper(ChomperElement *obj, int X_Cell, int Y_Cell)
+{
+    obj->Lifespan = 20;
+    obj->Health = 100;
+    obj->ChomperObj.posX = obj->ChomperObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
+    obj->ChomperObj.posY = obj->ChomperObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
+    obj->X_Cell = X_Cell;
+    obj->Y_Cell = Y_Cell;
+    obj->isAlive = true;
+
+    return;
+}
+void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell)
+{
+    obj->Health = 100;
+    obj->Firingspeed = 3;
+    obj->PeashooterObj.posX = obj->PeashooterObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
+    obj->PeashooterObj.posY = obj->PeashooterObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
+    obj->X_Cell = X_Cell;
+    obj->Y_Cell = Y_Cell;
+    obj->FireTimer = 1.5;
+    obj->Firing = false;
+    for (int i = 0; i < 5; i++)
+    {
+        obj->Pea[i].isActive = false;
+    }
+    obj->isAlive = true;
+
+    return;
+}
+void ShowLackSunWarning(void)
+{
+
+    strcpy(LackSunWarning.text, "SUN NOT ENOUGH!");
+    LackSunWarning.isActive = true;
+    LackSunWarning.timer = LackSunWarning.duration; // ریست تایمر
+}
+void ShowLockWarning(void)
+{
+
+    strcpy(LockWarning.text, "Lock!");
+    LockWarning.isActive = true;
+    LockWarning.timer = LockWarning.duration; // ریست تایمر
+}
+void GenerateZombies(Zombies *obj)
+{
+    obj->Damege = 0.1;
+    obj->Health = 100;
+    int Row = rand() % 5;
+    int xstart = SCREEN_WIDTH;
+    int Xfinal = 0;
+    int Ystart = START_Y + Row * RectangleHeight - 10;
+    int Yfinal = Ystart;
+    obj->Markaz.x = 1600;
+    obj->Y_Cell = Row;
+    obj->ZombieObj = GenerateAnimatedObject(&ZombieNormal1, 107, 122, 40, xstart, Ystart, -20, 0, Xfinal, Yfinal);
+    obj->isAlive = true;
+}
+void GeneratePea(PeashooterElement *obj)
+{
+    for (int i = 0; i < 5; i++)
+    {
+        if (!(obj->Pea[i].isActive))
+        {
+            obj->Pea[i].Pea = GenerateAnimatedObject(&pea, 29, 32, 1000, 385 + obj->X_Cell * RectangleWidth,
+                                                     247 + obj->Y_Cell * RectangleHeight, 300, 0, END_X, 385);
+            obj->Pea[i].isActive = true;
+            return;
+        }
+    }
+}
+//----------------------------------------------------------------------------//
+// ---------------------- Update Functions-----------------------  //
+
 void CheckSelect()
 {
     Vector2 MousePos = GetMousePosition();
@@ -241,6 +541,7 @@ void CheckSelect()
                 }
                 else
                 {
+                    ShowLockWarning();
                 }
                 break;
             case 1:
@@ -257,6 +558,7 @@ void CheckSelect()
                 }
                 else
                 {
+                    ShowLockWarning();
                 }
                 break;
             case 2:
@@ -273,6 +575,7 @@ void CheckSelect()
                 }
                 else
                 {
+                    ShowLockWarning();
                 }
                 break;
             case 3:
@@ -289,6 +592,7 @@ void CheckSelect()
                 }
                 else
                 {
+                    ShowLockWarning();
                 }
                 break;
             default:
@@ -304,83 +608,6 @@ void CheckSelect()
             }
         }
     }
-}
-void GenerateSunFlower(SunflowerElement *obj, int X_Cell, int Y_Cell)
-{
-    obj->Cooldown = 30;
-    obj->Health = 100;
-    obj->SunFlowerObj.posX = obj->SunFlowerObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
-    obj->SunFlowerObj.posY = obj->SunFlowerObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
-    obj->isAlive = true;
-
-    return;
-}
-void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
-{
-    obj->Lifespan = 10;
-    obj->Health = 100;
-    obj->RoseObj.posX = obj->RoseObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
-    obj->RoseObj.posY = obj->RoseObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
-    obj->isAlive = true;
-
-    return;
-}
-void GenerateChomper(ChomperElement *obj, int X_Cell, int Y_Cell)
-{
-    obj->Lifespan = 20;
-    obj->Health = 100;
-    obj->ChomperObj.posX = obj->ChomperObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
-    obj->ChomperObj.posY = obj->ChomperObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
-    obj->isAlive = true;
-
-    return;
-}
-void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell)
-{
-    obj->Health = 100;
-    obj->Firingspeed = 15;
-    obj->PeashooterObj.posX = obj->PeashooterObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
-    obj->PeashooterObj.posY = obj->PeashooterObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
-    obj->isAlive = true;
-
-    return;
-}
-void ShowLackSunWarning(void)
-{
-
-    strcpy(LackSunWarning.text, "SUN NOT ENOUGH!");
-    LackSunWarning.isActive = true;
-    LackSunWarning.timer = LackSunWarning.duration; // ریست تایمر
-}
-void DrawLackSunWarning(void)
-{
-
-    // محاسبه زمان سپری شده از شروع نمایش (برعکس تایمر)
-    float elapsed = LackSunWarning.duration - LackSunWarning.timer;
-
-    // **افکت ۱: حرکت عمودی نوسانی (Bouncing)**
-    // استفاده از sin برای نوسان نرم
-    // 5.0f * sin(elapsed * 20.0f) مقدار جابجایی عمودی است.
-    // 20.0f سرعت نوسان را تعیین می کند.
-    float offset = 5.0f * sinf(elapsed * 20.0f);
-
-    // **افکت ۲: بزرگ شدن/کوچک شدن (Scaling)**
-    // استفاده از sin برای تغییر اندازه (اوج در وسط مدت نمایش)
-    float scaleFactor = 1.0f + 0.1f * sinf(elapsed * 2 * PI / LackSunWarning.duration);
-
-    Vector2 textPosition = LackSunWarning.startPos;
-    textPosition.y += offset; // اعمال نوسان عمودی
-
-    float currentSize = LackSunWarning.baseSize * scaleFactor;
-
-    // برای وسط قرار گرفتن متن، ابتدا اندازه آن را بگیرید
-    Vector2 measure = MeasureTextEx(HorrorFont, LackSunWarning.text, currentSize, 2.0f);
-    textPosition.x -= measure.x / 2.0f; // وسط قرار دادن افقی
-    textPosition.y -= measure.y / 2.0f; // وسط قرار دادن عمودی
-
-    DrawTextEx(HorrorFont, LackSunWarning.text, textPosition, currentSize, 2.0f,
-               RED // می‌توانید رنگ را به قرمز تغییر دهید
-    );
 }
 void CooldownUpdate(void)
 {
@@ -421,85 +648,6 @@ void CooldownUpdate(void)
         }
     }
 }
-void DrawPlants(void)
-{
-    for (int i = 0; i < MAXNUMITEMS; i++)
-    {
-        if (SunFlower[i].isAlive)
-        {
-            DrawAnimatedObject(&SunFlower[i].SunFlowerObj, WHITE);
-        }
-        if (Chomper[i].isAlive)
-        {
-            DrawAnimatedObject(&Chomper[i].ChomperObj, WHITE);
-        }
-        if (Peashooter[i].isAlive)
-        {
-            DrawAnimatedObject(&Peashooter[i].PeashooterObj, WHITE);
-        }
-        if (Rose[i].isAlive)
-        {
-            DrawAnimatedObject(&Rose[i].RoseObj, WHITE);
-        }
-    }
-}
-void DrawSunElement(void)
-{
-    for (int i = 0; i < MAXSUNELEMENT; i++)
-    {
-        if (SunElementArray[i].Available == true)
-        {
-            DrawAnimatedObject(&SunElementArray[i].sun, WHITE);
-        }
-    }
-}
-void DrawSelectionTick(void)
-{
-    switch (Selection)
-    {
-    case SUNFLOWER:
-        DrawTexture(selectpic, 360 + 0 * Frame.width, 30, WHITE);
-        break;
-    case PEASHOOTER:
-        DrawTexture(selectpic, 360 + 1 * Frame.width, 30, WHITE);
-        break;
-    case CHOMPER:
-        DrawTexture(selectpic, 360 + 2 * Frame.width, 30, WHITE);
-        break;
-    case ROSE:
-        DrawTexture(selectpic, 360 + 3 * Frame.width, 30, WHITE);
-        break;
-
-    default:
-        break;
-    }
-}
-void DrawLevelItems(void)
-{
-    DrawTexture(Map, 0, 0, WHITE);
-    DrawTexture(SunBankPic, 0, 0, WHITE);
-    for (int i = 0; i < 4; i++)
-    {
-        DrawTexture(Frame, 300 + i * Frame.width, 0, WHITE);
-        DrawAnimatedObject(&icon[i], WHITE);
-        DrawTexture(Price[i], 445 + i * Frame.width, 75, WHITE);
-    }
-
-    char sunbanktext[5];
-    sprintf(sunbanktext, "%d", SunBank);
-    DrawText(sunbanktext, 85, 40, 30, GoldOrange);
-    for (int i = 0; i < ROWLAWNMOWER; i++)
-    {
-        if (LawnMower[i].posX == LawnMower[i].finalX)
-        {
-            DrawTexture(OFFlawnMowerRow[i], LawnMower[i].finalX, LawnMower[i].finalY, WHITE);
-        }
-        else
-        {
-            DrawAnimatedObject(&LawnMower[i], WHITE);
-        }
-    }
-}
 void UpdatePlantsTimer(void)
 {
     for (int i = 0; i < MAXNUMITEMS; i++)
@@ -521,7 +669,7 @@ void UpdatePlantsTimer(void)
             if (Rose[i].Lifespan <= 0)
             {
                 Rose[i].isAlive = false;
-                Selection = EMPTY;
+                CellContent[Rose[i].Y_Cell][Rose[i].X_Cell] = EMPTY;
             }
         }
         if (Chomper[i].isAlive)
@@ -530,7 +678,7 @@ void UpdatePlantsTimer(void)
             if (Chomper[i].Lifespan <= 0)
             {
                 Chomper[i].isAlive = false;
-                Selection = EMPTY;
+                CellContent[Chomper[i].Y_Cell][Chomper[i].X_Cell] = EMPTY;
             }
         }
     }
@@ -569,7 +717,13 @@ void UpdateLevelItems(void)
 
     for (int i = 0; i < ROWLAWNMOWER; i++)
     {
-        UpdateAnimatedObject(&LawnMower[i]);
+        if (LawnMower[i].isActive)
+        {
+            LawnMower[i].Markaz.x = LawnMower[i].LawnMowerObj.posX + LawnMower[i].LawnMowerObj.frames[0].width / 2;
+            LawnMower[i].Markaz.y = LawnMower[i].LawnMowerObj.posY + LawnMower[i].LawnMowerObj.frames[0].height / 2;
+            UpdateAnimatedObject(&LawnMower[i].LawnMowerObj);
+            LawnMower[i].X_Cell = (LawnMower[i].Markaz.x - START_X) / (RectangleWidth);
+        }
     }
     for (int i = 0; i < 4; i++)
     {
@@ -582,6 +736,14 @@ void UpdateLackSunWarning(void)
     if (LackSunWarning.timer <= 0.0f)
     {
         LackSunWarning.isActive = false; // پیام را غیرفعال کن
+    }
+}
+void UpdateLockWarning(void)
+{
+    LockWarning.timer -= GetFrameTime();
+    if (LockWarning.timer <= 0.0f)
+    {
+        LockWarning.isActive = false; // پیام را غیرفعال کن
     }
 }
 void UpdateSelectionItems(void)
@@ -702,6 +864,131 @@ void CollectSunElement(void)
         }
     }
 }
+//  ------------------------- Draw Functions-----------------------  //
+void DrawPlants(void)
+{
+    for (int i = 0; i < MAXNUMITEMS; i++)
+    {
+        if (SunFlower[i].isAlive)
+        {
+            DrawAnimatedObject(&SunFlower[i].SunFlowerObj, WHITE);
+        }
+        if (Chomper[i].isAlive)
+        {
+            DrawAnimatedObject(&Chomper[i].ChomperObj, WHITE);
+        }
+        if (Peashooter[i].isAlive)
+        {
+            DrawAnimatedObject(&Peashooter[i].PeashooterObj, WHITE);
+        }
+        if (Rose[i].isAlive)
+        {
+            DrawAnimatedObject(&Rose[i].RoseObj, WHITE);
+        }
+    }
+}
+void DrawSunElement(void)
+{
+    for (int i = 0; i < MAXSUNELEMENT; i++)
+    {
+        if (SunElementArray[i].Available == true)
+        {
+            DrawAnimatedObject(&SunElementArray[i].sun, WHITE);
+        }
+    }
+}
+void DrawSelectionTick(void)
+{
+    switch (Selection)
+    {
+    case SUNFLOWER:
+        DrawTexture(selectpic, 360 + 0 * Frame.width, 30, WHITE);
+        break;
+    case PEASHOOTER:
+        DrawTexture(selectpic, 360 + 1 * Frame.width, 30, WHITE);
+        break;
+    case CHOMPER:
+        DrawTexture(selectpic, 360 + 2 * Frame.width, 30, WHITE);
+        break;
+    case ROSE:
+        DrawTexture(selectpic, 360 + 3 * Frame.width, 30, WHITE);
+        break;
+
+    default:
+        break;
+    }
+}
+void DrawLevelItems(void)
+{
+    DrawTexture(Map, 0, 0, WHITE);
+    DrawTexture(SunBankPic, 0, 0, WHITE);
+    for (int i = 0; i < 4; i++)
+    {
+        DrawTexture(Frame, 300 + i * Frame.width, 0, WHITE);
+        DrawAnimatedObject(&icon[i], WHITE);
+        DrawTexture(Price[i], 445 + i * Frame.width, 75, WHITE);
+    }
+
+    char sunbanktext[5];
+    sprintf(sunbanktext, "%d", SunBank);
+    DrawText(sunbanktext, 85, 40, 30, GoldOrange);
+    for (int i = 0; i < ROWLAWNMOWER; i++)
+    {
+        if (LawnMower[i].LawnMowerObj.posX == LawnMower[i].LawnMowerObj.finalX && CellContent[i][0] == LAWNMOWER)
+        {
+
+            DrawTexture(OFFlawnMowerRow, LawnMower[i].LawnMowerObj.finalX, LawnMower[i].LawnMowerObj.finalY, WHITE);
+        }
+        else if (LawnMower[i].isActive)
+        {
+            DrawAnimatedObject(&LawnMower[i].LawnMowerObj, WHITE);
+        }
+    }
+}
+void DrawLackSunWarning(void)
+{
+
+    // محاسبه زمان سپری شده از شروع نمایش (برعکس تایمر)
+    float elapsed = LackSunWarning.duration - LackSunWarning.timer;
+
+    // **افکت ۱: حرکت عمودی نوسانی (Bouncing)**
+    // استفاده از sin برای نوسان نرم
+    // 5.0f * sin(elapsed * 20.0f) مقدار جابجایی عمودی است.
+    // 20.0f سرعت نوسان را تعیین می کند.
+    float offset = 5.0f * sinf(elapsed * 20.0f);
+
+    // **افکت ۲: بزرگ شدن/کوچک شدن (Scaling)**
+    // استفاده از sin برای تغییر اندازه (اوج در وسط مدت نمایش)
+    float scaleFactor = 1.0f + 0.1f * sinf(elapsed * 2 * PI / LackSunWarning.duration);
+
+    Vector2 textPosition = LackSunWarning.startPos;
+    textPosition.y += offset; // اعمال نوسان عمودی
+
+    float currentSize = LackSunWarning.baseSize * scaleFactor;
+
+    // برای وسط قرار گرفتن متن، ابتدا اندازه آن را بگیرید
+    Vector2 measure = MeasureTextEx(HorrorFont, LackSunWarning.text, currentSize, 2.0f);
+    textPosition.x -= measure.x / 2.0f; // وسط قرار دادن افقی
+    textPosition.y -= measure.y / 2.0f; // وسط قرار دادن عمودی
+
+    DrawTextEx(HorrorFont, LackSunWarning.text, textPosition, currentSize, 2.0f,
+               RED // می‌توانید رنگ را به قرمز تغییر دهید
+    );
+}
+void DrawLockWarning(void)
+{
+
+    float elapsed = LockWarning.timer;
+    float offset = 5 * sinf(elapsed * 20);
+    float scaleFactor = 1 + 0.1 * sinf(elapsed * 2 * PI / LockWarning.duration);
+    float currentSize = LockWarning.baseSize * scaleFactor;
+    Vector2 textPosition = LackSunWarning.startPos;
+    textPosition.y += offset;
+    Vector2 measure = MeasureTextEx(HorrorFont, LockWarning.text, currentSize, 2.0f);
+    textPosition.x -= measure.x / 2.0f; // وسط قرار دادن افقی
+    textPosition.y -= measure.y / 2.0f; // وسط قرار دادن عمودی
+    DrawTextEx(HorrorFont, LockWarning.text, textPosition, currentSize, 2.0f, GoldOrange);
+}
 void CellularNetworkMap(void)
 {
     for (int i = 0; i < ROWS; i++)
@@ -717,3 +1004,139 @@ void CellularNetworkMap(void)
         }
     }
 }
+
+//--------------------------------------------------------------------------------//
+
+// ---------------------- Init Functions-----------------------------------------  //
+
+void InitLevel1Info(void)
+{
+    Level1Info.SunFlowertInfoLevel.price = 50;
+    Level1Info.PeashooterInfoLevel.price = 100;
+    Level1Info.ChompertInfoLevel.price = 125;
+    Level1Info.RosetInfoLevel.price = 150;
+    Level1Info.SunFlowertInfoLevel.Cooldown = 45;
+    Level1Info.PeashooterInfoLevel.Cooldown = 2; // 45;
+    Level1Info.ChompertInfoLevel.Cooldown = 60;
+    Level1Info.RosetInfoLevel.Cooldown = 70;
+    Level1Info.SunFlowertInfoLevel.Timer = 0;
+    Level1Info.PeashooterInfoLevel.Timer = 0;
+    Level1Info.ChompertInfoLevel.Timer = 0;
+    Level1Info.RosetInfoLevel.Timer = 0;
+    Level1Info.SunFlowertInfoLevel.Lock = false;
+    Level1Info.PeashooterInfoLevel.Lock = false;
+    Level1Info.ChompertInfoLevel.Lock = false;
+    Level1Info.RosetInfoLevel.Lock = false;
+    Level1Info.SunElementInfoLevel.Value = VALUESUN;
+    Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
+    Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
+    Level1Info.ZombieNormal.Regenerate = 5;
+    Level1Info.ZombieNormal.Timer = 0;
+    LackSunWarning.isActive = false;
+    LackSunWarning.duration = 2.0f;
+    LackSunWarning.baseSize = 30.0f;
+    LackSunWarning.startPos = (Vector2){(float)GetScreenWidth() / 2.0f, 150};
+    LockWarning.isActive = false;
+    LockWarning.duration = 2.0f;
+    LockWarning.baseSize = 30.0f;
+    LockWarning.startPos = (Vector2){(float)GetScreenWidth() / 2.0f, 130};
+}
+void InitLevel1Texture(void)
+{
+    Map = LoadTexture("../assets/map/level1_map.png");
+    SunBankPic = LoadTexture("../assets/Level1/SunBack.png");
+    selectpic = LoadTexture("../assets/Level1/Select.png");
+    OFFlawnMowerRow = LoadTexture("../assets/Level1/lawnMower_Idle.png");
+    SunFlowerSheet = LoadTexture("../assets/Level1/SunFlower.png");
+    PeashooterSheet = LoadTexture("../assets/Level1/PeashooterSheet.png");
+    ZombieNormal2 = LoadTexture("../assets/Level1/NormalZombieRunSheet.png");
+    ZombieNormal1 = LoadTexture("../assets/Level1/ZombieSheet.png");
+    ZombieNormalAttack1 = LoadTexture("../assets/Level1/ZombieAttackSheet.png");
+    ChomperSheet = LoadTexture("../assets/Level1/ChomperSheet.png");
+    RoseSheet = LoadTexture("../assets/Level1/roseSheet.png");
+    LawnMowerSheet = LoadTexture("../assets/Level1/lawnMower_Active-Sheet.png");
+    SunElementSheet = LoadTexture("../assets/Level1/Sun_Sheet.png");
+    Frame = LoadTexture("../assets/Level1/Frame.png");
+    pea = LoadTexture("../assets/Level1/PB.png");
+}
+void InitLevel1Font(void)
+{
+    HorrorFont = LoadFont("../assets/Level1/houseofterrormedium.ttf");
+}
+void InitLevel1Animation(void)
+{
+    for (int i = 0; i < 4; i++)
+    {
+        int pixel = (i == 2) ? 100 : 71;
+        int pixelY = (i == 2) ? 0 : 25;
+        int k = (i == 2) ? 12 : 0;
+        char temp[100];
+        sprintf(temp, "../assets/Level1/icon%d.png", i);
+        icon[i] = LoadAnimatedObject(temp, pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
+                                     370 - k + Frame.width * i, 25);
+        sprintf(temp, "../assets/Level1/price%d.png", i);
+        Price[i] = LoadTexture(temp);
+    }
+    for (int i = 0; i < ROWLAWNMOWER; i++)
+    {
+        LawnMower[i].LawnMowerObj = GenerateAnimatedObject(&LawnMowerSheet, 70, 57, 80, 210, 270 + RectangleHeight * i,
+                                                           50, 0, 320, 270 + RectangleHeight * i);
+        LawnMower[i].Y_Cell = i;
+        LawnMower[i].X_Cell = 0;
+        LawnMower[i].Available = true;
+        LawnMower[i].isActive = true;
+        CellContent[i][0] = LAWNMOWER;
+    }
+    for (int i = 0; i < MAXNUMITEMS; i++)
+    {
+        SunFlower[i].SunFlowerObj = GenerateAnimatedObject(&SunFlowerSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
+        SunFlower[i].isAlive = false;
+        SunFlower[i].Health = 100;
+        Rose[i].RoseObj = GenerateAnimatedObject(&RoseSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
+        Rose[i].Health = 100;
+        Rose[i].isAlive = false;
+        Chomper[i].ChomperObj = GenerateAnimatedObject(&ChomperSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
+        Chomper[i].isAlive = false;
+        Peashooter[i].PeashooterObj = GenerateAnimatedObject(&PeashooterSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
+        Peashooter[i].isAlive = false;
+        Peashooter[i].FireTimer = 0;
+        Peashooter[i].Firing = false;
+        for (int j = 0; j < 5; j++)
+        {
+            Peashooter[i].Pea[j].isActive = false;
+            Peashooter[i].Pea[j].Pea = GenerateAnimatedObject(&pea, 29, 32, 80, 0, 0, 0, 0, 0, 0);
+        }
+    }
+
+    SunTimer = 0;
+    for (int i = 0; i < MAXSUNELEMENT; i++)
+    {
+        SunElementArray[i].sun = GenerateAnimatedObject(&SunElementSheet, 79, 79, 60, 0, 0, 0, 45, 0, 0);
+        SunElementArray[i].Available = false;
+        SunElementArray[i].time = 0.0f;
+    }
+    ZombieTimer = 0;
+    for (int i = 0; i < 30; i++)
+    {
+        ZombieNormal[i].isAlive = false;
+        ZombieNormal[i].Attack = false;
+        ZombieNormal[i].ZombieObj = GenerateAnimatedObject(&ZombieNormal1, 12, 12, 0, 0, 0, 0, 0, 0, 0);
+    }
+}
+void InitLevel1MapCell(void)
+{
+    for (int Y = START_Y, i = 0, j = 0; Y <= END_Y - RectangleHeight; Y = Y + RectangleHeight)
+    {
+        j = 0;
+        for (int X = START_X; X <= END_X - RectangleWidth; X = X + RectangleWidth)
+        {
+            MapCell[i][j].x = X;
+            MapCell[i][j].y = Y;
+            MapCell[i][j].width = RectangleWidth;
+            MapCell[i][j].height = RectangleHeight;
+            j++;
+        }
+        i++;
+    }
+}
+//------------------------------------------------------------------------------------------------//

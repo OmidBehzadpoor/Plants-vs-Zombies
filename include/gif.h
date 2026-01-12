@@ -18,16 +18,13 @@ typedef struct AnimatedObject
     float speedX, speedY;
     float finalX, finalY;
 } AnimatedObject;
-
-AnimatedObject LoadAnimatedObject(const char *fileName,
-                                  int frameWidth,
-                                  int frameHeight,
-                                  int frameDelay,
-                                  float startX, float startY,
-                                  float speedX, float speedY,
-                                  float finalX, float finalY);
+AnimatedObject GenerateAnimatedObject(const Texture2D *Sheet, int frameWidth, int frameHeight, int frameDelay,
+                                      float startX, float startY, float speedX, float speedY, float finalX,
+                                      float finalY);
+AnimatedObject LoadAnimatedObject(const char *fileName, int frameWidth, int frameHeight, int frameDelay, float startX,
+                                  float startY, float speedX, float speedY, float finalX, float finalY);
 void UpdateAnimatedObject(AnimatedObject *obj);
-void DrawAnimatedObject(const AnimatedObject *obj,  Color tint);
-void UnloadAnimatedObject( AnimatedObject *obj);
+void DrawAnimatedObject(const AnimatedObject *obj, Color tint);
+void UnloadAnimatedObject(AnimatedObject *obj);
 
 #endif
