@@ -531,7 +531,7 @@ void GenerateSunFlower(SunflowerElement *obj, int X_Cell, int Y_Cell)
 }
 void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
 {
-    obj->Lifespan = 1000;
+    obj->Lifespan = 10;
     obj->Health = Level1Info.RosetInfoLevel.BaseHealth;
     obj->RoseObj.posX = obj->RoseObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->RoseObj.posY = obj->RoseObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
