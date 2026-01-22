@@ -18,8 +18,29 @@
 #define DISPLAYSUN 30
 #define MAXSUNELEMENT 55
 #define MAXNUMITEMS 50
+#define MAXNUZOMBIES 30
 #define GENERATERANDOM -555
 #define VALUESUN 25
+
+struct BulletHit
+{
+    AnimatedObject BulletHitObj;
+    bool isActive;
+    float DisplayTime;
+    float DisplayTimer;
+};
+struct PeaFire
+{
+    AnimatedObject Pea;
+    struct BulletHit PeaBulletHit;
+    int X_Cell;
+    Vector2 Markaz;
+        float Radius;   
+    int Y_Cell;
+     Rectangle CollisionBox;
+    bool isActive;
+};
+
 typedef struct SunflowerElement
 {
     AnimatedObject SunFlowerObj;
@@ -30,22 +51,18 @@ typedef struct SunflowerElement
     int Y_Cell;
     bool isAlive;
 } SunflowerElement;
-struct PeaFire
-{
-    AnimatedObject Pea;
-    bool isActive;
-   
 
-};
 typedef struct PeashooterElement
 {
     AnimatedObject PeashooterObj;
-    struct PeaFire Pea[5];
+    struct PeaFire Pea[10];
 
     Rectangle Coordinates;
 
     float Firingspeed;
     float FireTimer;
+    float EffectiveFireRate ;
+    float peaDamege;
     float Health;
     int X_Cell;
     int Y_Cell;
@@ -73,6 +90,7 @@ typedef struct RoseElement
     Rectangle Coordinates;
     float Lifespan;
     float Health;
+    float Timer ;
     int X_Cell;
     int Y_Cell;
     bool isAlive;
@@ -80,7 +98,6 @@ typedef struct RoseElement
 typedef struct LawnMowerElement
 {
     AnimatedObject LawnMowerObj;
-
 
     int X_Cell;
     int Y_Cell;
@@ -108,9 +125,12 @@ typedef struct SunElementInfo
 typedef struct ZombieInfo
 {
 
-    
     float Regenerate;
-        float Timer;
+    float Timer;
+    float BassSpeedX;
+    float BassSpeedY;
+    float BassFrameDelay;
+
 
 } ZombieInfo;
 typedef struct SunElement
@@ -129,58 +149,37 @@ typedef struct
     Vector2 startPos; // موقعیت شروع (مرکز صفحه)
     float baseSize;   // اندازه فونت پایه
 } WarningMessage;
-
-struct SunFlowertInfo
+struct PlantsInfo
 {
     int price;
     float Cooldown;
+    float BaseHealth;
     float Timer;
     bool Lock;
 };
-struct PeashooterInfo
-{
-    int price;
 
-    float Cooldown;
-    float Timer;
-    bool Lock;
-};
-struct ChompertInfo
-{
-    int price;
-
-    float Cooldown;
-    float Timer;
-    bool Lock;
-};
-struct RosetInfo
-{
-    int price;
-
-    float Cooldown;
-    float Timer;
-    bool Lock;
-};
 typedef struct Zombies
 {
     AnimatedObject ZombieObj;
     float Health;
-    float Damege ;
+    float Damege;
     int X_Cell;
     int Y_Cell;
-    Vector2 Markaz ;
-    bool isAlive; 
+    Vector2 Markaz;
+    float slowFactor;
+    bool isAlive;
     bool Attack;
-}Zombies;
+    Rectangle CollisionBox; 
+} Zombies;
 typedef struct LevelInfo
 {
 
-    struct SunFlowertInfo SunFlowertInfoLevel;
-    struct PeashooterInfo PeashooterInfoLevel;
-    struct ChompertInfo ChompertInfoLevel;
-    struct RosetInfo RosetInfoLevel;
+    struct PlantsInfo SunFlowertInfoLevel;
+    struct PlantsInfo PeashooterInfoLevel;
+    struct PlantsInfo ChompertInfoLevel;
+    struct PlantsInfo RosetInfoLevel;
     struct SunElementInfo SunElementInfoLevel;
-    struct ZombieInfo ZombieNormal ;
+    struct ZombieInfo ZombieNormal;
 
 } LevelInfo;
 
@@ -189,7 +188,7 @@ extern float RectangleHeight;
 extern LevelInfo Level1Info;
 extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4];
 extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet;
-extern AnimatedObject  icon[4];
+extern AnimatedObject icon[4];
 extern Color GoldOrange;
 extern WarningMessage LackSunWarning;
 extern Rectangle MapCell[ROWS][COLUMNS];
@@ -234,4 +233,7 @@ void ShowLockWarning(void);
 void UpdateLockWarning(void);
 void GenerateZombies(Zombies *obj);
 void GeneratePea(PeashooterElement *obj);
+void ResetSlowFactorZombies(void);
+void ResetEffectiveFireRate(void);
+
 #endif

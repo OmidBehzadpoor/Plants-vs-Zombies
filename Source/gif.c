@@ -1,5 +1,5 @@
 #include "gif.h"
-AnimatedObject GenerateAnimatedObject(const Texture2D *Sheet, int frameWidth, int frameHeight, int frameDelay, float startX,
+AnimatedObject GenerateAnimatedObject(const Texture2D *Sheet, int frameWidth, int frameHeight, float frameDelay, float startX,
                                   float startY, float speedX, float speedY, float finalX, float finalY)
 {
     AnimatedObject obj = {0};
@@ -28,7 +28,7 @@ AnimatedObject GenerateAnimatedObject(const Texture2D *Sheet, int frameWidth, in
 
     return obj;
 }
-AnimatedObject LoadAnimatedObject(const char *fileName, int frameWidth, int frameHeight, int frameDelay, float startX,
+AnimatedObject LoadAnimatedObject(const char *fileName, int frameWidth, int frameHeight, float frameDelay, float startX,
                                   float startY, float speedX, float speedY, float finalX, float finalY)
 {
     AnimatedObject obj = {0};
@@ -60,40 +60,40 @@ AnimatedObject LoadAnimatedObject(const char *fileName, int frameWidth, int fram
 
 void UpdateAnimatedObject(AnimatedObject *obj)
 {
-    obj->frameTimer += GetFrameTime();
+    float dt = GetFrameTime();
 
+    obj->frameTimer += dt;
     if (obj->frameTimer >= obj->frameDelay / 1000.0f)
     {
         obj->frameTimer = 0;
         obj->currentFrame = (obj->currentFrame + 1) % obj->frameCount;
     }
 
-    if ((obj->speedX > 0 && obj->posX < obj->finalX) || (obj->speedX < 0 && obj->posX > obj->finalX))
+    if ((obj->speedX > 0 && obj->posX < obj->finalX) ||
+        (obj->speedX < 0 && obj->posX > obj->finalX))
     {
-        obj->posX += obj->speedX * GetFrameTime();
-        if (obj->posX > obj->finalX && obj->speedX>=0)
+        obj->posX += obj->speedX * dt;
+
+        if ((obj->speedX > 0 && obj->posX > obj->finalX) ||
+            (obj->speedX < 0 && obj->posX < obj->finalX))
         {
             obj->posX = obj->finalX;
         }
-        else if (obj->posX < obj->finalX && obj->speedX<=0)
-        {
-            obj->posX = obj->finalX;
-        }
-        
     }
-    if ((obj->speedY > 0 && obj->posY < obj->finalY) || (obj->speedY < 0 && obj->posY > obj->finalY))
+
+    if ((obj->speedY > 0 && obj->posY < obj->finalY) ||
+        (obj->speedY < 0 && obj->posY > obj->finalY))
     {
-        obj->posY += obj->speedY * GetFrameTime();
-        if (obj->posY > obj->finalY && obj->speedY>=0 )
-        {
-            obj->posY = obj->finalY;
-        }
-          else if (obj->posY < obj->finalY && obj->speedY<=0)
+        obj->posY += obj->speedY * dt;
+
+        if ((obj->speedY > 0 && obj->posY > obj->finalY) ||
+            (obj->speedY < 0 && obj->posY < obj->finalY))
         {
             obj->posY = obj->finalY;
         }
     }
 }
+
 
 void DrawAnimatedObject(const AnimatedObject *obj, Color tint)
 {
@@ -107,4 +107,12 @@ void UnloadAnimatedObject(AnimatedObject *obj)
 {
     UnloadTexture(obj->texture);
     free(obj->frames);
+}
+void ResetAnimatedObject(AnimatedObject *obj)
+{
+    if (obj->frames != NULL)
+    {
+        free(obj->frames);
+        obj->frames = NULL;
+    }
 }

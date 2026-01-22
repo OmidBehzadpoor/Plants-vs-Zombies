@@ -8,7 +8,7 @@
 #include <string.h>
 Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4];
 Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, ZombieNormal1,
-    ZombieNormalAttack1, ZombieNormal2, pea;
+    ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit;
 AnimatedObject icon[4];
 LawnMowerElement LawnMower[ROWLAWNMOWER];
 LevelInfo Level1Info;
@@ -22,7 +22,7 @@ SunflowerElement SunFlower[MAXNUMITEMS];
 PeashooterElement Peashooter[MAXNUMITEMS];
 ChomperElement Chomper[MAXNUMITEMS];
 RoseElement Rose[MAXNUMITEMS];
-Zombies ZombieNormal[30];
+Zombies ZombieNormal[MAXNUZOMBIES];
 Font HorrorFont;
 int SunBank = 9999;
 int CurrentSunIndex = 0;
@@ -59,7 +59,7 @@ void DrawLevel1(void)
     {
         DrawLockWarning();
     }
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < MAXNUZOMBIES; i++)
     {
         if (ZombieNormal[i].isAlive)
         {
@@ -69,29 +69,46 @@ void DrawLevel1(void)
 
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
-        for (int k = 0; k < 5; k++)
+        for (int k = 0; k < 10; k++)
         {
             if (Peashooter[i].Pea[k].isActive)
             {
                 DrawAnimatedObject(&Peashooter[i].Pea[k].Pea, WHITE);
             }
+            if (Peashooter[i].Pea[k].PeaBulletHit.isActive)
+            {
+                DrawAnimatedObject(&Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj, WHITE);
+            }
         }
     }
 
-    for (int i = 0; i < 30; i++) // for debug
+    for (int i = 0; i < MAXNUZOMBIES; i++) // for debug
     {
         if (ZombieNormal[i].isAlive)
         {
-            DrawText("O", ZombieNormal[i].ZombieObj.posX + ZombieNormal[i].ZombieObj.frames->width / 2,
-                     ZombieNormal[i].ZombieObj.posY + ZombieNormal[i].ZombieObj.frames->height / 2, 20, RED);
+            DrawText("O", ZombieNormal[i].ZombieObj.posX + ZombieNormal[i].ZombieObj.frames[0].width / 2,
+                     ZombieNormal[i].ZombieObj.posY + ZombieNormal[i].ZombieObj.frames[0].height / 2, 20, RED);
+            DrawRectangleLines((int)ZombieNormal[i].CollisionBox.x, (int)ZombieNormal[i].CollisionBox.y,
+                               (int)ZombieNormal[i].CollisionBox.width, (int)ZombieNormal[i].CollisionBox.height,
+                               RED // رنگ مستطیل
+            );
         }
     }
-    /*
-    for (int i = 0; i < 10; i++)
+    // رسم HitBox دایره‌ای تیرها برای دیباگ
+    for (int i = 0; i < MAXNUMITEMS; i++)
     {
-       for(int j=0 ; j<5;j++){DrawTexture(pea,385+i*RectangleWidth , 735-j*RectangleHeight , WHITE);}
+        for (int k = 0; k < 10; k++)
+        {
+            if (Peashooter[i].Pea[k].isActive)
+            {
+                DrawCircleLines((int)Peashooter[i].Pea[k].Markaz.x, // مرکز X
+                                (int)Peashooter[i].Pea[k].Markaz.y, // مرکز Y
+                                Peashooter[i].Pea[k].Radius,        // شعاع
+                                BLUE                                // رنگ دایره (قرمز برای دیباگ)
+                );
+            }
+        }
     }
-    */
 
     CellularNetworkMap(); // for debug
 }
@@ -121,7 +138,7 @@ void UpdateLevel1(void)
     if (ZombieTimer >= Level1Info.ZombieNormal.Regenerate)
     {
         ZombieTimer = 0;
-        for (int i = 0; i < 30; i++)
+        for (int i = 0; i < MAXNUZOMBIES; i++)
         {
             if (!ZombieNormal[i].isAlive)
             {
@@ -130,14 +147,23 @@ void UpdateLevel1(void)
             }
         }
     }
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < MAXNUZOMBIES; i++)
     {
         if (ZombieNormal[i].isAlive)
         {
             UpdateAnimatedObject(&ZombieNormal[i].ZombieObj);
+            if (!ZombieNormal[i].Attack)
+            {
+                ZombieNormal[i].ZombieObj.speedX = Level1Info.ZombieNormal.BassSpeedX * ZombieNormal[i].slowFactor;
+                ZombieNormal[i].ZombieObj.speedY = Level1Info.ZombieNormal.BassSpeedY * ZombieNormal[i].slowFactor;
+            }
+            ZombieNormal[i].ZombieObj.frameDelay = Level1Info.ZombieNormal.BassFrameDelay / ZombieNormal[i].slowFactor;
+            //   if(i==0) printf("ZombieNormal[%d] speedX = %f \n ", i, ZombieNormal[i].ZombieObj.speedX);  //debug
             ZombieNormal[i].Markaz.x = (ZombieNormal[i].ZombieObj.posX + ZombieNormal[i].ZombieObj.frames[0].width / 2);
             ZombieNormal[i].Markaz.y =
                 (ZombieNormal[i].ZombieObj.posY + ZombieNormal[i].ZombieObj.frames[0].height / 2);
+            ZombieNormal[i].CollisionBox.x = ZombieNormal[i].ZombieObj.posX + 40;
+            ZombieNormal[i].CollisionBox.y = ZombieNormal[i].ZombieObj.posY + 20;
             if (ZombieNormal[i].Markaz.x < END_X)
             {
                 ZombieNormal[i].X_Cell = (ZombieNormal[i].Markaz.x - START_X) / (RectangleWidth);
@@ -250,50 +276,44 @@ void UpdateLevel1(void)
             }
         }
     }
+
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
         if (Peashooter[i].isAlive)
         {
-            bool onfire = false;
+            
             if (Peashooter[i].Firing == false)
             {
-                for (int j = 0; j < 30; j++)
+                for (int j = 0; j < MAXNUZOMBIES; j++)
                 {
-                    for (int k = Peashooter[i].X_Cell; k < COLUMNS; k++)
+
+                    if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X &&
+                        ZombieNormal[j].Y_Cell == Peashooter[i].Y_Cell)
                     {
-                        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X &&
-                            ZombieNormal[j].Y_Cell == Peashooter[i].Y_Cell)
+                        if (Peashooter[i].X_Cell <= ZombieNormal[j].X_Cell)
                         {
-                            if (Peashooter[i].X_Cell <= ZombieNormal[j].X_Cell)
-                                onfire = true;
+                            Peashooter[i].Firing = true;
+                            // printf("Peashooter %d : on by ZombieNormal %d x=%f \n ", i, j, ZombieNormal[j].Markaz.x);
 
                             break;
                         }
-                    }
-                    if (onfire)
-                    {
-                        // printf("Peashooter %d : on by ZombieNormal %d x=%f \n ", i, j, ZombieNormal[j].Markaz.x);
-                        Peashooter[i].Firing = true;
-                        break;
                     }
                 }
             }
             else
             {
                 bool OFFfire = true;
-                for (int j = 0; j < 30; j++)
+                for (int j = 0; j < MAXNUZOMBIES; j++)
                 {
 
-                    for (int k = Peashooter[i].X_Cell; k < COLUMNS; k++)
+                    if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X &&
+                        ZombieNormal[j].Y_Cell == Peashooter[i].Y_Cell)
                     {
-                        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X && ZombieNormal[j].Y_Cell ==Peashooter[i].Y_Cell )
+                        if (Peashooter[i].X_Cell <= ZombieNormal[j].X_Cell)
                         {
-                            if (Peashooter[i].X_Cell <= ZombieNormal[j].X_Cell)
-                            {
-                                OFFfire = false;
-                                j = 30;
-                                break;
-                            }
+                            OFFfire = false;
+                            j = MAXNUZOMBIES;
+                            break;
                         }
                     }
                 }
@@ -306,20 +326,100 @@ void UpdateLevel1(void)
         if (Peashooter[i].Firing)
         {
             Peashooter[i].FireTimer += GetFrameTime();
-            if (Peashooter[i].FireTimer >= Peashooter[i].Firingspeed)
+            if (Peashooter[i].FireTimer >= Peashooter[i].Firingspeed / Peashooter[i].EffectiveFireRate)
             {
                 Peashooter[i].FireTimer = 0;
                 GeneratePea(&Peashooter[i]);
             }
         }
-        for (int k = 0; k < 5; k++)
+        for (int k = 0; k < 10; k++)
         {
             if (Peashooter[i].Pea[k].isActive)
             {
                 UpdateAnimatedObject(&Peashooter[i].Pea[k].Pea);
-                if (Peashooter[i].Pea[k].Pea.posX >= END_X)
+                Peashooter[i].Pea[k].Markaz.x =
+                    (Peashooter[i].Pea[k].Pea.posX + Peashooter[i].Pea[k].Pea.frames[0].width / 2);
+                Peashooter[i].Pea[k].Markaz.y =
+                    (Peashooter[i].Pea[k].Pea.posY + Peashooter[i].Pea[k].Pea.frames[0].height / 2);
+                if (Peashooter[i].Pea[k].Markaz.x < END_X)
+                {
+                    Peashooter[i].Pea[k].Y_Cell = Peashooter[i].Y_Cell;
+                    Peashooter[i].Pea[k].X_Cell = (Peashooter[i].Pea[k].Markaz.x - START_X) / (RectangleWidth);
+                    // printf("%d\n", Peashooter[i].Pea[k].X_Cell);
+                }
+                else
                 {
                     Peashooter[i].Pea[k].isActive = false;
+                    continue;
+                }
+                int j = 0;
+
+                for (int j = 0; j < MAXNUZOMBIES; j++)
+                {
+                    if (!ZombieNormal[j].isAlive)
+                        continue;
+                    if (ZombieNormal[j].Y_Cell != Peashooter[i].Pea[k].Y_Cell)
+                        continue;
+                    if (ZombieNormal[j].X_Cell == Peashooter[i].Pea[k].X_Cell)
+                    {
+                        Peashooter[i].Pea[k].Pea.finalX = ZombieNormal[j].Markaz.x;
+                    }
+                    if (Peashooter[i].Pea[k].Pea.finalX <= Peashooter[i].Pea[k].Pea.posX)
+                    { // دمیج
+                        ZombieNormal[j].Health -= Peashooter[i].peaDamege;
+
+                        // تیر حذف
+                        Peashooter[i].Pea[k].isActive = false;
+
+                        // افکت برخورد (حتی اگر زامبی بمیرد)
+                        Peashooter[i].Pea[k].PeaBulletHit.isActive = true;
+                        Peashooter[i].Pea[k].PeaBulletHit.DisplayTimer = 0;
+
+                        Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj = GenerateAnimatedObject(
+                            &PeaBulletHit, 49, 43, 100000, ZombieNormal[j].Markaz.x - 20, Peashooter[i].Pea[k].Markaz.y,
+                            ZombieNormal[j].ZombieObj.speedX, ZombieNormal[j].ZombieObj.speedY,
+                            ZombieNormal[j].ZombieObj.finalX, Peashooter[i].Pea[k].Markaz.y);
+
+                        // مرگ زامبی
+                        if (ZombieNormal[j].Health <= 0)
+                            ZombieNormal[j].isAlive = false;
+                        // printf("0\n");
+                        break; // یک تیر فقط به یک زامبی
+                    }
+                    if (CheckCollisionCircleRec(Peashooter[i].Pea[k].Markaz, Peashooter[i].Pea[k].Radius,
+                                                ZombieNormal[j].CollisionBox))
+                    {
+                        // دمیج
+                        ZombieNormal[j].Health -= Peashooter[i].peaDamege;
+
+                        // تیر حذف
+                        Peashooter[i].Pea[k].isActive = false;
+
+                        // افکت برخورد (حتی اگر زامبی بمیرد)
+                        Peashooter[i].Pea[k].PeaBulletHit.isActive = true;
+                        Peashooter[i].Pea[k].PeaBulletHit.DisplayTimer = 0;
+
+                        Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj = GenerateAnimatedObject(
+                            &PeaBulletHit, 49, 43, 100000, ZombieNormal[j].Markaz.x - 20, Peashooter[i].Pea[k].Markaz.y,
+                            ZombieNormal[j].ZombieObj.speedX, ZombieNormal[j].ZombieObj.speedY,
+                            ZombieNormal[j].ZombieObj.finalX, Peashooter[i].Pea[k].Markaz.y);
+
+                        // مرگ زامبی
+                        if (ZombieNormal[j].Health <= 0)
+                            ZombieNormal[j].isAlive = false;
+
+                        break; // یک تیر فقط به یک زامبی
+                    }
+                }
+            }
+            if (Peashooter[i].Pea[k].PeaBulletHit.isActive)
+            {
+                UpdateAnimatedObject(&Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj);
+                Peashooter[i].Pea[k].PeaBulletHit.DisplayTimer += GetFrameTime();
+                if (Peashooter[i].Pea[k].PeaBulletHit.DisplayTimer >= Peashooter[i].Pea[k].PeaBulletHit.DisplayTime)
+                {
+                    Peashooter[i].Pea[k].PeaBulletHit.DisplayTimer = 0;
+                    Peashooter[i].Pea[k].PeaBulletHit.isActive = false;
                 }
             }
         }
@@ -332,7 +432,7 @@ void UpdateLevel1(void)
             {
                 LawnMower[i].isActive = false;
             }
-            for (int j = 0; j < 30; j++)
+            for (int j = 0; j < MAXNUZOMBIES; j++)
             {
                 if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X &&
                     ZombieNormal[j].Y_Cell == LawnMower[i].Y_Cell && ZombieNormal[j].X_Cell == LawnMower[i].X_Cell)
@@ -420,7 +520,7 @@ void GenerateSun(SunElement *obj, int x, int y)
 void GenerateSunFlower(SunflowerElement *obj, int X_Cell, int Y_Cell)
 {
     obj->Cooldown = 30;
-    obj->Health = 100;
+    obj->Health = Level1Info.SunFlowertInfoLevel.BaseHealth;
     obj->SunFlowerObj.posX = obj->SunFlowerObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->SunFlowerObj.posY = obj->SunFlowerObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
     obj->X_Cell = X_Cell;
@@ -431,12 +531,13 @@ void GenerateSunFlower(SunflowerElement *obj, int X_Cell, int Y_Cell)
 }
 void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
 {
-    obj->Lifespan = 10;
-    obj->Health = 100;
+    obj->Lifespan = 1000;
+    obj->Health = Level1Info.RosetInfoLevel.BaseHealth;
     obj->RoseObj.posX = obj->RoseObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->RoseObj.posY = obj->RoseObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
     obj->X_Cell = X_Cell;
     obj->Y_Cell = Y_Cell;
+    obj->Timer = 0;
     obj->isAlive = true;
 
     return;
@@ -444,7 +545,7 @@ void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
 void GenerateChomper(ChomperElement *obj, int X_Cell, int Y_Cell)
 {
     obj->Lifespan = 20;
-    obj->Health = 100;
+    obj->Health = Level1Info.ChompertInfoLevel.BaseHealth;
     obj->ChomperObj.posX = obj->ChomperObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->ChomperObj.posY = obj->ChomperObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
     obj->X_Cell = X_Cell;
@@ -455,15 +556,17 @@ void GenerateChomper(ChomperElement *obj, int X_Cell, int Y_Cell)
 }
 void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell)
 {
-    obj->Health = 100;
-    obj->Firingspeed = 3;
+    obj->Health = Level1Info.PeashooterInfoLevel.BaseHealth;
+    obj->Firingspeed = 2 ;
     obj->PeashooterObj.posX = obj->PeashooterObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->PeashooterObj.posY = obj->PeashooterObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
     obj->X_Cell = X_Cell;
     obj->Y_Cell = Y_Cell;
-    obj->FireTimer = 1.5;
+    obj->FireTimer = 1;
+    obj->EffectiveFireRate = 1.0f;
+    obj->peaDamege = 10;
     obj->Firing = false;
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
         obj->Pea[i].isActive = false;
     }
@@ -496,17 +599,25 @@ void GenerateZombies(Zombies *obj)
     int Yfinal = Ystart;
     obj->Markaz.x = 1600;
     obj->Y_Cell = Row;
-    obj->ZombieObj = GenerateAnimatedObject(&ZombieNormal1, 107, 122, 40, xstart, Ystart, -20, 0, Xfinal, Yfinal);
+    obj->slowFactor = 1.0f;
+    obj->ZombieObj =
+        GenerateAnimatedObject(&ZombieNormal1, 107, 122, Level1Info.ZombieNormal.BassFrameDelay, xstart, Ystart,
+                               Level1Info.ZombieNormal.BassSpeedX, Level1Info.ZombieNormal.BassSpeedY, Xfinal, Yfinal);
     obj->isAlive = true;
+    obj->CollisionBox = (Rectangle){obj->ZombieObj.posX + 15, obj->ZombieObj.posY + 20,
+                                    obj->ZombieObj.frames[0].width - 65, obj->ZombieObj.frames[0].height - 20};
 }
 void GeneratePea(PeashooterElement *obj)
 {
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10; i++)
     {
         if (!(obj->Pea[i].isActive))
         {
             obj->Pea[i].Pea = GenerateAnimatedObject(&pea, 29, 32, 1000, 385 + obj->X_Cell * RectangleWidth,
                                                      247 + obj->Y_Cell * RectangleHeight, 300, 0, END_X, 385);
+            obj->Pea[i].Radius = (obj->Pea[i].Pea.frames[0].width / 2.0f) * 0.80f;
+            obj->Pea[i].Markaz.x = obj->Pea[i].Pea.posX + obj->Pea[i].Radius;
+            obj->Pea[i].Markaz.y = obj->Pea[i].Pea.posY + obj->Pea[i].Radius;
             obj->Pea[i].isActive = true;
             return;
         }
@@ -650,6 +761,8 @@ void CooldownUpdate(void)
 }
 void UpdatePlantsTimer(void)
 {
+    ResetSlowFactorZombies();
+    ResetEffectiveFireRate();
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
         if (SunFlower[i].isAlive)
@@ -665,6 +778,53 @@ void UpdatePlantsTimer(void)
         }
         if (Rose[i].isAlive)
         {
+            Rose[i].Timer += GetFrameTime();
+            if (Rose[i].Timer >= 1)
+            {
+                Rose[i].Timer = 0;
+                for (int k = 0; k < MAXNUMITEMS; k++)
+                {
+                    if (SunFlower[k].isAlive && SunFlower[k].Y_Cell == Rose[i].Y_Cell)
+                    {
+                        SunFlower[k].Health = SunFlower[k].Health + 0.1f * SunFlower[k].Health;
+                        if (SunFlower[k].Health >= 1.5 * Level1Info.SunFlowertInfoLevel.BaseHealth)
+                        {
+                            SunFlower[k].Health = 1.5 * Level1Info.SunFlowertInfoLevel.BaseHealth;
+                        }
+                    }
+                    if (Peashooter[k].isAlive && Peashooter[k].Y_Cell == Rose[i].Y_Cell)
+                    {
+                        Peashooter[k].Health = Peashooter[k].Health + 0.1f * Peashooter[k].Health;
+                        if (Peashooter[k].Health >= 1.5 * Level1Info.PeashooterInfoLevel.BaseHealth)
+                        {
+                            Peashooter[k].Health = 1.5 * Level1Info.PeashooterInfoLevel.BaseHealth;
+                        }
+                    }
+                    if (Chomper[k].isAlive && Chomper[k].Y_Cell == Rose[i].Y_Cell)
+                    {
+                        Chomper[k].Health = Chomper[k].Health + 0.1f * Chomper[k].Health;
+                        if (Chomper[k].Health >= 1.5 * Level1Info.ChompertInfoLevel.BaseHealth)
+                        {
+                            Chomper[k].Health = 1.5 * Level1Info.ChompertInfoLevel.BaseHealth;
+                        }
+                    }
+                    if (Rose[k].isAlive && Rose[k].Y_Cell == Rose[i].Y_Cell)
+                    {
+                        Rose[k].Health = Rose[k].Health + 0.1f * Rose[k].Health;
+                        if (Rose[k].Health >= 1.5 * Level1Info.RosetInfoLevel.BaseHealth)
+                        {
+                            Rose[k].Health = 1.5 * Level1Info.RosetInfoLevel.BaseHealth;
+                        }
+                    }
+                }
+            }
+            for (int k = 0; k < MAXNUMITEMS; k++)
+            {
+                if (Peashooter[k].isAlive && Peashooter[k].Y_Cell == Rose[i].Y_Cell)
+                {
+                    Peashooter[k].EffectiveFireRate *= 1.2f;
+                }
+            }
             Rose[i].Lifespan -= GetFrameTime();
             if (Rose[i].Lifespan <= 0)
             {
@@ -674,12 +834,40 @@ void UpdatePlantsTimer(void)
         }
         if (Chomper[i].isAlive)
         {
+
+            for (int j = 0; j < MAXNUZOMBIES; j++)
+            {
+
+                if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x < END_X &&
+                    ZombieNormal[j].Y_Cell == Chomper[i].Y_Cell)
+                {
+                    ZombieNormal[j].slowFactor *= 2.0f / 3.0f; // هر چامپر 1/3 سرعت کم می‌کند
+                }
+            }
+
             Chomper[i].Lifespan -= GetFrameTime();
             if (Chomper[i].Lifespan <= 0)
             {
                 Chomper[i].isAlive = false;
                 CellContent[Chomper[i].Y_Cell][Chomper[i].X_Cell] = EMPTY;
             }
+        }
+    }
+}
+void ResetSlowFactorZombies(void)
+{
+    for (int j = 0; j < MAXNUZOMBIES; j++)
+    {
+        ZombieNormal[j].slowFactor = 1.0f;
+    }
+}
+void ResetEffectiveFireRate(void)
+{
+    for (int i = 0; i < MAXNUMITEMS; i++)
+    {
+        if (Peashooter[i].isAlive)
+        {
+            Peashooter[i].EffectiveFireRate = 1.0f;
         }
     }
 }
@@ -854,9 +1042,9 @@ void CollectSunElement(void)
         if (SunElementArray[i].Available)
         {
             if (MousePos.x >= SunElementArray[i].sun.posX &&
-                MousePos.x <= SunElementArray[i].sun.posX + SunElementArray[i].sun.frames->width &&
+                MousePos.x <= SunElementArray[i].sun.posX + SunElementArray[i].sun.frames[0].width &&
                 MousePos.y >= SunElementArray[i].sun.posY &&
-                MousePos.y <= SunElementArray[i].sun.posY + SunElementArray[i].sun.frames->height)
+                MousePos.y <= SunElementArray[i].sun.posY + SunElementArray[i].sun.frames[0].height)
             {
                 SunElementArray[i].Available = false;
                 SunBank += Level1Info.SunElementInfoLevel.Value;
@@ -995,12 +1183,10 @@ void CellularNetworkMap(void)
     {
         for (int j = 0; j < COLUMNS; j++)
         {
-            char *Coordinates;
-            Coordinates = (char *)malloc(10 * sizeof(char));
+            char Coordinates[16];
             sprintf(Coordinates, "(%d , %d)", i + 1, j + 1);
             DrawRectangleLinesEx(MapCell[i][j], 1, WHITE);
             DrawText(Coordinates, MapCell[i][j].x + 5, MapCell[i][j].y + 5, 20, RED);
-            free(Coordinates);
         }
     }
 }
@@ -1017,21 +1203,29 @@ void InitLevel1Info(void)
     Level1Info.RosetInfoLevel.price = 150;
     Level1Info.SunFlowertInfoLevel.Cooldown = 45;
     Level1Info.PeashooterInfoLevel.Cooldown = 2; // 45;
-    Level1Info.ChompertInfoLevel.Cooldown = 60;
-    Level1Info.RosetInfoLevel.Cooldown = 70;
+    Level1Info.ChompertInfoLevel.Cooldown = 2;   // 60;
+    Level1Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
     Level1Info.SunFlowertInfoLevel.Timer = 0;
     Level1Info.PeashooterInfoLevel.Timer = 0;
     Level1Info.ChompertInfoLevel.Timer = 0;
     Level1Info.RosetInfoLevel.Timer = 0;
+    Level1Info.SunFlowertInfoLevel.BaseHealth = 100;
+    Level1Info.PeashooterInfoLevel.BaseHealth = 100;
+    Level1Info.ChompertInfoLevel.BaseHealth = 100;
+    Level1Info.RosetInfoLevel.BaseHealth = 100;
     Level1Info.SunFlowertInfoLevel.Lock = false;
     Level1Info.PeashooterInfoLevel.Lock = false;
     Level1Info.ChompertInfoLevel.Lock = false;
     Level1Info.RosetInfoLevel.Lock = false;
+
     Level1Info.SunElementInfoLevel.Value = VALUESUN;
     Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
     Level1Info.ZombieNormal.Regenerate = 5;
     Level1Info.ZombieNormal.Timer = 0;
+    Level1Info.ZombieNormal.BassSpeedX = -20;
+    Level1Info.ZombieNormal.BassSpeedY = 0;
+    Level1Info.ZombieNormal.BassFrameDelay = 40.0f;
     LackSunWarning.isActive = false;
     LackSunWarning.duration = 2.0f;
     LackSunWarning.baseSize = 30.0f;
@@ -1058,6 +1252,7 @@ void InitLevel1Texture(void)
     SunElementSheet = LoadTexture("../assets/Level1/Sun_Sheet.png");
     Frame = LoadTexture("../assets/Level1/Frame.png");
     pea = LoadTexture("../assets/Level1/PB.png");
+    PeaBulletHit = LoadTexture("../assets/Level1/PeaBulletHit.png");
 }
 void InitLevel1Font(void)
 {
@@ -1089,7 +1284,7 @@ void InitLevel1Animation(void)
     }
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
-        SunFlower[i].SunFlowerObj = GenerateAnimatedObject(&SunFlowerSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
+        SunFlower[i].SunFlowerObj = GenerateAnimatedObject(&SunFlowerSheet, 80, 80, 60, 0, 0, 0, 0, 0, 0);
         SunFlower[i].isAlive = false;
         SunFlower[i].Health = 100;
         Rose[i].RoseObj = GenerateAnimatedObject(&RoseSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
@@ -1097,14 +1292,18 @@ void InitLevel1Animation(void)
         Rose[i].isAlive = false;
         Chomper[i].ChomperObj = GenerateAnimatedObject(&ChomperSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
         Chomper[i].isAlive = false;
-        Peashooter[i].PeashooterObj = GenerateAnimatedObject(&PeashooterSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
+        Peashooter[i].PeashooterObj = GenerateAnimatedObject(&PeashooterSheet, 80, 80, 16.75, 0, 0, 0, 0, 0, 0);
         Peashooter[i].isAlive = false;
         Peashooter[i].FireTimer = 0;
         Peashooter[i].Firing = false;
-        for (int j = 0; j < 5; j++)
+
+        for (int j = 0; j < 10; j++)
         {
             Peashooter[i].Pea[j].isActive = false;
             Peashooter[i].Pea[j].Pea = GenerateAnimatedObject(&pea, 29, 32, 80, 0, 0, 0, 0, 0, 0);
+            Peashooter[i].Pea[j].isActive = false;
+            Peashooter[i].Pea[j].PeaBulletHit.DisplayTime = 0.1f;
+            Peashooter[i].Pea[j].PeaBulletHit.DisplayTimer = 0.0;
         }
     }
 
@@ -1116,7 +1315,7 @@ void InitLevel1Animation(void)
         SunElementArray[i].time = 0.0f;
     }
     ZombieTimer = 0;
-    for (int i = 0; i < 30; i++)
+    for (int i = 0; i < MAXNUZOMBIES; i++)
     {
         ZombieNormal[i].isAlive = false;
         ZombieNormal[i].Attack = false;
