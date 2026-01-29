@@ -1,8 +1,10 @@
 #include "menu.h"
 #include "raylib.h"
+#include <levelselect.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <levelselect.h>
+#include "SoundandMusic.h"
+
 Texture2D BackgroundLevelselect;
 Texture2D LVL1Picture;
 Texture2D LVL2Picture;
@@ -18,7 +20,7 @@ float Radius2;
 float Radius3;
 float Radius4;
 // float RadiusBackButton;
- Button BackButton;
+Button BackButton;
 void Initlevelselect(void)
 {
 
@@ -106,27 +108,26 @@ void ButtonAnimation(void)
             }
         }
     }
-
 }
 void Drawlevelselect(void)
 {
 
     DrawTexture(BackgroundLevelselect, 0, 0, WHITE);
-    //BackButton
+    // BackButton
     ButtonAnimation();
-     Vector2 origin = {(float)BackButton.Picture.width / 2.0f, (float)BackButton.Picture.height / 2.0f}; // مرکز تصویر
+    Vector2 origin = {(float)BackButton.Picture.width / 2.0f, (float)BackButton.Picture.height / 2.0f}; // مرکز تصویر
 
-
-       DrawTexturePro(
+    DrawTexturePro(
         BackButton.Picture,
         (Rectangle){0.0f, 0.0f, (float)BackButton.Picture.width, (float)BackButton.Picture.height}, // منبع (تمام بافت)
-        (Rectangle){BackButton.CenterPosition.x, BackButton.CenterPosition.y, (float)BackButton.Picture.width * BackButton.ScaleNow,
+        (Rectangle){BackButton.CenterPosition.x, BackButton.CenterPosition.y,
+                    (float)BackButton.Picture.width * BackButton.ScaleNow,
                     (float)BackButton.Picture.height * BackButton.ScaleNow}, // مقصد (با مقیاس)
-        origin,                                 // نقطه مبدأ (Origin)
-        0.0f,                                   // چرخش
+        origin,                                                              // نقطه مبدأ (Origin)
+        0.0f,                                                                // چرخش
         WHITE);
 
-        //
+    //
     if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl1, Radius1))
     {
         DrawTexture(LVL1Picture, 557, 285, WHITE);
@@ -141,7 +142,6 @@ void Drawlevelselect(void)
     {
         DrawTexture(LVL3Picture, 557, 532, WHITE);
         DrawText("LEVEL 3", 625, 680, 12, WHITE);
-        
     }
     if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl4, Radius4))
     {
@@ -170,10 +170,13 @@ void Updatelevelselect(void)
         }
         else if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl4, Radius4))
         {
+            PlaySound(Clocks);
             Screen = LVL4;
         }
         else if (CheckCollisionPointRec(GetMousePosition(), BackButton.ClickArea))
         {
+            PlaySound(BackButtonSoundClick);
+
             Screen = MENU;
         }
     }

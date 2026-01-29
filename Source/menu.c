@@ -2,10 +2,13 @@
 #include "raylib.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "SoundandMusic.h"
+
 Texture2D background;
 Rectangle PlayButton;
 Rectangle ShopButton;
 Rectangle ExitButton;
+bool hoverPlayed = false;
 
 void InitMenu(void)
 {
@@ -28,15 +31,19 @@ void InitMenu(void)
     ExitButton.y = 550;
     ExitButton.width = 250;
     ExitButton.height = 73;
-}
+    //   menuOpen = LoadSound("../assets/Sounds/menu_open.wav");
 
+
+
+}
 
 void DrawMenu(void)
 {
     DrawTexture(background, 0, 0, WHITE);
+
     if (CheckCollisionPointRec(GetMousePosition(), PlayButton))
     {
-        DrawText("Play", 687, 285, 50, BLUE);
+        DrawText("Play", 687, 285, 50, GREEN);
     }
     else
     {
@@ -63,18 +70,68 @@ void DrawMenu(void)
 void UpdateMenu(void)
 {
 
+    Vector2 mousePos = GetMousePosition();
+
+    // هاور PlayButton
+    static bool playHoverPlayed = false;
+    if (CheckCollisionPointRec(mousePos, PlayButton))
+    {
+        if (!playHoverPlayed)
+        {
+            PlaySound(menuHover);
+            playHoverPlayed = true;
+        }
+    }
+    else
+    {
+        playHoverPlayed = false;
+    }
+
+    // هاور ShopButton
+    static bool shopHoverPlayed = false;
+    if (CheckCollisionPointRec(mousePos, ShopButton))
+    {
+        if (!shopHoverPlayed)
+        {
+            PlaySound(menuHover);
+            shopHoverPlayed = true;
+        }
+    }
+    else
+    {
+        shopHoverPlayed = false;
+    }
+
+    // هاور ExitButton
+    static bool exitHoverPlayed = false;
+    if (CheckCollisionPointRec(mousePos, ExitButton))
+    {
+        if (!exitHoverPlayed)
+        {
+            PlaySound(menuHover);
+            exitHoverPlayed = true;
+        }
+    }
+    else
+    {
+        exitHoverPlayed = false;
+    }
+    // کلیک دکمه‌ها
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        if (CheckCollisionPointRec(GetMousePosition(), PlayButton))
+        if (CheckCollisionPointRec(mousePos, PlayButton))
         {
+            PlaySound(menuSelect);
             Screen = LEVEL_SELECT;
         }
-        else if (CheckCollisionPointRec(GetMousePosition(), ShopButton))
+        else if (CheckCollisionPointRec(mousePos, ShopButton))
         {
+            PlaySound(menuSelect);
             Screen = SHOP;
         }
-        else if (CheckCollisionPointRec(GetMousePosition(), ExitButton))
+        else if (CheckCollisionPointRec(mousePos, ExitButton))
         {
+            PlaySound(menuSelect);
             Screen = EXITING;
         }
     }

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LifeTime Bar Sprite Sheet – Cool Colors 65x3</title>
+<style>
+body { background-color:#222; color:white; font-family:sans-serif; text-align:center; padding-top:20px;}
+canvas { display:block; margin:0 auto; }
+button { margin-top:20px; padding:10px 20px; font-size:16px; cursor:pointer;}
+</style>
+</head>
+<body>
+
+<h1>LifeTime Bar Sprite Sheet (100 Frames – Empty → Full, 65x3, Cool Colors)</h1>
+<canvas id="spriteCanvas" width="6500" height="3"></canvas> <!-- 100 فریم × 65px -->
+<br>
+<button id="generate">Generate Sprite Sheet</button>
+
+<script>
+const frameCount = 100;
+const frameWidth = 65;  // عرض هر فریم
+const frameHeight = 3;  // ارتفاع جدید
+const maxRadius = frameHeight/2;
+
+const canvas = document.getElementById("spriteCanvas");
+canvas.width = frameWidth * frameCount; // 65 * 100 = 6500
+canvas.height = frameHeight;
+const ctx = canvas.getContext("2d");
+
+// Gradient LifeTime با رنگ های سرد و متنوع
+function getLifeGradient(ctx, x, y, w, h, percent){
+    const grd = ctx.createLinearGradient(x, y, x + w, y);
+
+    if(percent > 0.83){
+        grd.addColorStop(0, "#00BCD4"); // Cyan
+        grd.addColorStop(1, "#03A9F4"); // Light Blue
+    } else if(percent > 0.66){
+        grd.addColorStop(0, "#2196F3"); // Blue
+        grd.addColorStop(1, "#3F51B5"); // Indigo
+    } else if(percent > 0.5){
+        grd.addColorStop(0, "#9C27B0"); // Purple
+        grd.addColorStop(1, "#673AB7"); // Deep Purple
+    } else if(percent > 0.33){
+        grd.addColorStop(0, "#E91E63"); // Pink
+        grd.addColorStop(1, "#F06292"); // Light Pink
+    } else if(percent > 0.16){
+        grd.addColorStop(0, "#00ACC1"); // Teal
+        grd.addColorStop(1, "#26C6DA"); // Light Teal
+    } else {
+        grd.addColorStop(0, "#607D8B"); // Blue Grey
+        grd.addColorStop(1, "#78909C"); // Light Blue Grey
+    }
+    return grd;
+}
+
+// رسم مستطیل کرو با radius پویا
+function drawRoundedRect(ctx, x, y, w, h, r, color){
+    const radius = Math.min(r, w/2);
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + w - radius, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+    ctx.lineTo(x + w, y + h - radius);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+    ctx.lineTo(x + radius, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+}
+
+// Shine subtle
+function drawShine(ctx, x, y, w, h, r){
+    const radius = Math.min(r, w/2);
+    const shineHeight = h*0.5;
+    const gradient = ctx.createLinearGradient(x, y, x, y + shineHeight);
+    gradient.addColorStop(0,"rgba(255,255,255,0.5)");
+    gradient.addColorStop(1,"rgba(255,255,255,0)");
+    drawRoundedRect(ctx, x, y, w, shineHeight, radius, gradient);
+}
+
+// رسم یک فریم LifeTime Bar
+function drawLifeFrame(ctx, offsetX, percent){
+    drawRoundedRect(ctx, offsetX, 0, frameWidth, frameHeight, maxRadius, "#333"); // Background
+    const grd = getLifeGradient(ctx, offsetX, 0, frameWidth*percent, frameHeight, percent);
+    drawRoundedRect(ctx, offsetX, 0, frameWidth*percent, frameHeight, maxRadius, grd); // Gradient
+    drawShine(ctx, offsetX, 0, frameWidth*percent, frameHeight, maxRadius);           // Shine
+    const barWidth = frameWidth*percent;
+    const radius = Math.min(maxRadius, barWidth/2);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(offsetX + radius, 0);
+    ctx.lineTo(offsetX + barWidth - radius, 0);
+    ctx.quadraticCurveTo(offsetX + barWidth, 0, offsetX + barWidth, radius);
+    ctx.lineTo(offsetX + barWidth, frameHeight - radius);
+    ctx.quadraticCurveTo(offsetX + barWidth, frameHeight, offsetX + barWidth - radius, frameHeight);
+    ctx.lineTo(offsetX + radius, frameHeight);
+    ctx.quadraticCurveTo(offsetX, frameHeight, offsetX, frameHeight - radius);
+    ctx.lineTo(offsetX, radius);
+    ctx.quadraticCurveTo(offsetX, 0, offsetX + radius, 0);
+    ctx.closePath();
+    ctx.stroke();
+}
+
+// تولید Sprite Sheet
+document.getElementById("generate").addEventListener("click", ()=>{
+    for(let i=0;i<frameCount;i++){
+        const percent = i/(frameCount-1); // Empty → Full
+        drawLifeFrame(ctx, i*frameWidth, percent);
+    }
+    const dataURL = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = dataURL;
+    a.download = "lifetime_spritesheet_coolcolors_65x3.png";
+    a.click();
+    alert("LifeTime Sprite Sheet generated!");
+});
+</script>
+
+</body>
+</html>

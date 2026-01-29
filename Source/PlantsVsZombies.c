@@ -1,7 +1,12 @@
+#include "Level1.h"
+#include "LevelBase.h"
+
+#include "SoundandMusic.h"
 #include "levelselect.h"
 #include "menu.h"
-#include "Level1.h"
 #include "raylib.h"
+#include <stdlib.h>
+#include <time.h>
 #define SCREEN_WIDTH 1600
 #define SCREEN_HEIGHT 900
 #define FPS 60
@@ -10,16 +15,22 @@ GameScreen Screen = MENU;
 
 int main()
 {
+    srand(time(NULL));
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Plants vs Zombies");
     SetTargetFPS(FPS);
     ClearBackground(YELLOW);
-    
+    InitAudioDevice();
+    InitSound();
+    InitMusic();
     InitMenu();
     Initlevelselect();
+    InitGame();
     InitLevel1();
+    PlayRandomMenuMusic();
     while (!WindowShouldClose() && Screen != EXITING)
     {
+        UpdateMusic();
         if (Screen == MENU)
         {
             UpdateMenu();
@@ -30,7 +41,7 @@ int main()
         }
         else if (Screen == LVL1)
         {
-           UpdateLevel1();
+            UpdateLevel1();
         }
         BeginDrawing();
 
@@ -43,13 +54,12 @@ int main()
         else if (Screen == LEVEL_SELECT)
         {
             Drawlevelselect();
-            
         }
         else if (Screen == LVL1)
         {
             DrawLevel1();
         }
-        
+
         MouseSelection();
         EndDrawing();
     }
@@ -57,6 +67,8 @@ int main()
     UnloadMenu();
     Unloadlevelselect();
     UnloadLevel1();
+    UnloadSoundAndMusic();
+    CloseAudioDevice();
     CloseWindow();
 
     return 0;
