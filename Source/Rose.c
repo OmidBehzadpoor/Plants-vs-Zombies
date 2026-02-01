@@ -1,5 +1,12 @@
+#include "Rose.h"
+#include "Chomper.h"
 #include "Level1.h"
+#include "Peashooter.h"
+#include "Plant.h"
 #include "SoundandMusic.h"
+#include "Sun.h"
+#include "Sunflower.h"
+#include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
 #include "menu.h"
@@ -7,20 +14,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Zombie.h"
-#include "Chomper.h"
-#include "Peashooter.h"
-#include "Rose.h"
-#include "Sunflower.h"
-#include "Sun.h"
-#include "Plant.h"
 RoseElement Rose[MAXNUMITEMS];
 
 void ApplyRoseHealEffect(RoseElement *rose, PlantBase *Plant, float BaseHp)
 {
     if (Plant->isAlive && Plant->Y_Cell == rose->Base.Y_Cell)
     {
-        Plant->Health = Plant->Health + 0.1f * Plant->Health;
+
+        if (Plant->Health < 1.5 * BaseHp)
+        {
+            Plant->Health = Plant->Health + 0.1f * Plant->Health;
+            RowStatus[Plant->Y_Cell].rowChanged = true;
+        }
         if (Plant->Health >= 1.5 * BaseHp)
         {
             Plant->Health = 1.5 * BaseHp;
@@ -49,7 +54,7 @@ void RoseEffect(RoseElement *rose)
             ApplyRoseHealEffect(rose, &SunFlower[i].Base, CurrentLevelInfo->SunFlowertInfoLevel.BaseHealth);
             ApplyRoseHealEffect(rose, &Peashooter[i].Base, CurrentLevelInfo->PeashooterInfoLevel.BaseHealth);
             ApplyRoseHealEffect(rose, &Chomper[i].Base, CurrentLevelInfo->ChompertInfoLevel.BaseHealth);
-            ApplyRoseHealEffect(rose, &Rose[i].Base, CurrentLevelInfo->RosetInfoLevel.BaseHealth);
+            //  TODO: ???  ApplyRoseHealEffect(rose, &Rose[i].Base, CurrentLevelInfo->RosetInfoLevel.BaseHealth);
         }
     }
 
@@ -67,6 +72,8 @@ void UpdateRose(RoseElement *rose)
     {
         rose->Base.isAlive = false;
         CellContent[rose->Base.Y_Cell][rose->Base.X_Cell] = EMPTY;
+        RowStatus[rose->Base.Y_Cell].plantCount--;
+        RowStatus[rose->Base.Y_Cell].rowChanged = true;
     }
 }
 

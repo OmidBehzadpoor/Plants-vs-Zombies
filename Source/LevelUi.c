@@ -1,8 +1,13 @@
 #include "LevelUi.h"
+#include "Chomper.h"
 #include "Level1.h"
 #include "LevelBase.h"
+#include "Peashooter.h"
 #include "Plant.h"
+#include "Rose.h"
 #include "SoundandMusic.h"
+#include "Sun.h"
+#include "Sunflower.h"
 #include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
@@ -10,11 +15,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Chomper.h"
-#include "Peashooter.h"
-#include "Rose.h"
-#include "Sunflower.h"
-#include "Sun.h"
 #include <string.h>
 WarningMessage LackSunWarning, LockWarning;
 Rectangle MapCell[ROWS][COLUMNS];
@@ -22,8 +22,8 @@ Rectangle MapCell[ROWS][COLUMNS];
 int SunBank = 0;
 float RectangleWidth = (float)(END_X - START_X) / COLUMNS; // 107.5
 float RectangleHeight = (float)(END_Y - START_Y) / ROWS;   // 122
-    float scaleVictoryPic = 0.1f;
-        float scaleGameOverPic = 0.1f;
+float scaleVictoryPic = 0.1f;
+float scaleGameOverPic = 0.1f;
 
 MapContent CellContent[ROWS][COLUMNS] = {EMPTY};
 MapContent Selection = EMPTY;
@@ -36,6 +36,8 @@ CircleButton ButtonLevelSelectLOSE = {(Vector2){760 + 90, 600 + 80}, 80, false};
 GameState CurrentGameState = PLAYING;
 bool IsDrawVictory = false;
 bool IsDrawGameOver = false;
+RowManager RowStatus[ROWS] = {0};
+
 void DrawUI(void)
 {
     DrawLevelItems();
@@ -178,7 +180,14 @@ void UpdateLevelItems(void)
         unsigned int random = (unsigned int)(GetTime() * 1000);
         srand(random);
         FirstRun = false;
-        PlaySound(SetupLawnMowerSound);
+        for (int i = 0; i < ROWS; i++)
+        {
+            if (CellContent[i][0]==LAWNMOWER)
+            {
+                PlaySound(SetupLawnMowerSound);
+                break;
+            }
+        }
     }
     for (int i = 0; i < 4; i++)
     {
@@ -231,6 +240,8 @@ void UpdateSelectionItems(void)
                     {
                         GenerateSunFlower(&SunFlower[i], X_Cell, Y_Cell);
                         CellContent[Y_Cell][X_Cell] = SUNFLOWER;
+                        RowStatus[Y_Cell].plantCount++;
+                        RowStatus[Y_Cell].rowChanged = true;
                         SunBank -= CurrentLevelInfo->SunFlowertInfoLevel.price;
                         CurrentLevelInfo->SunFlowertInfoLevel.Lock = true;
                         Selection = EMPTY;
@@ -247,6 +258,8 @@ void UpdateSelectionItems(void)
                     {
                         GeneratePeashooter(&Peashooter[i], X_Cell, Y_Cell);
                         CellContent[Y_Cell][X_Cell] = PEASHOOTER;
+                        RowStatus[Y_Cell].plantCount++;
+                        RowStatus[Y_Cell].rowChanged = true;
                         SunBank -= CurrentLevelInfo->PeashooterInfoLevel.price;
                         CurrentLevelInfo->PeashooterInfoLevel.Lock = true;
                         Selection = EMPTY;
@@ -265,6 +278,8 @@ void UpdateSelectionItems(void)
                     {
                         GenerateChomper(&Chomper[i], X_Cell, Y_Cell);
                         CellContent[Y_Cell][X_Cell] = CHOMPER;
+                        RowStatus[Y_Cell].plantCount++;
+                        RowStatus[Y_Cell].rowChanged = true;
                         SunBank -= CurrentLevelInfo->ChompertInfoLevel.price;
                         CurrentLevelInfo->ChompertInfoLevel.Lock = true;
                         Selection = EMPTY;
@@ -282,6 +297,8 @@ void UpdateSelectionItems(void)
                     {
                         GenerateRose(&Rose[i], X_Cell, Y_Cell);
                         CellContent[Y_Cell][X_Cell] = ROSE;
+                        RowStatus[Y_Cell].plantCount++;
+                        RowStatus[Y_Cell].rowChanged = true;
                         SunBank -= CurrentLevelInfo->RosetInfoLevel.price;
                         CurrentLevelInfo->RosetInfoLevel.Lock = true;
                         Selection = EMPTY;
@@ -385,7 +402,7 @@ void DrawLockWarning(void)
 }
 void DrawGameOver(void)
 {
- 
+
     static float scaleSpeed = 0.02f;
     Vector2 center = {1600 / 2.0f + 60, 900 / 2.0f + 100};
     float scaledWidth = GameOver.width * scaleGameOverPic;
@@ -492,7 +509,7 @@ void UpdateBottom(void)
             }
             else if (ButtonRestartWIN.hovered)
             {
-                Screen = LVL2;
+                Screen += 1;
             }
         }
     }
@@ -557,13 +574,13 @@ void DrawLockPicture(void)
             frame = 99;
 
         Rectangle FramePic = (Rectangle){58 * frame, 0, 58, 58};
-        Vector2 Pos = (Vector2){441+ 0 * Frame.width, 71};
+        Vector2 Pos = (Vector2){441 + 0 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
     if (CurrentLevelInfo->PeashooterInfoLevel.Lock)
     {
         DrawTexture(LockPic, 370 + 1 * Frame.width, 30, WHITE);
-              int frame =
+        int frame =
             (CurrentLevelInfo->PeashooterInfoLevel.Timer / CurrentLevelInfo->PeashooterInfoLevel.Cooldown) * 100.0f - 1;
 
         if (frame < 0)
@@ -572,13 +589,13 @@ void DrawLockPicture(void)
             frame = 99;
 
         Rectangle FramePic = (Rectangle){58 * frame, 0, 58, 58};
-        Vector2 Pos = (Vector2){441+ 1 * Frame.width, 71};
+        Vector2 Pos = (Vector2){441 + 1 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
     if (CurrentLevelInfo->ChompertInfoLevel.Lock)
     {
         DrawTexture(LockPic, 370 + 2 * Frame.width, 30, WHITE);
-              int frame =
+        int frame =
             (CurrentLevelInfo->ChompertInfoLevel.Timer / CurrentLevelInfo->ChompertInfoLevel.Cooldown) * 100.0f - 1;
 
         if (frame < 0)
@@ -587,14 +604,13 @@ void DrawLockPicture(void)
             frame = 99;
 
         Rectangle FramePic = (Rectangle){58 * frame, 0, 58, 58};
-        Vector2 Pos = (Vector2){441+ 2 * Frame.width, 71};
+        Vector2 Pos = (Vector2){441 + 2 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
     if (CurrentLevelInfo->RosetInfoLevel.Lock)
     {
         DrawTexture(LockPic, 370 + 3 * Frame.width, 30, WHITE);
-              int frame =
-            (CurrentLevelInfo->RosetInfoLevel.Timer / CurrentLevelInfo->RosetInfoLevel.Cooldown) * 100.0f - 1;
+        int frame = (CurrentLevelInfo->RosetInfoLevel.Timer / CurrentLevelInfo->RosetInfoLevel.Cooldown) * 100.0f - 1;
 
         if (frame < 0)
             frame = 0;
@@ -602,7 +618,42 @@ void DrawLockPicture(void)
             frame = 99;
 
         Rectangle FramePic = (Rectangle){58 * frame, 0, 58, 58};
-        Vector2 Pos = (Vector2){441+ 3 * Frame.width, 71};
+        Vector2 Pos = (Vector2){441 + 3 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
+}
+
+void ResetRowManager(void)
+{
+    for (int i = 0; i < ROWS; i++)
+    {
+        RowStatus[i].plantCount = 0;
+        RowStatus[i].rowChanged = true;
+        RowStatus[i].ThinkingZombiesDeterminant =0;
+         RowStatus[i].RowWeights =100;
+    }
+}
+void ResetUi(void)
+{
+    Selection = EMPTY;
+    CurrentGameState = PLAYING;
+    scaleVictoryPic = 0.1f;
+    scaleGameOverPic = 0.1f;
+    IsDrawVictory = false;
+    IsDrawGameOver = false;
+    ZombiesSpawned = 0;
+    ZombiesKilled = 0;
+    SunBank = 9999;
+    CurrentSunIndex = 0;
+    SunTimer = 0;
+    ZombieTimer = 0;
+    CurrentLevelInfo->SunFlowertInfoLevel.Timer = 0;
+    CurrentLevelInfo->PeashooterInfoLevel.Timer = 0;
+    CurrentLevelInfo->ChompertInfoLevel.Timer = 0;
+    CurrentLevelInfo->RosetInfoLevel.Timer = 0;
+    CurrentLevelInfo->SunFlowertInfoLevel.Lock = false;
+    CurrentLevelInfo->PeashooterInfoLevel.Lock = false;
+    CurrentLevelInfo->ChompertInfoLevel.Lock = false;
+    CurrentLevelInfo->RosetInfoLevel.Lock = false;
+    ResetRowManager();
 }

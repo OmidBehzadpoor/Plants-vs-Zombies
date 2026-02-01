@@ -40,6 +40,15 @@ typedef struct WarningMessage
     Vector2 startPos;
     float baseSize;
 } WarningMessage;
+typedef struct RowManager
+{
+    int plantCount;   
+    bool rowChanged; // هر گونه تغییر در کاشت  یا تغییر خون یا حرکت چمن زن
+    double ThinkingZombiesDeterminant;
+    double RowWeights ;
+} RowManager;
+
+extern RowManager RowStatus[ROWS];
 extern WarningMessage LackSunWarning, LockWarning;
 extern MapContent Selection;
 extern MapContent CellContent[ROWS][COLUMNS];
@@ -67,5 +76,7 @@ void ShowLockWarning(void);
 void DrawUI(void);
 void UpdateUI(void);
 void DrawLockPicture(void);
+void ResetUi(void);
 
+void ResetRowManager(void);
 #endif

@@ -56,6 +56,7 @@ void UpdateLevel1(void)
     {
         resartLevel();
         InitLevel1Animation();
+        ResetUi();
     }
 
     UpdateUI();
@@ -132,7 +133,7 @@ void InitLevel1Info(void)
     Level1Info.PeashooterInfoLevel.price = 100;
     Level1Info.ChompertInfoLevel.price = 125;
     Level1Info.RosetInfoLevel.price = 150;
-    Level1Info.SunFlowertInfoLevel.Cooldown = 45;
+    Level1Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
     Level1Info.PeashooterInfoLevel.Cooldown = 2; // 45;
     Level1Info.ChompertInfoLevel.Cooldown = 2;   // 60;
     Level1Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
@@ -148,7 +149,6 @@ void InitLevel1Info(void)
     Level1Info.PeashooterInfoLevel.Lock = false;
     Level1Info.ChompertInfoLevel.Lock = false;
     Level1Info.RosetInfoLevel.Lock = false;
-
     Level1Info.SunElementInfoLevel.Value = VALUESUN;
     Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
@@ -156,8 +156,18 @@ void InitLevel1Info(void)
     Level1Info.ZombieNormal.Timer = 0;
     Level1Info.ZombieNormal.BassSpeedX = -20;
     Level1Info.ZombieNormal.BassSpeedY = 0;
+    Level1Info.ZombieNormal.BassRunSpeedY = 0;
+
     Level1Info.ZombieNormal.BassFrameDelay = 40.0f;
+    Level1Info.ThinkingZombie.Timer = 0;
+    Level1Info.ThinkingZombie.BassSpeedX = -20;
+    Level1Info.ThinkingZombie.BassSpeedY = 0;
+    Level1Info.ThinkingZombie.BassRunSpeedY = 20;
+
+    Level1Info.ThinkingZombie.BassFrameDelay = 40.0f;
+    Level1Info.MaxThinkingZombieAllowed = 0;
     Level1Info.MaxZombieNormalAllowed = 30;
+
     LackSunWarning.isActive = false;
     LackSunWarning.duration = 2.0f;
     LackSunWarning.baseSize = 30.0f;
@@ -166,19 +176,18 @@ void InitLevel1Info(void)
     LockWarning.duration = 2.0f;
     LockWarning.baseSize = 30.0f;
     LockWarning.startPos = (Vector2){(float)GetScreenWidth() / 2.0f, 130};
-
 }
 
 void InitLevel1Animation(void)
 {
-    CurrentLevelInfo=&Level1Info;
+    CurrentLevelInfo = &Level1Info;
     for (int i = 0; i < 4; i++)
     {
         int pixel = (i == 2) ? 100 : 71;
         int pixelY = (i == 2) ? 0 : 25;
         int k = (i == 2) ? 12 : 0;
 
-        icon[i] = GenerateAnimatedObject(&iconPic[i] , pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
+        icon[i] = GenerateAnimatedObject(&iconPic[i], pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
                                          370 - k + Frame.width * i, 25);
     }
     for (int i = 0; i < ROWLAWNMOWER; i++)
@@ -253,9 +262,12 @@ void InitLevel1MapCell(void)
 
 void CheckWin(void)
 {
-    if (ZombiesSpawned < CurrentLevelInfo->MaxZombieNormalAllowed)
+    if (CurrentLevelInfo->ZombieNormal.ZombieSpawned < CurrentLevelInfo->MaxZombieNormalAllowed)
         return;
-    if (ZombiesSpawned == 30 && ZombiesKilled == 30)
+    if (CurrentLevelInfo->ThinkingZombie.ZombieSpawned < CurrentLevelInfo->MaxThinkingZombieAllowed)
+        return;
+    if (ZombiesSpawned == CurrentLevelInfo->MaxZombieNormalAllowed + CurrentLevelInfo->MaxThinkingZombieAllowed &&
+        ZombiesKilled == CurrentLevelInfo->MaxZombieNormalAllowed + CurrentLevelInfo->MaxThinkingZombieAllowed)
     {
         CurrentGameState = WIN;
         PlaySound(VictorySound);
@@ -266,6 +278,15 @@ void CheckLose(void)
     for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
     {
         if (ZombieNormal[i].isAlive && ZombieNormal[i].Markaz.x < START_X)
+        {
+            CurrentGameState = LOSE;
+            PlaySound(EndGameSound);
+            return;
+        }
+    }
+    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
+    {
+        if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Markaz.x < START_X)
         {
             CurrentGameState = LOSE;
             PlaySound(EndGameSound);
@@ -284,20 +305,6 @@ void resartLevel(void)
         }
     }
 
-    Selection = EMPTY;
-    CurrentGameState = PLAYING;
-    scaleVictoryPic=0.1f;
-    scaleGameOverPic =0.1f;
-    IsDrawVictory = false;
-    IsDrawGameOver = false;
-    ZombiesSpawned = 0;
-    ZombiesKilled = 0;
-
-    SunBank = 9999;
-    CurrentSunIndex = 0;
-    lvl1Runtime = 0;
-    SunTimer = 0;
-    ZombieTimer = 0;
     for (int i = 0; i < ROWLAWNMOWER; i++)
     {
         ResetAnimatedObject(&LawnMower[i].LawnMowerObj);
@@ -313,6 +320,18 @@ void resartLevel(void)
             ResetAnimatedObject(&Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
             ResetAnimatedObject(&Peashooter[i].Pea[j].Pea);
         }
+    }
+    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
+    {
+        ZombieNormal[i].isAlive = false;
+        ZombieNormal[i].Attack = false;
+        ResetAnimatedObject(&ZombieNormal[i].ZombieObj);
+    }
+    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
+    {
+        ThinkingZombie[i].isAlive = false;
+        ThinkingZombie[i].Attack = false;
+        ResetAnimatedObject(&ThinkingZombie[i].ZombieObj);
     }
     FirstRun = true;
     for (int i = 0; i < 4; i++)
@@ -334,6 +353,17 @@ void DrawDebug(void)
                      ZombieNormal[i].ZombieObj.posY + ZombieNormal[i].ZombieObj.frames[0].height / 2, 20, RED);
             DrawRectangleLines((int)ZombieNormal[i].CollisionBox.x, (int)ZombieNormal[i].CollisionBox.y,
                                (int)ZombieNormal[i].CollisionBox.width, (int)ZombieNormal[i].CollisionBox.height, RED);
+        }
+    }
+    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++) // for debug
+    {
+        if (ThinkingZombie[i].isAlive)
+        {
+            DrawText("O", ThinkingZombie[i].ZombieObj.posX + ThinkingZombie[i].ZombieObj.frames[0].width / 2,
+                     ThinkingZombie[i].ZombieObj.posY + ThinkingZombie[i].ZombieObj.frames[0].height / 2, 20, RED);
+            DrawRectangleLines((int)ThinkingZombie[i].CollisionBox.x, (int)ThinkingZombie[i].CollisionBox.y,
+                               (int)ThinkingZombie[i].CollisionBox.width, (int)ThinkingZombie[i].CollisionBox.height,
+                               RED);
         }
     }
     for (int i = 0; i < MAXNUMITEMS; i++)

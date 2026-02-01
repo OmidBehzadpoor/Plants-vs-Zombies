@@ -11,14 +11,15 @@ typedef struct SunElementInfo
     float Regenerate;
 } SunElementInfo;
 
-
 typedef struct ZombieInfo
 {
     float Regenerate;
     float Timer;
     float BassSpeedX;
     float BassSpeedY;
+    float BassRunSpeedY;
     float BassFrameDelay;
+    int ZombieSpawned;
 } ZombieInfo;
 
 
@@ -40,13 +41,16 @@ typedef struct LevelInfo
     struct PlantsInfo RosetInfoLevel;
     struct SunElementInfo SunElementInfoLevel;
     struct ZombieInfo ZombieNormal;
+    struct ZombieInfo ThinkingZombie;
+
     int MaxZombieNormalAllowed;
+    int MaxThinkingZombieAllowed;
 } LevelInfo;
 extern LevelInfo *CurrentLevelInfo;
 extern Font HorrorFont;
 extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4],iconPic[4], GameOver, Victory, ButtonWin, ButtonLose;
 extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,
-    ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar ,LockPic , RingBar;
+    ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar ,LockPic , RingBar , ThinkingZombiePic ,ThinkingZombieAttackPic;
 extern Color GoldOrange;
 extern AnimatedObject icon[4];
 extern float SunTimer, ZombieTimer;

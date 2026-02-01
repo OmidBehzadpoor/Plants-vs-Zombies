@@ -169,23 +169,23 @@ if (!Peashooter->Pea[PeaNumber].isActive) return;
             finalTarget = &ZombieNormal[j]; }
     }
 
-    // for (int j = 0; j < CurrentLevelInfo->MaxZombieType2Allowed; j++)
-    // {
-    //     if (!ZombieType2[j].isAlive || ZombieType2[j].Y_Cell != Peashooter->Pea[PeaNumber].Y_Cell)
-    //         continue;
+    for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
+    {
+        if (!ThinkingZombie[j].isAlive || ThinkingZombie[j].Y_Cell != Peashooter->Pea[PeaNumber].Y_Cell)
+            continue;
 
-    //     bool hasHit = false;
-    //     if (ZombieType2[j].X_Cell == Peashooter->Base.X_Cell && ZombieType2[j].X_Cell == Peashooter->Pea[PeaNumber].X_Cell)
-    //         Peashooter->Pea[PeaNumber].Pea.finalX = ZombieType2[j].Markaz.x;
+        bool hasHit = false;
+        if (ThinkingZombie[j].X_Cell == Peashooter->Base.X_Cell && ThinkingZombie[j].X_Cell == Peashooter->Pea[PeaNumber].X_Cell)
+            Peashooter->Pea[PeaNumber].Pea.finalX = ThinkingZombie[j].Markaz.x;
 
-    //     if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX) hasHit = true;
-    //     else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius, ZombieType2[j].CollisionBox)) hasHit = true;
+        if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX) hasHit = true;
+        else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius, ThinkingZombie[j].CollisionBox)) hasHit = true;
 
-    //     if (hasHit && ZombieType2[j].Markaz.x < minX) {
-    //         minX = ZombieType2[j].Markaz.x;
-    //         finalTarget = &ZombieType2[j]; // آدرس زامبی نوع ۲ را ذخیره کن
-    //     }
-    // }
+        if (hasHit && ThinkingZombie[j].Markaz.x < minX) {
+            minX = ThinkingZombie[j].Markaz.x;
+            finalTarget = &ThinkingZombie[j]; // آدرس زامبی نوع ۲ را ذخیره کن
+        }
+    }
 
     if (finalTarget != NULL)
     {

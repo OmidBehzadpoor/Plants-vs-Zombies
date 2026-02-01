@@ -13,7 +13,7 @@
 Font HorrorFont;
 Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4],iconPic[4], GameOver, Victory, ButtonWin, ButtonLose;
 Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, ZombieNormal1,
-    ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic, RingBar;
+    ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic, RingBar, ThinkingZombiePic ,ThinkingZombieAttackPic;
     AnimatedObject icon[4];
 
 LevelInfo *CurrentLevelInfo = NULL;
@@ -57,6 +57,8 @@ void InitLevelTexture(void)
     ButtonLose = LoadTexture("../assets/Level1/Button1.png");
     LockPic = LoadTexture("../assets/Level1/lock.png");
     RingBar = LoadTexture("../assets/Level1/RingBar.png");
+    ThinkingZombieAttackPic = LoadTexture("../assets/Level2/FlagZombieAttackSheet.png");
+    ThinkingZombiePic =LoadTexture("../assets/Level2/FlagZombieSheet.png");
     for (int i = 0; i < 4; i++)
     {
         char temp[100];

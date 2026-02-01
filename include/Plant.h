@@ -1,7 +1,7 @@
 #pragma once
 #ifndef PLANT_H
 #define PLANT_H
-
+#include "raylib.h"
  typedef enum PlantType
 {
     PLANT_SUNFLOWER,
