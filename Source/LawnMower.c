@@ -1,8 +1,10 @@
 
+#include "LawnMower.h"
 #include "Level1.h"
 #include "Plant.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
+#include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
 #include "menu.h"
@@ -10,8 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Zombie.h"
-#include "LawnMower.h"
 LawnMowerElement LawnMower[ROWLAWNMOWER];
 
 void DrawLawnMowers(void)
@@ -39,22 +39,21 @@ void UpdateLawnMowers(void)
             {
                 LawnMower[i].isActive = false;
             }
-        KillAllZombiesInCell(LawnMower[i].Y_Cell, LawnMower[i].X_Cell);
-                      LawnMower[i].Markaz.x = LawnMower[i].LawnMowerObj.posX + LawnMower[i].LawnMowerObj.frames[0].width / 2;
+            KillAllZombiesInCell(LawnMower[i].Y_Cell, LawnMower[i].X_Cell);
+            LawnMower[i].Markaz.x = LawnMower[i].LawnMowerObj.posX + LawnMower[i].LawnMowerObj.frames[0].width / 2;
             LawnMower[i].Markaz.y = LawnMower[i].LawnMowerObj.posY + LawnMower[i].LawnMowerObj.frames[0].height / 2;
             UpdateAnimatedObject(&LawnMower[i].LawnMowerObj);
             LawnMower[i].X_Cell = (LawnMower[i].Markaz.x - START_X) / (RectangleWidth);
         }
-          
     }
-
-
 }
 
 void ActivateLawnMower(int Row)
 {
     CellContent[Row][0] = EMPTY;
-                    ResetAnimatedObject(&LawnMower[Row].LawnMowerObj);
+    RowStatus[Row].WeightChanged = true;
+
+    ResetAnimatedObject(&LawnMower[Row].LawnMowerObj);
 
     LawnMower[Row].LawnMowerObj = GenerateAnimatedObject(&LawnMowerSheet, 70, 57, 80, 320, 270 + RectangleHeight * Row,
                                                          500, 0, END_X, 270 + RectangleHeight * Row);

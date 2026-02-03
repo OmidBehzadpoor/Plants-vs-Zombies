@@ -1,6 +1,8 @@
 #include "Level1.h"
-#include "LevelBase.h"
 #include "Level2.h"
+#include "Level3.h"
+#include "Level4.h"
+#include "LevelBase.h"
 #include "SoundandMusic.h"
 #include "levelselect.h"
 #include "menu.h"
@@ -28,6 +30,9 @@ int main()
     InitGame();
     InitLevel1();
     InitLevel2();
+    InitLevel3();
+    InitLevel4();
+
     PlayRandomMenuMusic();
     while (!WindowShouldClose() && Screen != EXITING)
     {
@@ -44,9 +49,17 @@ int main()
         {
             UpdateLevel1();
         }
-         else if (Screen == LVL2)
+        else if (Screen == LVL2)
         {
             UpdateLevel2();
+        }
+        else if (Screen == LVL3)
+        {
+            UpdateLevel3();
+        }
+        else if (Screen == LVL4)
+        {
+            UpdateLevel4();
         }
         BeginDrawing();
 
@@ -67,6 +80,14 @@ int main()
         else if (Screen == LVL2)
         {
             DrawLevel2();
+        }
+        else if (Screen == LVL3)
+        {
+            DrawLevel3();
+        }
+        else if (Screen == LVL4)
+        {
+            DrawLevel4();
         }
         MouseSelection();
         EndDrawing();

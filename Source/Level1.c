@@ -37,17 +37,22 @@ void DrawLevel1(void)
     DrawZombies();
     DrawPlantsOverZombie();
     DrawSunElement();
-
     DrawDebug();
     if (CurrentGameState == LOSE)
     {
+
         DrawGameOver();
         DrawBottom();
     }
     if (CurrentGameState == WIN)
     {
+
         DrawVictory();
         DrawBottom();
+    }
+    if (CurrentGameState == YesNo)
+    {
+        DrawYesOrNop("       There's still a chance...\n\n\nAre you sure you want to give up? ");
     }
 }
 void UpdateLevel1(void)
@@ -70,6 +75,10 @@ void UpdateLevel1(void)
         UpdateZombies();
         CheckWin();
         CheckLose();
+    }
+    if (CurrentGameState == YesNo)
+    {
+        UpdateYesOrNop();
     }
 }
 void UnloadLevel1(void)
@@ -145,10 +154,14 @@ void InitLevel1Info(void)
     Level1Info.PeashooterInfoLevel.BaseHealth = 100;
     Level1Info.ChompertInfoLevel.BaseHealth = 100;
     Level1Info.RosetInfoLevel.BaseHealth = 100;
-    Level1Info.SunFlowertInfoLevel.Lock = false;
+    Level1Info.SunFlowertInfoLevel.Lock = true;
     Level1Info.PeashooterInfoLevel.Lock = false;
     Level1Info.ChompertInfoLevel.Lock = false;
     Level1Info.RosetInfoLevel.Lock = false;
+    Level1Info.SunFlowertInfoLevel.IsAvailable = true;
+    Level1Info.PeashooterInfoLevel.IsAvailable = true;
+    Level1Info.ChompertInfoLevel.IsAvailable = true;
+    Level1Info.RosetInfoLevel.IsAvailable = true;
     Level1Info.SunElementInfoLevel.Value = VALUESUN;
     Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
@@ -157,7 +170,10 @@ void InitLevel1Info(void)
     Level1Info.ZombieNormal.BassSpeedX = -20;
     Level1Info.ZombieNormal.BassSpeedY = 0;
     Level1Info.ZombieNormal.BassRunSpeedY = 0;
-
+    Level1Info.ZombieNormal.InfiniteSpan = false;
+    Level1Info.ZombieNormal.ZombieSpawned = 0;
+    Level1Info.ThinkingZombie.InfiniteSpan = false;
+    Level1Info.ThinkingZombie.ZombieSpawned = 0;
     Level1Info.ZombieNormal.BassFrameDelay = 40.0f;
     Level1Info.ThinkingZombie.Timer = 0;
     Level1Info.ThinkingZombie.BassSpeedX = -20;
@@ -241,6 +257,12 @@ void InitLevel1Animation(void)
         ZombieNormal[i].Attack = false;
         ZombieNormal[i].ZombieObj = GenerateAnimatedObject(&ZombieNormal1, 12, 12, 0, 0, 0, 0, 0, 0, 0);
     }
+    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
+    {
+        ThinkingZombie[i].isAlive = false;
+        ThinkingZombie[i].Attack = false;
+        ThinkingZombie[i].ZombieObj = GenerateAnimatedObject(&ThinkingZombiePic, 12, 12, 0, 0, 0, 0, 0, 0, 0);
+    }
 }
 void InitLevel1MapCell(void)
 {
@@ -270,6 +292,7 @@ void CheckWin(void)
         ZombiesKilled == CurrentLevelInfo->MaxZombieNormalAllowed + CurrentLevelInfo->MaxThinkingZombieAllowed)
     {
         CurrentGameState = WIN;
+        printf("WHY?");
         PlaySound(VictorySound);
     }
 }

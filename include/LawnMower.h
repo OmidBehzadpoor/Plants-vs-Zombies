@@ -1,6 +1,9 @@
 #pragma once
 #ifndef LAWNMOWER_H
 #define LAWNMOWER_H
+#include "raylib.h"
+#include "Level1.h"
+#include "gif.h"
 typedef struct Zombies Zombies;
 typedef struct LawnMowerElement
 {

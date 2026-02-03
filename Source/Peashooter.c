@@ -200,7 +200,7 @@ if (!Peashooter->Pea[PeaNumber].isActive) return;
         Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj = GenerateAnimatedObject(
             &PeaBulletHit, 49, 43, 100000, finalTarget->Markaz.x - 20, Peashooter->Pea[PeaNumber].Markaz.y,
             finalTarget->ZombieObj.speedX, finalTarget->ZombieObj.speedY, finalTarget->ZombieObj.finalX,
-            Peashooter->Pea[PeaNumber].Markaz.y);
+            finalTarget->ZombieObj.finalY);
 
         if (finalTarget->Health <= 0) {
             finalTarget->isAlive = false;

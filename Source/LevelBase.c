@@ -11,16 +11,28 @@
 #include <stdlib.h>
 #include <string.h>
 Font HorrorFont;
-Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4],iconPic[4], GameOver, Victory, ButtonWin, ButtonLose;
+Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4], iconPic[4], GameOver, Victory, ButtonWin,
+    ButtonLose;
 Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, ZombieNormal1,
-    ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic, RingBar, ThinkingZombiePic ,ThinkingZombieAttackPic;
-    AnimatedObject icon[4];
-
+    ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic, RingBar,
+    ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic;
+AnimatedObject icon[4];
+Rectangle LoseNowButton;
+Rectangle YesButton = {900, 560, 305, 95};
+Rectangle NoButton = {500, 560, 290, 95};
 LevelInfo *CurrentLevelInfo = NULL;
 Color GoldOrange = {255, 188, 0, 255};
 bool restart = true;
 int ZombiesSpawned = 0;
 int ZombiesKilled = 0;
+float SurvivalTimer = 0.0f;
+float BestSurvivalTime = 0.0f;
+int bestHours;
+int bestMinutes;
+int bestSeconds;
+int SurvivalHours;
+int SurvivalMinutes;
+int SurvivalSeconds;
 
 float SunTimer, ZombieTimer;
 bool FirstRun = true;
@@ -58,7 +70,13 @@ void InitLevelTexture(void)
     LockPic = LoadTexture("../assets/Level1/lock.png");
     RingBar = LoadTexture("../assets/Level1/RingBar.png");
     ThinkingZombieAttackPic = LoadTexture("../assets/Level2/FlagZombieAttackSheet.png");
-    ThinkingZombiePic =LoadTexture("../assets/Level2/FlagZombieSheet.png");
+    ThinkingZombiePic = LoadTexture("../assets/Level2/FlagZombieSheet.png");
+    LoseNowpic = LoadTexture("../assets/Level1/LoseNow.png");
+    LoseNowButton = (Rectangle){1495, 785, LoseNowpic.width, LoseNowpic.height};
+    YesOrNopic = LoadTexture("../assets/Level1/YorN.png");
+    TimeFramePic = LoadTexture("../assets/Level1/TimeFrame.png");
+
+    LoadBestTime();
     for (int i = 0; i < 4; i++)
     {
         char temp[100];
@@ -72,4 +90,35 @@ void InitLevelTexture(void)
 void InitLevelFont(void)
 {
     HorrorFont = LoadFont("../assets/Level1/houseofterrormedium.ttf");
+}
+void SaveBestTime(void)
+{
+    SaveFileData("../assets/Level1/BestTime.dat", &BestSurvivalTime, sizeof(float));
+}
+
+void LoadBestTime(void)
+{
+    if (FileExists("../assets/Level1/BestTime.dat"))
+    {
+        unsigned int bytesRead = 0;
+        unsigned char *data = LoadFileData("../assets/Level1/BestTime.dat", &bytesRead);
+        if (data != NULL && bytesRead == sizeof(float))
+        {
+            BestSurvivalTime = *(float *)data;
+            CalculateBestTimeHMS();
+            UnloadFileData(data);
+        }
+    }
+}
+void CalculateBestTimeHMS(void)
+{
+    bestHours = BestSurvivalTime / 3600;
+    bestMinutes = ((int)BestSurvivalTime % 3600) / 60;
+    bestSeconds = (int)BestSurvivalTime % 60;
+}
+void CalculateSurvivalTimeHMS(void)
+{
+    SurvivalHours = SurvivalTimer / 3600;
+    SurvivalMinutes = ((int)SurvivalTimer % 3600) / 60;
+    SurvivalSeconds = (int)SurvivalTimer % 60;
 }

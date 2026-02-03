@@ -19,7 +19,8 @@ typedef enum GameState
     PLAYING,
     WIN,
     LOSE,
-    PAUSED
+    PAUSED ,
+    YesNo
 } GameState;
 extern GameState CurrentGameState;
 typedef enum MapContent
@@ -43,7 +44,8 @@ typedef struct WarningMessage
 typedef struct RowManager
 {
     int plantCount;   
-    bool rowChanged; // هر گونه تغییر در کاشت  یا تغییر خون یا حرکت چمن زن
+    bool rowChanged; //  هر گونه تغییر در کاشت  یا تغییر خون که نیاز به محاسبه دترمینان باشد 
+    bool WeightChanged; // تغییر ردیف یا چمن زن
     double ThinkingZombiesDeterminant;
     double RowWeights ;
 } RowManager;
@@ -77,6 +79,8 @@ void DrawUI(void);
 void UpdateUI(void);
 void DrawLockPicture(void);
 void ResetUi(void);
-
+void UpdateLoseNowButton(void);
 void ResetRowManager(void);
+void DrawYesOrNop(char *Question);
+void UpdateYesOrNop(void);
 #endif

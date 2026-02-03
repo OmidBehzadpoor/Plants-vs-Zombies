@@ -50,6 +50,10 @@ void DrawLevel2(void)
         DrawVictory();
         DrawBottom();
     }
+     if (CurrentGameState == YesNo)
+    {
+        DrawYesOrNop("       There's still a chance...\n\n\nAre you sure you want to give up? ");
+    }
 }
 void UpdateLevel2(void)
 {
@@ -70,6 +74,9 @@ void UpdateLevel2(void)
         UpdateZombies();
         CheckWin();
         CheckLose();
+    }    if (CurrentGameState == YesNo)
+    {
+        UpdateYesOrNop();
     }
 }
 // ---------------------- Generate Functions-----------------------  //
@@ -100,7 +107,10 @@ void InitLevel2Info(void)
     Level2Info.PeashooterInfoLevel.Lock = false;
     Level2Info.ChompertInfoLevel.Lock = false;
     Level2Info.RosetInfoLevel.Lock = false;
-
+    Level2Info.SunFlowertInfoLevel.IsAvailable = true;
+    Level2Info.PeashooterInfoLevel.IsAvailable = true;
+    Level2Info.ChompertInfoLevel.IsAvailable = true;
+    Level2Info.RosetInfoLevel.IsAvailable = true;
     Level2Info.SunElementInfoLevel.Value = VALUESUN;
     Level2Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level2Info.SunElementInfoLevel.Regenerate = GENERATESUN;
@@ -119,6 +129,8 @@ void InitLevel2Info(void)
     Level2Info.ThinkingZombie.BassFrameDelay = 40.0f;
     Level2Info.MaxThinkingZombieAllowed = 30;
     Level2Info.MaxZombieNormalAllowed = 0;
+    Level2Info.ZombieNormal.InfiniteSpan = false;
+    Level2Info.ThinkingZombie.InfiniteSpan = false;
     LackSunWarning.isActive = false;
     LackSunWarning.duration = 2.0f;
     LackSunWarning.baseSize = 30.0f;

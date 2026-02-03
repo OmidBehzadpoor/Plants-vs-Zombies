@@ -42,6 +42,8 @@ void UpdateChomper(ChomperElement *chomper)
         CellContent[chomper->Base.Y_Cell][chomper->Base.X_Cell] = EMPTY;
         RowStatus[chomper->Base.Y_Cell].plantCount--;
         RowStatus[chomper->Base.Y_Cell].rowChanged = true;
+        RowStatus[chomper->Base.Y_Cell].WeightChanged = true;
+        
     }
 }
 

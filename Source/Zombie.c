@@ -125,7 +125,7 @@ bool SpawnZombie(Zombies *ZombiesType, Texture2D *ZombieSheet, struct ZombieInfo
     {
         return false;
     }
-    if (Zombie->ZombieSpawned < MaxSpawnCount || MaxSpawnCount == INFINITE)
+    if (Zombie->ZombieSpawned < MaxSpawnCount || Zombie->InfiniteSpan)
     {
         if (ZombiesSpawned == 0)
         {
@@ -254,6 +254,8 @@ void ApplyZombieDamageToPlant(Zombies *zombie, PlantBase *Plant)
         CellContent[Plant->Y_Cell][Plant->X_Cell] = EMPTY;
         RowStatus[Plant->Y_Cell].plantCount--;
         RowStatus[Plant->Y_Cell].rowChanged = true;
+                            RowStatus[Plant->Y_Cell].WeightChanged = true;
+
         Plant->isAlive = false;
     }
 }
@@ -335,7 +337,7 @@ void UpdateRowWeights()
 {
     for (int i = 0; i < ROWS; i++)
     {
-
+        if(!RowStatus[i].WeightChanged){continue;}
         float mowerFactor = (CellContent[i][0] == LAWNMOWER) ? 1.0f : 0.0f;
         if (RowStatus[i].rowChanged)
         {

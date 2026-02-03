@@ -37,7 +37,7 @@ void DrawPlantsOverZombie(void)
 }
 void CooldownUpdate(void)
 {
-    if (CurrentLevelInfo->SunFlowertInfoLevel.Lock)
+    if (CurrentLevelInfo->SunFlowertInfoLevel.IsAvailable&&CurrentLevelInfo->SunFlowertInfoLevel.Lock)
     {
         CurrentLevelInfo->SunFlowertInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->SunFlowertInfoLevel.Timer >= CurrentLevelInfo->SunFlowertInfoLevel.Cooldown)
@@ -46,7 +46,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->SunFlowertInfoLevel.Timer = 0;
         }
     }
-    if (CurrentLevelInfo->PeashooterInfoLevel.Lock)
+    if (CurrentLevelInfo->PeashooterInfoLevel.IsAvailable&&CurrentLevelInfo->PeashooterInfoLevel.Lock)
     {
         CurrentLevelInfo->PeashooterInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->PeashooterInfoLevel.Timer >= CurrentLevelInfo->PeashooterInfoLevel.Cooldown)
@@ -55,7 +55,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->PeashooterInfoLevel.Timer = 0;
         }
     }
-    if (CurrentLevelInfo->ChompertInfoLevel.Lock)
+    if (CurrentLevelInfo->ChompertInfoLevel.IsAvailable&&CurrentLevelInfo->ChompertInfoLevel.Lock)
     {
         CurrentLevelInfo->ChompertInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->ChompertInfoLevel.Timer >= CurrentLevelInfo->ChompertInfoLevel.Cooldown)
@@ -64,7 +64,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->ChompertInfoLevel.Timer = 0;
         }
     }
-    if (CurrentLevelInfo->RosetInfoLevel.Lock)
+    if (CurrentLevelInfo->RosetInfoLevel.IsAvailable&&CurrentLevelInfo->RosetInfoLevel.Lock)
     {
         CurrentLevelInfo->RosetInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->RosetInfoLevel.Timer >= CurrentLevelInfo->RosetInfoLevel.Cooldown)
