@@ -53,7 +53,7 @@ extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4], i
 extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,
     ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic,
     RingBar, ThinkingZombiePic, ThinkingZombieAttackPic , LoseNowpic, YesOrNopic ,TimeFramePic;
-extern Color GoldOrange;
+extern Color GoldOrange , SaffronYellow;
 extern AnimatedObject icon[4];
 extern Rectangle LoseNowButton;
  extern Rectangle  YesButton;

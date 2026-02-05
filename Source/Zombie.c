@@ -344,7 +344,7 @@ void UpdateRowWeights()
             RowStatus[i].ThinkingZombiesDeterminant = UpdateThinkingZombiesDeterminant(i);
             RowStatus[i].rowChanged = false;
         }
-        RowStatus[i].RowWeights = (mowerFactor * 100) - (RowStatus[i].ThinkingZombiesDeterminant);
+        RowStatus[i].RowWeights = (mowerFactor * 10) + (RowStatus[i].ThinkingZombiesDeterminant);
     }
 }
 double UpdateThinkingZombiesDeterminant(int Row)

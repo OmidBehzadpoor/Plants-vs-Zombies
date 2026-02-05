@@ -1,70 +1,52 @@
 #include "menu.h"
+#include "LevelBase.h"
+#include "SoundandMusic.h"
 #include "raylib.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "SoundandMusic.h"
 
-Texture2D background;
-Rectangle PlayButton;
-Rectangle ShopButton;
-Rectangle ExitButton;
-bool hoverPlayed = false;
-
+Texture2D Menu3Button, Menu4Button;
+Rectangle PlayButton =(Rectangle) { 660 , 260 ,920 - 660 ,  320 - 260 };
+Rectangle ShopButton=(Rectangle) { 660 , 350 ,920 - 660 ,  415 - 350 };
+Rectangle ExitButton=(Rectangle) { 660 , 535 ,920 - 660 ,  600 - 535 };
+bool shopHoverPlayed = false;
+bool exitHoverPlayed = false;
+bool playHoverPlayed = false;
 void InitMenu(void)
 {
 
-    background = LoadTexture("../assets/menu/3-button_menu.png");
+    Menu3Button = LoadTexture("../assets/menu/3-button_menu.png");
+    Menu4Button = LoadTexture("../assets/menu/4-button_menu.png");
     // // PlayButton
-    PlayButton.x = 594;
-    PlayButton.y = 261;
-    PlayButton.width = 291;
-    PlayButton.height = 90;
+    // PlayButton.x = 660;
+    // PlayButton.y = 260;
+    // PlayButton.width = 920 - PlayButton.x;
+    // PlayButton.height = 320 - PlayButton.y;
 
     // // ShopButton
-    ShopButton.x = 604;
-    ShopButton.y = 411;
-    ShopButton.width = 257;
-    ShopButton.height = 76;
+    // ShopButton.x = 660;
+    // ShopButton.y = 350;
+    // ShopButton.width = 920 - ShopButton.x;
+    // ShopButton.height = 415 - ShopButton.y;
 
     // // ExitButton
-    ExitButton.x = 616;
-    ExitButton.y = 550;
-    ExitButton.width = 250;
-    ExitButton.height = 73;
-    //   menuOpen = LoadSound("../assets/Sounds/menu_open.wav");
-
-
-
+    // ExitButton.x = 600;
+    // ExitButton.y = 535;
+    // ExitButton.width = 920 - ExitButton.x;
+    // ExitButton.height = 600 - ExitButton.y;
+    // //  menuOpen = LoadSound("../assets/Sounds/menu_open.wav");
 }
 
 void DrawMenu(void)
 {
-    DrawTexture(background, 0, 0, WHITE);
+    //  // DrawTexture(Menu3Button, 0, 0, WHITE);
+    DrawTexture(Menu4Button, 0, 0, WHITE);
 
-    if (CheckCollisionPointRec(GetMousePosition(), PlayButton))
-    {
-        DrawText("Play", 687, 285, 50, GREEN);
-    }
-    else
-    {
-        DrawText("Play", 687, 285, 50, YELLOW);
-    }
-    if (CheckCollisionPointRec(GetMousePosition(), ShopButton))
-    {
-        DrawText("Shop", 687, 430, 40, BLUE);
-    }
-    else
-    {
-        DrawText("Shop", 687, 430, 40, YELLOW);
-    }
-    if (CheckCollisionPointRec(GetMousePosition(), ExitButton))
-    {
-        DrawText("Exit", 687, 570, 40, RED);
-    }
-    else
-    {
-        DrawText("Exit", 687, 570, 40, YELLOW);
-    }
+    DrawText("Play", 733, 265, 50, playHoverPlayed ? GREEN : SaffronYellow);
+
+    DrawText("Shop", 733, 365, 45, shopHoverPlayed ? BLUE : SaffronYellow);
+
+    DrawText("Exit", 733, 545, 50, exitHoverPlayed ? RED : SaffronYellow);
 }
 
 void UpdateMenu(void)
@@ -73,7 +55,6 @@ void UpdateMenu(void)
     Vector2 mousePos = GetMousePosition();
 
     // هاور PlayButton
-    static bool playHoverPlayed = false;
     if (CheckCollisionPointRec(mousePos, PlayButton))
     {
         if (!playHoverPlayed)
@@ -88,7 +69,8 @@ void UpdateMenu(void)
     }
 
     // هاور ShopButton
-    static bool shopHoverPlayed = false;
+
+    ;
     if (CheckCollisionPointRec(mousePos, ShopButton))
     {
         if (!shopHoverPlayed)
@@ -103,7 +85,6 @@ void UpdateMenu(void)
     }
 
     // هاور ExitButton
-    static bool exitHoverPlayed = false;
     if (CheckCollisionPointRec(mousePos, ExitButton))
     {
         if (!exitHoverPlayed)
@@ -119,17 +100,17 @@ void UpdateMenu(void)
     // کلیک دکمه‌ها
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        if (CheckCollisionPointRec(mousePos, PlayButton))
+        if (playHoverPlayed)
         {
             PlaySound(menuSelect);
             Screen = LEVEL_SELECT;
         }
-        else if (CheckCollisionPointRec(mousePos, ShopButton))
+        else if (shopHoverPlayed)
         {
             PlaySound(menuSelect);
             Screen = SHOP;
         }
-        else if (CheckCollisionPointRec(mousePos, ExitButton))
+        else if (exitHoverPlayed)
         {
             PlaySound(menuSelect);
             Screen = EXITING;
@@ -138,7 +119,8 @@ void UpdateMenu(void)
 }
 void UnloadMenu(void)
 {
-    UnloadTexture(background);
+    UnloadTexture(Menu3Button);
+    UnloadTexture(Menu4Button);
 }
 void MouseSelection(void)
 {

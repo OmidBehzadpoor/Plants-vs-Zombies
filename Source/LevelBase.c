@@ -22,6 +22,7 @@ Rectangle YesButton = {900, 560, 305, 95};
 Rectangle NoButton = {500, 560, 290, 95};
 LevelInfo *CurrentLevelInfo = NULL;
 Color GoldOrange = {255, 188, 0, 255};
+Color SaffronYellow = { 222,200 ,95 ,255 };
 bool restart = true;
 int ZombiesSpawned = 0;
 int ZombiesKilled = 0;

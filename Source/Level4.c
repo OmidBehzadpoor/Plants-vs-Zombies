@@ -37,7 +37,7 @@ void DrawLevel4(void)
 
     DrawZombies();
     DrawPlantsOverZombie();
-      DrawSunElement();
+    DrawSunElement();
 
     DrawDebug();
     if (CurrentGameState == LOSE)
@@ -50,7 +50,7 @@ void DrawLevel4(void)
         DrawVictory();
         DrawBottom();
     }
-     if (CurrentGameState == YesNo)
+    if (CurrentGameState == YesNo)
     {
         DrawYesOrNop("       There's still a chance...\n\n\nAre you sure you want to give up? ");
     }
