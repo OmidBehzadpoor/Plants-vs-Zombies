@@ -6,6 +6,7 @@
 #include "LevelUi.h"
 #include "Peashooter.h"
 #include "Plant.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
@@ -54,7 +55,6 @@ void DrawLevel4(void)
     {
         DrawYesOrNop("       There's still a chance...\n\n\nAre you sure you want to give up? ");
     }
-    
 }
 void UpdateLevel4(void)
 {
@@ -69,7 +69,7 @@ void UpdateLevel4(void)
     if (CurrentGameState == PLAYING)
     {
         SurvivalTimer += GetFrameTime();
-         UpdateSUNELEMENT();
+        UpdateSUNELEMENT();
         UpdatePlants();
         UpdateLawnMowers();
 
@@ -84,7 +84,8 @@ void UpdateLevel4(void)
             CalculateBestTimeHMS();
             SaveBestTime();
         }
-    }    if (CurrentGameState == YesNo)
+    }
+    if (CurrentGameState == YesNo)
     {
         UpdateYesOrNop();
     }
@@ -101,6 +102,8 @@ void InitLevel4Info(void)
     Level4Info.PeashooterInfoLevel.price = 100;
     Level4Info.ChompertInfoLevel.price = 125;
     Level4Info.RosetInfoLevel.price = 150;
+    Level4Info.PotatoMineInfoLevel.price = 25;
+
     Level4Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
     Level4Info.PeashooterInfoLevel.Cooldown = 2; // 45;
     Level4Info.ChompertInfoLevel.Cooldown = 2;   // 60;
@@ -109,18 +112,27 @@ void InitLevel4Info(void)
     Level4Info.PeashooterInfoLevel.Timer = 0;
     Level4Info.ChompertInfoLevel.Timer = 0;
     Level4Info.RosetInfoLevel.Timer = 0;
+    Level4Info.PotatoMineInfoLevel.Timer = 0;
+    Level4Info.PotatoMineInfoLevel.ActivationTime = 5;
+
     Level4Info.SunFlowertInfoLevel.BaseHealth = 100;
     Level4Info.PeashooterInfoLevel.BaseHealth = 100;
     Level4Info.ChompertInfoLevel.BaseHealth = 100;
     Level4Info.RosetInfoLevel.BaseHealth = 100;
+    Level4Info.PotatoMineInfoLevel.BaseHealth = 100;
+
     Level4Info.SunFlowertInfoLevel.Lock = false;
     Level4Info.PeashooterInfoLevel.Lock = false;
     Level4Info.ChompertInfoLevel.Lock = false;
     Level4Info.RosetInfoLevel.Lock = false;
+    Level4Info.PotatoMineInfoLevel.Lock = false;
+
     Level4Info.SunFlowertInfoLevel.IsAvailable = true;
     Level4Info.PeashooterInfoLevel.IsAvailable = true;
     Level4Info.ChompertInfoLevel.IsAvailable = true;
     Level4Info.RosetInfoLevel.IsAvailable = true;
+    Level4Info.PotatoMineInfoLevel.IsAvailable = true;
+
     Level4Info.SunElementInfoLevel.Value = VALUESUN;
     Level4Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level4Info.SunElementInfoLevel.Regenerate = GENERATESUN;
@@ -154,11 +166,11 @@ void InitLevel4Info(void)
 void InitLevel4Animation(void)
 {
     CurrentLevelInfo = &Level4Info;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
-        int pixel = (i == 2) ? 100 : 71;
-        int pixelY = (i == 2) ? 0 : 25;
-        int k = (i == 2) ? 12 : 0;
+        int pixel = (i == 2) ? 80 : 71;
+        int pixelY = (i == 2) ? 14 : 25;
+        int k = (i == 2 || i == 4) ? 12 : 0;
 
         icon[i] = GenerateAnimatedObject(&iconPic[i], pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
                                          370 - k + Frame.width * i, 25);
@@ -189,7 +201,8 @@ void InitLevel4Animation(void)
         Peashooter[i].Base.isAlive = false;
         Peashooter[i].FireTimer = 0;
         Peashooter[i].Firing = false;
-
+        PotatoMine[i].PotatoMineObj = GenerateAnimatedObject(&PotatoMineNotReadyPic, 75, 55, 80, 0, 0, 0, 0, 0, 0);
+        PotatoMine[i].Base.isAlive = false;
         for (int j = 0; j < 10; j++)
         {
             Peashooter[i].Pea[j].isActive = false;
@@ -261,6 +274,9 @@ void resartLevel4(void)
         ResetAnimatedObject(&Peashooter[i].PeashooterObj);
         ResetAnimatedObject(&Chomper[i].ChomperObj);
         ResetAnimatedObject(&Rose[i].RoseObj);
+        ResetAnimatedObject(&PotatoMine[i].PotatoMineObj);
+        PotatoMine[i].Explosion = false;
+
         for (int j = 0; j < 10; j++)
         {
             ResetAnimatedObject(&Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
@@ -280,7 +296,7 @@ void resartLevel4(void)
         ResetAnimatedObject(&ThinkingZombie[i].ZombieObj);
     }
     FirstRun = true;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         ResetAnimatedObject(&icon[i]);
     }

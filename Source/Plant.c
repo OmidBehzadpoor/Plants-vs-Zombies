@@ -13,6 +13,7 @@
 #include <string.h>
 #include "Chomper.h"
 #include "Peashooter.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "Sunflower.h"
 #include "Sun.h"
@@ -73,6 +74,15 @@ void CooldownUpdate(void)
             CurrentLevelInfo->RosetInfoLevel.Timer = 0;
         }
     }
+        if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable&&CurrentLevelInfo->PotatoMineInfoLevel.Lock)
+    {
+        CurrentLevelInfo->PotatoMineInfoLevel.Timer += GetFrameTime();
+        if (CurrentLevelInfo->PotatoMineInfoLevel.Timer >= CurrentLevelInfo->PotatoMineInfoLevel.Cooldown)
+        {
+            CurrentLevelInfo->PotatoMineInfoLevel.Lock = false;
+            CurrentLevelInfo->PotatoMineInfoLevel.Timer = 0;
+        }
+    }
 }
 void UpdatePlantsTimer(void)
 {
@@ -93,6 +103,7 @@ void UpdatePlantsTimer(void)
         }
         UpdateRose(&Rose[i]);
         UpdateChomper(&Chomper[i]);
+        UpdatePotatoMine(&PotatoMine[i]);
     }
 }
 
@@ -129,6 +140,12 @@ void DrawPlantsObject(void)
             DrawAnimatedObject(&Rose[i].RoseObj, WHITE);
             DrawTextureRec(LifetimeBar, Rose[i].LifetimeDisplay.frameBAR, Rose[i].LifetimeDisplay.posBar, WHITE);
             DrawHpBar(&Rose[i].Base.HpDisplay);
+        }
+        if (PotatoMine[i].Base.isAlive)
+        {
+            DrawAnimatedObject(&PotatoMine[i].PotatoMineObj, WHITE);
+          if(!PotatoMine[i].Active)  DrawTextureRec(LifetimeBar, PotatoMine[i].ActivationDisplay.frameBAR, PotatoMine[i].ActivationDisplay.posBar, WHITE);
+            DrawHpBar(&PotatoMine[i].Base.HpDisplay);
         }
     }
 }
@@ -175,7 +192,7 @@ void UpdatePlantsAnimation(void)
             UpdateAnimatedObject(&Chomper[i].ChomperObj);
             UpdateHpBar(&Chomper[i].Base, CurrentLevelInfo->ChompertInfoLevel.BaseHealth);
 
-            Chomper[i].LifetimeDisplay.LifetimePercentage = (Chomper[i].Lifespan / 20.0f) * 100.0f;
+            Chomper[i].LifetimeDisplay.TimePercentage = (Chomper[i].Lifespan / 20.0f) * 100.0f;
             UpdateLifetimeBar(&Chomper[i].LifetimeDisplay, Chomper[i].Lifespan, 20);
         }
         if (Rose[i].Base.isAlive)
@@ -183,6 +200,12 @@ void UpdatePlantsAnimation(void)
             UpdateAnimatedObject(&Rose[i].RoseObj);
             UpdateHpBar(&Rose[i].Base, CurrentLevelInfo->RosetInfoLevel.BaseHealth);
             UpdateLifetimeBar(&Rose[i].LifetimeDisplay, Rose[i].Lifespan, 10);
+        }
+        if (PotatoMine[i].Base.isAlive)
+        {
+            UpdateAnimatedObject(&PotatoMine[i].PotatoMineObj);
+            UpdateHpBar(&PotatoMine[i].Base, CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth);
+          if(!PotatoMine[i].Active)  UpdateLifetimeBar(&PotatoMine[i].ActivationDisplay, PotatoMine[i].Timer, CurrentLevelInfo->PotatoMineInfoLevel.ActivationTime);
         }
     }
 }
@@ -203,9 +226,9 @@ void GeneratePlantBase(PlantBase *obj, PlantType Type, float HP, int X_Cell, int
 }
 void UpdateLifetimeBar(ActiveTimeBar *bar, float life, float maxLife)
 {
-    bar->LifetimePercentage = (life / maxLife) * 100.0f;
+    bar->TimePercentage = (life / maxLife) * 100.0f;
 
-    int frame = (int)bar->LifetimePercentage - 1;
+    int frame = (int)bar->TimePercentage - 1;
     if (frame < 0)
         frame = 0;
     if (frame > 99)

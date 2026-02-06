@@ -11,12 +11,12 @@
 #include <stdlib.h>
 #include <string.h>
 Font HorrorFont;
-Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4], iconPic[4], GameOver, Victory, ButtonWin,
+Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[5], GameOver, Victory, ButtonWin,
     ButtonLose;
 Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, ZombieNormal1,
     ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic, RingBar,
-    ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic;
-AnimatedObject icon[4];
+    ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic ,PotatoMineNotReadyPic ,PotatoMineMashedPic , PotatoMineSheet , ExplosionSpudow;
+AnimatedObject icon[5];
 Rectangle LoseNowButton;
 Rectangle YesButton = {900, 560, 305, 95};
 Rectangle NoButton = {500, 560, 290, 95};
@@ -76,9 +76,12 @@ void InitLevelTexture(void)
     LoseNowButton = (Rectangle){1495, 785, LoseNowpic.width, LoseNowpic.height};
     YesOrNopic = LoadTexture("../assets/Level1/YorN.png");
     TimeFramePic = LoadTexture("../assets/Level1/TimeFrame.png");
-
+    PotatoMineMashedPic = LoadTexture("../assets/Level2/PotatoMineMashed.png") ;
+    PotatoMineNotReadyPic = LoadTexture("../assets/Level2/PotatoMineNotReady.png") ; 
+    PotatoMineSheet = LoadTexture("../assets/Level2/PotatoMineSheet.png") ;
+    ExplosionSpudow = LoadTexture("../assets/Level2/ExplosionSpudow.png") ;
     LoadBestTime();
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i <5; i++)
     {
         char temp[100];
 

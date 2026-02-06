@@ -28,6 +28,7 @@ struct PlantsInfo
     int price;
     float Cooldown;
     float BaseHealth;
+    float ActivationTime;
     float Timer;
     bool Lock;
     bool IsAvailable;
@@ -39,6 +40,7 @@ typedef struct LevelInfo
     struct PlantsInfo PeashooterInfoLevel;
     struct PlantsInfo ChompertInfoLevel;
     struct PlantsInfo RosetInfoLevel;
+    struct PlantsInfo PotatoMineInfoLevel;
     struct SunElementInfo SunElementInfoLevel;
     struct ZombieInfo ZombieNormal;
     struct ZombieInfo ThinkingZombie;
@@ -48,17 +50,18 @@ typedef struct LevelInfo
 } LevelInfo;
 extern LevelInfo *CurrentLevelInfo;
 extern Font HorrorFont;
-extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[4], iconPic[4], GameOver, Victory, ButtonWin,
+extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[5], GameOver, Victory, ButtonWin,
     ButtonLose;
 extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,
     ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic,
-    RingBar, ThinkingZombiePic, ThinkingZombieAttackPic , LoseNowpic, YesOrNopic ,TimeFramePic;
-extern Color GoldOrange , SaffronYellow;
-extern AnimatedObject icon[4];
+    RingBar, ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic, PotatoMineNotReadyPic,
+    PotatoMineMashedPic, PotatoMineSheet , ExplosionSpudow;
+extern Color GoldOrange, SaffronYellow;
+extern AnimatedObject icon[5];
 extern Rectangle LoseNowButton;
- extern Rectangle  YesButton;
- extern Rectangle  NoButton;
- extern int bestHours;
+extern Rectangle YesButton;
+extern Rectangle NoButton;
+extern int bestHours;
 extern int bestMinutes;
 extern int bestSeconds;
 extern int SurvivalHours;

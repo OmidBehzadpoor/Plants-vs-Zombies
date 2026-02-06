@@ -6,6 +6,7 @@
 #include "SoundandMusic.h"
 #include "Sun.h"
 #include "Sunflower.h"
+#include "PotatoMine.h"
 #include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
@@ -42,6 +43,7 @@ void DrawPeashooterBullets(void)
                 DrawAnimatedObject(&Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj, WHITE);
             }
         }
+        DrawPotatoMineExplosionEffect(&PotatoMine[i]);
     }
 }
 
@@ -146,10 +148,11 @@ void UpdatePeashooterSinglePea(PeashooterElement *Peashooter, int PeaNumber)
 }
 void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
 {
-if (!Peashooter->Pea[PeaNumber].isActive) return;
+    if (!Peashooter->Pea[PeaNumber].isActive)
+        return;
 
-    Zombies *finalTarget = NULL; 
-    float minX = 2000.0f; 
+    Zombies *finalTarget = NULL;
+    float minX = 2000.0f;
 
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
@@ -161,12 +164,17 @@ if (!Peashooter->Pea[PeaNumber].isActive) return;
             ZombieNormal[j].X_Cell == Peashooter->Pea[PeaNumber].X_Cell)
             Peashooter->Pea[PeaNumber].Pea.finalX = ZombieNormal[j].Markaz.x;
 
-        if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX) hasHit = true;
-        else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius, ZombieNormal[j].CollisionBox)) hasHit = true;
+        if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX)
+            hasHit = true;
+        else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius,
+                                         ZombieNormal[j].CollisionBox))
+            hasHit = true;
 
-        if (hasHit && ZombieNormal[j].Markaz.x < minX) {
+        if (hasHit && ZombieNormal[j].Markaz.x < minX)
+        {
             minX = ZombieNormal[j].Markaz.x;
-            finalTarget = &ZombieNormal[j]; }
+            finalTarget = &ZombieNormal[j];
+        }
     }
 
     for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
@@ -175,13 +183,18 @@ if (!Peashooter->Pea[PeaNumber].isActive) return;
             continue;
 
         bool hasHit = false;
-        if (ThinkingZombie[j].X_Cell == Peashooter->Base.X_Cell && ThinkingZombie[j].X_Cell == Peashooter->Pea[PeaNumber].X_Cell)
+        if (ThinkingZombie[j].X_Cell == Peashooter->Base.X_Cell &&
+            ThinkingZombie[j].X_Cell == Peashooter->Pea[PeaNumber].X_Cell)
             Peashooter->Pea[PeaNumber].Pea.finalX = ThinkingZombie[j].Markaz.x;
 
-        if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX) hasHit = true;
-        else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius, ThinkingZombie[j].CollisionBox)) hasHit = true;
+        if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX)
+            hasHit = true;
+        else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius,
+                                         ThinkingZombie[j].CollisionBox))
+            hasHit = true;
 
-        if (hasHit && ThinkingZombie[j].Markaz.x < minX) {
+        if (hasHit && ThinkingZombie[j].Markaz.x < minX)
+        {
             minX = ThinkingZombie[j].Markaz.x;
             finalTarget = &ThinkingZombie[j]; // آدرس زامبی نوع ۲ را ذخیره کن
         }
@@ -191,7 +204,7 @@ if (!Peashooter->Pea[PeaNumber].isActive) return;
     {
         finalTarget->Health -= Peashooter->peaDamege;
         PlaySound(BulletHitSound[rand() % 4]);
-        
+
         Peashooter->Pea[PeaNumber].isActive = false;
         Peashooter->Pea[PeaNumber].PeaBulletHit.isActive = true;
         Peashooter->Pea[PeaNumber].PeaBulletHit.DisplayTimer = 0;
@@ -202,12 +215,12 @@ if (!Peashooter->Pea[PeaNumber].isActive) return;
             finalTarget->ZombieObj.speedX, finalTarget->ZombieObj.speedY, finalTarget->ZombieObj.finalX,
             finalTarget->ZombieObj.finalY);
 
-        if (finalTarget->Health <= 0) {
+        if (finalTarget->Health <= 0)
+        {
             finalTarget->isAlive = false;
             ZombiesKilled++;
         }
     }
-
 }
 void UpdatePeaHitEffect(struct BulletHit *PeaBulletHit)
 {

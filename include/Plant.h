@@ -7,7 +7,8 @@
     PLANT_SUNFLOWER,
     PLANT_PEASHOOTER,
     PLANT_CHOMPER,
-    PLANT_ROSE
+    PLANT_ROSE,
+    PLANT_POTATOMINE
 } PlantType;
 
 
@@ -36,7 +37,7 @@ typedef struct ActiveTimeBar
 {
     Rectangle frameBAR;
     Vector2 posBar;
-    float LifetimePercentage;
+    float TimePercentage;
 } ActiveTimeBar;
 
 struct Zombies;

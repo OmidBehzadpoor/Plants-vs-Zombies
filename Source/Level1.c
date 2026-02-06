@@ -5,6 +5,7 @@
 #include "LevelUi.h"
 #include "Peashooter.h"
 #include "Plant.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
@@ -101,7 +102,7 @@ void UnloadLevel1(void)
     {
         UnloadAnimatedObject(&SunElementArray[i].sun);
     }
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         UnloadAnimatedObject(&icon[i]);
         UnloadTexture(Price[i]);
@@ -142,26 +143,37 @@ void InitLevel1Info(void)
     Level1Info.PeashooterInfoLevel.price = 100;
     Level1Info.ChompertInfoLevel.price = 125;
     Level1Info.RosetInfoLevel.price = 150;
+    Level1Info.PotatoMineInfoLevel.price = 25;
+
     Level1Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
     Level1Info.PeashooterInfoLevel.Cooldown = 2; // 45;
     Level1Info.ChompertInfoLevel.Cooldown = 2;   // 60;
     Level1Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
+    Level1Info.PotatoMineInfoLevel.Cooldown = 0.5;
     Level1Info.SunFlowertInfoLevel.Timer = 0;
     Level1Info.PeashooterInfoLevel.Timer = 0;
     Level1Info.ChompertInfoLevel.Timer = 0;
     Level1Info.RosetInfoLevel.Timer = 0;
+    Level1Info.PotatoMineInfoLevel.Timer = 0;
+    Level1Info.PotatoMineInfoLevel.ActivationTime = 5;
     Level1Info.SunFlowertInfoLevel.BaseHealth = 100;
     Level1Info.PeashooterInfoLevel.BaseHealth = 100;
     Level1Info.ChompertInfoLevel.BaseHealth = 100;
     Level1Info.RosetInfoLevel.BaseHealth = 100;
+    Level1Info.PotatoMineInfoLevel.BaseHealth = 100;
     Level1Info.SunFlowertInfoLevel.Lock = true;
     Level1Info.PeashooterInfoLevel.Lock = false;
     Level1Info.ChompertInfoLevel.Lock = false;
+
     Level1Info.RosetInfoLevel.Lock = false;
+    Level1Info.PotatoMineInfoLevel.Lock = false;
+
     Level1Info.SunFlowertInfoLevel.IsAvailable = true;
     Level1Info.PeashooterInfoLevel.IsAvailable = true;
     Level1Info.ChompertInfoLevel.IsAvailable = true;
     Level1Info.RosetInfoLevel.IsAvailable = true;
+    Level1Info.PotatoMineInfoLevel.IsAvailable = true;
+
     Level1Info.SunElementInfoLevel.Value = VALUESUN;
     Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
@@ -197,11 +209,11 @@ void InitLevel1Info(void)
 void InitLevel1Animation(void)
 {
     CurrentLevelInfo = &Level1Info;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
-        int pixel = (i == 2) ? 100 : 71;
-        int pixelY = (i == 2) ? 0 : 25;
-        int k = (i == 2) ? 12 : 0;
+        int pixel = (i == 2) ? 80 : 71;
+        int pixelY = (i == 2) ? 14 : 25;
+        int k = (i == 2 || i == 4) ? 12 : 0;
 
         icon[i] = GenerateAnimatedObject(&iconPic[i], pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
                                          370 - k + Frame.width * i, 25);
@@ -232,6 +244,8 @@ void InitLevel1Animation(void)
         Peashooter[i].Base.isAlive = false;
         Peashooter[i].FireTimer = 0;
         Peashooter[i].Firing = false;
+        PotatoMine[i].PotatoMineObj = GenerateAnimatedObject(&PotatoMineNotReadyPic, 75, 55, 80, 0, 0, 0, 0, 0, 0);
+        PotatoMine[i].Base.isAlive = false;
 
         for (int j = 0; j < 10; j++)
         {
@@ -292,7 +306,6 @@ void CheckWin(void)
         ZombiesKilled == CurrentLevelInfo->MaxZombieNormalAllowed + CurrentLevelInfo->MaxThinkingZombieAllowed)
     {
         CurrentGameState = WIN;
-        printf("WHY?");
         PlaySound(VictorySound);
     }
 }
@@ -338,6 +351,8 @@ void resartLevel(void)
         ResetAnimatedObject(&Peashooter[i].PeashooterObj);
         ResetAnimatedObject(&Chomper[i].ChomperObj);
         ResetAnimatedObject(&Rose[i].RoseObj);
+        ResetAnimatedObject(&PotatoMine[i].PotatoMineObj);
+        PotatoMine[i].Explosion = false;
         for (int j = 0; j < 10; j++)
         {
             ResetAnimatedObject(&Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
@@ -357,7 +372,7 @@ void resartLevel(void)
         ResetAnimatedObject(&ThinkingZombie[i].ZombieObj);
     }
     FirstRun = true;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         ResetAnimatedObject(&icon[i]);
     }

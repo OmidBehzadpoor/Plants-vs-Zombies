@@ -6,6 +6,7 @@
 #include "LevelUi.h"
 #include "Peashooter.h"
 #include "Plant.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
@@ -51,7 +52,7 @@ void DrawLevel3(void)
         DrawVictory();
         DrawBottom();
     }
-     if (CurrentGameState == YesNo)
+    if (CurrentGameState == YesNo)
     {
         DrawYesOrNop("       There's still a chance...\n\n\nAre you sure you want to give up? ");
     }
@@ -77,7 +78,8 @@ void UpdateLevel3(void)
         UpdateZombies();
         CheckWin();
         CheckLose();
-    }    if (CurrentGameState == YesNo)
+    }
+    if (CurrentGameState == YesNo)
     {
         UpdateYesOrNop();
     }
@@ -94,6 +96,8 @@ void InitLevel3Info(void)
     Level3Info.PeashooterInfoLevel.price = 100;
     Level3Info.ChompertInfoLevel.price = 125;
     Level3Info.RosetInfoLevel.price = 150;
+    Level3Info.PotatoMineInfoLevel.price = 25;
+
     Level3Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
     Level3Info.PeashooterInfoLevel.Cooldown = 2; // 45;
     Level3Info.ChompertInfoLevel.Cooldown = 2;   // 60;
@@ -102,18 +106,27 @@ void InitLevel3Info(void)
     Level3Info.PeashooterInfoLevel.Timer = 0;
     Level3Info.ChompertInfoLevel.Timer = 0;
     Level3Info.RosetInfoLevel.Timer = 0;
+    Level3Info.PotatoMineInfoLevel.Timer = 0;
+    Level3Info.PotatoMineInfoLevel.ActivationTime = 5;
+
     Level3Info.SunFlowertInfoLevel.BaseHealth = 100;
     Level3Info.PeashooterInfoLevel.BaseHealth = 100;
     Level3Info.ChompertInfoLevel.BaseHealth = 100;
     Level3Info.RosetInfoLevel.BaseHealth = 100;
+    Level3Info.PotatoMineInfoLevel.BaseHealth = 100;
+
     Level3Info.SunFlowertInfoLevel.Lock = false;
     Level3Info.PeashooterInfoLevel.Lock = false;
     Level3Info.ChompertInfoLevel.Lock = false;
     Level3Info.RosetInfoLevel.Lock = false;
+    Level3Info.PotatoMineInfoLevel.Lock = false;
+
     Level3Info.SunFlowertInfoLevel.IsAvailable = false;
     Level3Info.PeashooterInfoLevel.IsAvailable = true;
     Level3Info.ChompertInfoLevel.IsAvailable = true;
     Level3Info.RosetInfoLevel.IsAvailable = true;
+    Level3Info.PotatoMineInfoLevel.IsAvailable = true;
+
     Level3Info.SunElementInfoLevel.Value = VALUESUN;
     Level3Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level3Info.SunElementInfoLevel.Regenerate = GENERATESUN;
@@ -147,11 +160,11 @@ void InitLevel3Info(void)
 void InitLevel3Animation(void)
 {
     CurrentLevelInfo = &Level3Info;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
-        int pixel = (i == 2) ? 100 : 71;
-        int pixelY = (i == 2) ? 0 : 25;
-        int k = (i == 2) ? 12 : 0;
+        int pixel = (i == 2) ? 80 : 71;
+        int pixelY = (i == 2) ? 14 : 25;
+        int k = (i == 2 || i == 4) ? 12 : 0;
 
         icon[i] = GenerateAnimatedObject(&iconPic[i], pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
                                          370 - k + Frame.width * i, 25);
@@ -182,7 +195,8 @@ void InitLevel3Animation(void)
         Peashooter[i].Base.isAlive = false;
         Peashooter[i].FireTimer = 0;
         Peashooter[i].Firing = false;
-
+        PotatoMine[i].PotatoMineObj = GenerateAnimatedObject(&PotatoMineNotReadyPic, 75, 55, 80, 0, 0, 0, 0, 0, 0);
+        PotatoMine[i].Base.isAlive = false;
         for (int j = 0; j < 10; j++)
         {
             Peashooter[i].Pea[j].isActive = false;
@@ -254,6 +268,9 @@ void resartLevel3(void)
         ResetAnimatedObject(&Peashooter[i].PeashooterObj);
         ResetAnimatedObject(&Chomper[i].ChomperObj);
         ResetAnimatedObject(&Rose[i].RoseObj);
+        ResetAnimatedObject(&PotatoMine[i].PotatoMineObj);
+        PotatoMine[i].Explosion = false;
+
         for (int j = 0; j < 10; j++)
         {
             ResetAnimatedObject(&Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
@@ -273,7 +290,7 @@ void resartLevel3(void)
         ResetAnimatedObject(&ThinkingZombie[i].ZombieObj);
     }
     FirstRun = true;
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         ResetAnimatedObject(&icon[i]);
     }

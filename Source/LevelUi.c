@@ -4,6 +4,7 @@
 #include "LevelBase.h"
 #include "Peashooter.h"
 #include "Plant.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
@@ -85,7 +86,7 @@ void CheckSelect(void)
     }
     Vector2 MousePos = GetMousePosition();
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         if (MousePos.y >= 0 && MousePos.y <= Frame.height && MousePos.x >= 300 + i * Frame.width &&
             MousePos.x <= 300 + i * Frame.width + Frame.width)
@@ -161,6 +162,23 @@ void CheckSelect(void)
                     ShowLockWarning();
                 }
                 break;
+            case 4:
+                if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable && !CurrentLevelInfo->PotatoMineInfoLevel.Lock)
+                {
+                    if (SunBank >= CurrentLevelInfo->PotatoMineInfoLevel.price) //? اصلاح
+                    {
+                        Selection = POTATOMINE;
+                    }
+                    else
+                    {
+                        ShowLackSunWarning(); //? اصلاح
+                    }
+                }
+                else
+                {
+                    ShowLockWarning();
+                }
+                break;
             default:
                 Selection = EMPTY;
             }
@@ -191,7 +209,7 @@ void UpdateLevelItems(void)
             }
         }
     }
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         UpdateAnimatedObject(&icon[i]);
     }
@@ -321,6 +339,27 @@ void UpdateSelectionItems(void)
                     }
                 }
             }
+            else if (Selection == POTATOMINE && CellContent[Y_Cell][X_Cell] == EMPTY)
+            {
+                for (int i = 0; i < MAXNUMITEMS; i++)
+                {
+                    if (PotatoMine[i].Base.isAlive == false &&PotatoMine[i].Explosion == false)
+                    {
+                        GeneratePotatoMine(&PotatoMine[i], X_Cell, Y_Cell);
+                        CellContent[Y_Cell][X_Cell] = POTATOMINE;
+                        RowStatus[Y_Cell].plantCount++;
+                        RowStatus[Y_Cell].rowChanged = true;
+                        RowStatus[Y_Cell].WeightChanged = true;
+
+                        SunBank -= CurrentLevelInfo->PotatoMineInfoLevel.price;
+                        CurrentLevelInfo->PotatoMineInfoLevel.Lock = true;
+                        Selection = EMPTY;
+                        PlaySound(PlantingSound[rand() % 3]);
+
+                        break;
+                    }
+                }
+            }
         }
     }
 }
@@ -342,6 +381,9 @@ void DrawSelectionTick(void)
     case ROSE:
         DrawTexture(selectpic, 360 + 3 * Frame.width, 30, WHITE);
         break;
+    case POTATOMINE:
+        DrawTexture(selectpic, 360 + 4 * Frame.width, 30, WHITE);
+        break;
 
     default:
         break;
@@ -351,7 +393,7 @@ void DrawLevelItems(void)
 {
     DrawTexture(Map, 0, 0, WHITE);
     DrawTexture(SunBankPic, 0, 0, WHITE);
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 5; i++)
     {
         DrawTexture(Frame, 300 + i * Frame.width, 0, WHITE);
         DrawAnimatedObject(&icon[i], WHITE);
@@ -370,14 +412,18 @@ void DrawLevelItems(void)
     {
         DrawTexture(TimeFramePic, 1380, 0, WHITE);
 
-        DrawTextEx(HorrorFont, "Best :", (Vector2){1405, 25}, 25, 2.0f,(BestSurvivalTime>SurvivalTimer)? GREEN : RED);
+        DrawTextEx(HorrorFont, "Best :", (Vector2){1405, 25}, 25, 2.0f,
+                   (BestSurvivalTime > SurvivalTimer) ? GREEN : RED);
         char TimeText[16];
         snprintf(TimeText, sizeof(TimeText), "%02d:%02d:%02d", bestHours, bestMinutes, bestSeconds);
-        DrawTextEx(HorrorFont, TimeText, (Vector2){1473, 30}, 20, 2.0f, (BestSurvivalTime>SurvivalTimer)? GREEN : RED);
+        DrawTextEx(HorrorFont, TimeText, (Vector2){1473, 30}, 20, 2.0f,
+                   (BestSurvivalTime > SurvivalTimer) ? GREEN : RED);
         snprintf(TimeText, sizeof(TimeText), "%02d:%02d:%02d", SurvivalHours, SurvivalMinutes, SurvivalSeconds);
 
-        DrawTextEx(HorrorFont, "Time :", (Vector2){1405, 50}, 23, 2.0f, (BestSurvivalTime>SurvivalTimer)? GRAY : GREEN);
-        DrawTextEx(HorrorFont, TimeText, (Vector2){1473, 55}, 18, 2.0f, (BestSurvivalTime>SurvivalTimer)? GRAY : GREEN);
+        DrawTextEx(HorrorFont, "Time :", (Vector2){1405, 50}, 23, 2.0f,
+                   (BestSurvivalTime > SurvivalTimer) ? GRAY : GREEN);
+        DrawTextEx(HorrorFont, TimeText, (Vector2){1473, 55}, 18, 2.0f,
+                   (BestSurvivalTime > SurvivalTimer) ? GRAY : GREEN);
     }
 }
 void DrawLackSunWarning(void)
@@ -701,6 +747,21 @@ void DrawLockPicture(void)
         Vector2 Pos = (Vector2){441 + 3 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
+    if (!CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable || CurrentLevelInfo->PotatoMineInfoLevel.Lock)
+    {
+        DrawTexture(LockPic, 370 + 4 * Frame.width, 30, WHITE);
+        int frame =
+            (CurrentLevelInfo->PotatoMineInfoLevel.Timer / CurrentLevelInfo->PotatoMineInfoLevel.Cooldown) * 100.0f - 1;
+
+        if (frame < 0)
+            frame = 0;
+        if (frame > 99)
+            frame = 99;
+
+        Rectangle FramePic = (Rectangle){58 * frame, 0, 58, 58};
+        Vector2 Pos = (Vector2){441 + 4 * Frame.width, 71};
+        DrawTextureRec(RingBar, FramePic, Pos, WHITE);
+    }
 }
 
 void ResetRowManager(void)
@@ -735,6 +796,9 @@ void ResetUi(void)
     CurrentLevelInfo->PeashooterInfoLevel.Timer = 0;
     CurrentLevelInfo->ChompertInfoLevel.Timer = 0;
     CurrentLevelInfo->RosetInfoLevel.Timer = 0;
+    CurrentLevelInfo->ThinkingZombie.ZombieSpawned = 0;
+    CurrentLevelInfo->ZombieNormal.ZombieSpawned = 0;
+
     CurrentLevelInfo->SunFlowertInfoLevel.Lock = false;
     CurrentLevelInfo->PeashooterInfoLevel.Lock = false;
     CurrentLevelInfo->ChompertInfoLevel.Lock = false;

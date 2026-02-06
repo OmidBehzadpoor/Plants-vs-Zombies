@@ -30,7 +30,9 @@ typedef enum MapContent
     SUNFLOWER,
     PEASHOOTER,
     CHOMPER,
-    ROSE
+    ROSE,
+    POTATOMINE,
+    EXPLODEDPOTATOMINE
 } MapContent;
 typedef struct WarningMessage
 {

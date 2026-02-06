@@ -11,6 +11,7 @@
 #include "gif.h"
 #include "levelselect.h"
 #include "menu.h"
+#include "PotatoMine.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -185,6 +186,10 @@ void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int Frame
     {
         return;
     }
+    if (CellContent[zombie->Y_Cell][zombie->X_Cell] == EXPLODEDPOTATOMINE)
+    {
+        return;
+    }
     ResetAnimatedObject(&zombie->ZombieObj);
 
     zombie->ZombieObj =
@@ -205,7 +210,7 @@ void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWi
         return;
     }
     if (CellContent[zombie->Y_Cell][zombie->X_Cell] == EMPTY ||
-        CellContent[zombie->Y_Cell][zombie->X_Cell] == LAWNMOWER)
+        CellContent[zombie->Y_Cell][zombie->X_Cell] == LAWNMOWER || CellContent[zombie->Y_Cell][zombie->X_Cell] == EXPLODEDPOTATOMINE)
     {
         ResetAnimatedObject(&zombie->ZombieObj);
 
@@ -232,6 +237,8 @@ void ZombiesAttackPlants(Zombies *zombie)
         ApplyZombieDamageToPlant(zombie, &Peashooter[i].Base);
         ApplyZombieDamageToPlant(zombie, &Chomper[i].Base);
         ApplyZombieDamageToPlant(zombie, &Rose[i].Base);
+        ApplyZombieDamageToPlant(zombie, &PotatoMine[i].Base);
+
     }
 }
 void ApplyZombieDamageToPlant(Zombies *zombie, PlantBase *Plant)
@@ -375,6 +382,12 @@ double UpdateThinkingZombiesDeterminant(int Row)
         if (Rose[i].Base.isAlive && Rose[i].Base.Y_Cell == Row)
         {
             double RelativeHP = Rose[i].Base.Health / CurrentLevelInfo->RosetInfoLevel.BaseHealth;
+            S += RelativeHP;
+            Q += (RelativeHP * RelativeHP);
+        }
+                if (PotatoMine[i].Base.isAlive && PotatoMine[i].Base.Y_Cell == Row)
+        {
+            double RelativeHP = PotatoMine[i].Base.Health / CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth;
             S += RelativeHP;
             Q += (RelativeHP * RelativeHP);
         }

@@ -9,6 +9,7 @@
 #include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
+#include "PotatoMine.h"
 #include "menu.h"
 #include <math.h>
 #include <stdio.h>
@@ -55,6 +56,8 @@ void RoseEffect(RoseElement *rose)
             ApplyRoseHealEffect(rose, &SunFlower[i].Base, CurrentLevelInfo->SunFlowertInfoLevel.BaseHealth);
             ApplyRoseHealEffect(rose, &Peashooter[i].Base, CurrentLevelInfo->PeashooterInfoLevel.BaseHealth);
             ApplyRoseHealEffect(rose, &Chomper[i].Base, CurrentLevelInfo->ChompertInfoLevel.BaseHealth);
+            ApplyRoseHealEffect(rose, &PotatoMine[i].Base, CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth);
+
             //  TODO: ???  ApplyRoseHealEffect(rose, &Rose[i].Base, CurrentLevelInfo->RosetInfoLevel.BaseHealth);
         }
     }
@@ -90,7 +93,7 @@ void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
 
     obj->LifetimeDisplay.frameBAR = (Rectangle){65 * 99, 0, 65, 3};
     obj->LifetimeDisplay.posBar = (Vector2){322.5 + X_Cell * 107.5, 243 + Y_Cell * 122};
-    obj->LifetimeDisplay.LifetimePercentage = 100;
+    obj->LifetimeDisplay.TimePercentage = 100;
     GeneratePlantBase(&obj->Base, PLANT_ROSE, CurrentLevelInfo->RosetInfoLevel.BaseHealth, X_Cell, Y_Cell);
 
     return;
