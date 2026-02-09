@@ -5,6 +5,7 @@
 #include "Plant.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
+#include "Shop.h"
 #include "Sun.h"
 #include "Sunflower.h"
 #include "Zombie.h"
@@ -12,6 +13,7 @@
 #include "levelselect.h"
 #include "menu.h"
 #include <math.h>
+#include "Diamond.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -64,7 +66,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
     }
     Zombies *finalTarget = NULL;
     float minX = 2000.0f;
-
+int Chancepercentage =0 ;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
         if (!ZombieNormal[j].isAlive || ZombieNormal[j].Markaz.x > END_X ||
@@ -80,6 +82,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
         {
             minX = ZombieNormal[j].Markaz.x;
             finalTarget = &ZombieNormal[j];
+            Chancepercentage =10;
         }
     }
 
@@ -99,6 +102,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
         {
             minX = ThinkingZombie[j].Markaz.x;
             finalTarget = &ThinkingZombie[j]; // آدرس زامبی نوع ۲ را ذخیره کن
+            Chancepercentage=25;
         }
     }
     if (finalTarget != NULL)
@@ -106,6 +110,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
         finalTarget->isAlive = false;
         PotatoMine->Explosion = true;
         ZombiesKilled++;
+        CreatingDiamondLuck( DiamondElementArray, finalTarget->Markaz.x ,finalTarget->Markaz.y ,Chancepercentage);
         CellContent[PotatoMine->Base.Y_Cell][PotatoMine->Base.X_Cell] = EXPLODEDPOTATOMINE;
         RowStatus[PotatoMine->Base.Y_Cell].plantCount--;
         RowStatus[PotatoMine->Base.Y_Cell].rowChanged = true;

@@ -1,9 +1,9 @@
+#include "levelselect.h"
+#include "SoundandMusic.h"
 #include "menu.h"
 #include "raylib.h"
-#include <levelselect.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "SoundandMusic.h"
 
 Texture2D BackgroundLevelselect;
 Texture2D LVL1Picture;
@@ -77,55 +77,121 @@ void Initlevelselect(void)
     //  Circle Back Button
 }
 
-void ButtonAnimation(void)
+void ButtonAnimation(Button *Button)
 {
     float Time = GetFrameTime();
 
-    int WidthBackButtonPic = BackButton.Picture.width;
-    int HeightBackButtonPic = BackButton.Picture.height;
-    float FinalWidthBackButton = (float)WidthBackButtonPic * BackButton.targetScale;
-    float FinalHeightBackButton = (float)HeightBackButtonPic * BackButton.targetScale;
-    if (CheckCollisionPointRec(GetMousePosition(), BackButton.ClickArea))
+    int WidthBackButtonPic = Button->ClickArea.width;
+    int HeightBackButtonPic = Button->ClickArea.height;
+    float FinalWidthBackButton = (float)WidthBackButtonPic * Button->targetScale;
+    float FinalHeightBackButton = (float)HeightBackButtonPic * Button->targetScale;
+    if (CheckCollisionPointRec(GetMousePosition(), Button->ClickArea))
     {
 
-        if (BackButton.ScaleNow < BackButton.targetScale)
+        if (Button->ScaleNow < Button->targetScale)
         {
-            BackButton.ScaleNow += BackButton.scaleSpeed * Time;
-            if (BackButton.ScaleNow > BackButton.targetScale)
+            Button->ScaleNow += Button->scaleSpeed * Time;
+            if (Button->ScaleNow > Button->targetScale)
             {
-                BackButton.ScaleNow = BackButton.targetScale;
+                Button->ScaleNow = Button->targetScale;
             }
         }
     }
     else
     {
-        if (BackButton.ScaleNow > BackButton.DefaultScale)
+        if (Button->ScaleNow > Button->DefaultScale)
         {
-            BackButton.ScaleNow -= BackButton.scaleSpeed * Time;
-            if (BackButton.ScaleNow < BackButton.DefaultScale)
+            Button->ScaleNow -= Button->scaleSpeed * Time;
+            if (Button->ScaleNow < Button->DefaultScale)
             {
-                BackButton.ScaleNow = BackButton.DefaultScale;
+                Button->ScaleNow = Button->DefaultScale;
             }
         }
     }
 }
+void DrawButton(Button *Button)
+{
+    float scaledWidth = Button->ClickArea.width * Button->ScaleNow;
+    float scaledHeight = Button->ClickArea.height * Button->ScaleNow;
+
+    // حالا origin واقعاً مرکز بافت میشه
+    Vector2 origin = {scaledWidth / 2.0f, scaledHeight / 2.0f};
+
+    DrawTexturePro(Button->Picture,
+                   (Rectangle){0.0f, 0.0f, (float)Button->Picture.width, (float)Button->Picture.height},
+
+                   // ❗ اینجا باید مختصات مرکز بدی، نه گوشه
+                   (Rectangle){Button->CenterPosition.x, Button->CenterPosition.y, scaledWidth, scaledHeight},
+
+                   origin, // مرکز واقعی
+                   0.0f, WHITE);
+}
+void DrawCircleButton(CircleButtonAnim *btn)
+{
+    float diameter = btn->Radius * 2.0f * btn->ScaleNow;
+
+    Vector2 origin = {diameter / 2.0f, diameter / 2.0f};
+
+    DrawTexturePro(btn->Picture, (Rectangle){0, 0, (float)btn->Picture.width, (float)btn->Picture.height},
+                   (Rectangle){btn->CenterPosition.x, btn->CenterPosition.y, diameter, diameter}, origin, btn->rotation,
+                   WHITE);
+}
+void CircleButtonAnimation(CircleButtonAnim *btn)
+{
+    float dt = GetFrameTime();
+
+    float scaledRadius = btn->Radius * btn->ScaleNow;
+    if (btn->rotational)
+    {
+        btn->rotation += dt *  btn->rotationSpeed;
+        if (btn->rotation >= 360)
+        {
+            btn->rotation = 0;
+        }
+    }
+    // بررسی برخورد موس با دایره
+    if (CheckCollisionPointCircle(GetMousePosition(), btn->CenterPosition, scaledRadius))
+    {
+        if (btn->ScaleNow < btn->targetScale && btn->scaleSpeed > 0 ||
+            btn->ScaleNow > btn->targetScale && btn->scaleSpeed < 0)
+        {
+            btn->ScaleNow += btn->scaleSpeed * dt;
+            if (btn->ScaleNow > btn->targetScale && btn->scaleSpeed > 0 ||
+                btn->ScaleNow < btn->targetScale && btn->scaleSpeed < 0)
+                btn->ScaleNow = btn->targetScale;
+        }
+        btn->IsHover = true;
+            if (btn->rotational)
+    {
+        btn->rotation += dt *  btn->rotationSpeed;
+        if (btn->rotation >= 360)
+        {
+            btn->rotation = 0;
+        }
+    }
+    }
+    else
+    {
+        if (btn->ScaleNow > btn->DefaultScale && btn->scaleSpeed > 0 ||
+            btn->ScaleNow < btn->DefaultScale && btn->scaleSpeed < 0)
+        {
+            btn->ScaleNow -= btn->scaleSpeed * dt;
+            if (btn->ScaleNow < btn->DefaultScale && btn->scaleSpeed > 0 ||
+                btn->ScaleNow > btn->DefaultScale && btn->scaleSpeed < 0)
+                btn->ScaleNow = btn->DefaultScale;
+        }
+        btn->IsHover = false;
+         btn->rotation = 0;
+    }
+}
+
 void Drawlevelselect(void)
 {
 
     DrawTexture(BackgroundLevelselect, 0, 0, WHITE);
     // BackButton
-    ButtonAnimation();
-    Vector2 origin = {(float)BackButton.Picture.width / 2.0f, (float)BackButton.Picture.height / 2.0f}; // مرکز تصویر
 
-    DrawTexturePro(
-        BackButton.Picture,
-        (Rectangle){0.0f, 0.0f, (float)BackButton.Picture.width, (float)BackButton.Picture.height}, // منبع (تمام بافت)
-        (Rectangle){BackButton.CenterPosition.x, BackButton.CenterPosition.y,
-                    (float)BackButton.Picture.width * BackButton.ScaleNow,
-                    (float)BackButton.Picture.height * BackButton.ScaleNow}, // مقصد (با مقیاس)
-        origin,                                                              // نقطه مبدأ (Origin)
-        0.0f,                                                                // چرخش
-        WHITE);
+    DrawButton(&BackButton);
 
     //
     if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl1, Radius1))
@@ -153,7 +219,7 @@ void Drawlevelselect(void)
 
 void Updatelevelselect(void)
 {
-
+    ButtonAnimation(&BackButton);
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
         if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl1, Radius1))

@@ -4,12 +4,12 @@
 #include "gif.h"
 #include "raylib.h"
 
-typedef struct SunElementInfo
+typedef struct ElementInfo
 {
     int Value;
     float DisplayTime;
     float Regenerate;
-} SunElementInfo;
+} ElementInfo;
 
 typedef struct ZombieInfo
 {
@@ -41,7 +41,9 @@ typedef struct LevelInfo
     struct PlantsInfo ChompertInfoLevel;
     struct PlantsInfo RosetInfoLevel;
     struct PlantsInfo PotatoMineInfoLevel;
-    struct SunElementInfo SunElementInfoLevel;
+    struct ElementInfo SunElementInfoLevel;
+    struct ElementInfo DiamondElementInfoLevel;
+
     struct ZombieInfo ZombieNormal;
     struct ZombieInfo ThinkingZombie;
 
@@ -55,7 +57,7 @@ extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], i
 extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,
     ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic,
     RingBar, ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic, PotatoMineNotReadyPic,
-    PotatoMineMashedPic, PotatoMineSheet , ExplosionSpudow;
+    PotatoMineMashedPic, PotatoMineSheet, ExplosionSpudow;
 extern Color GoldOrange, SaffronYellow;
 extern AnimatedObject icon[5];
 extern Rectangle LoseNowButton;

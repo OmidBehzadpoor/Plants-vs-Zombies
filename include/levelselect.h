@@ -16,24 +16,41 @@ extern float Radius2;
 extern float Radius3;
 extern float Radius4;
 extern float RadiusBackButton;
- typedef struct Button {
+typedef struct Button
+{
 
-
-    Texture2D Picture ;
-    Rectangle ClickArea ;
-    float targetScale;    
-    float DefaultScale;   
+    Texture2D Picture;
+    Rectangle ClickArea;
+    float targetScale;
+    float DefaultScale;
     float ScaleNow;
     float scaleSpeed;
     Vector2 CenterPosition;
-} Button ;
+} Button;
+typedef struct CircleButtonAnim
+{
+
+    Texture2D Picture;
+    float Radius;
+    float targetScale;
+    float DefaultScale;
+    float ScaleNow;
+    float scaleSpeed;
+    float rotationSpeed;
+    float rotation;
+    Vector2 CenterPosition;
+    bool IsHover;
+    bool rotational;
+} CircleButtonAnim;
 extern Button BackButton;
 
-void ButtonAnimation(void);
+void ButtonAnimation(Button *Button);
 void Initlevelselect(void);
 void Drawlevelselect(void);
 void Updatelevelselect(void);
 void Unloadlevelselect(void);
 void MouseSelection(void);
-
+void DrawButton(Button *Button);
+void DrawCircleButton(CircleButtonAnim *btn);
+void CircleButtonAnimation(CircleButtonAnim *btn);
 #endif

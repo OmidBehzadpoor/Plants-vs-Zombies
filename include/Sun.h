@@ -1,7 +1,8 @@
 #pragma once
 #ifndef SUN_H
 #define SUN_H
-
+#include "Level1.h"
+#include "gif.h"
 typedef struct SunElement
 {
     AnimatedObject sun;

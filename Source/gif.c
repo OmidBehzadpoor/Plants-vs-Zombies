@@ -1,4 +1,5 @@
 #include "gif.h"
+#include <stdio.h>
 AnimatedObject GenerateAnimatedObject(const Texture2D *Sheet, int frameWidth, int frameHeight, float frameDelay,
                                       float startX, float startY, float speedX, float speedY, float finalX,
                                       float finalY)
@@ -93,14 +94,13 @@ void UpdateAnimatedObject(AnimatedObject *obj)
 
 void DrawAnimatedObject(const AnimatedObject *obj, Color tint)
 {
-        DrawTextureRec(obj->texture, obj->frames[obj->currentFrame], (Vector2){obj->posX, obj->posY}, WHITE);
-    
+    DrawTextureRec(obj->texture, obj->frames[obj->currentFrame], (Vector2){obj->posX, obj->posY}, tint);
 }
 void UnloadAnimatedObject(AnimatedObject *obj)
 {
     UnloadTexture(obj->texture);
-    if(obj->frames!=NULL)
-    free(obj->frames);
+    if (obj->frames != NULL)
+        free(obj->frames);
 }
 void ResetAnimatedObject(AnimatedObject *obj)
 {

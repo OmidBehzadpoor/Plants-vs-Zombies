@@ -1,9 +1,11 @@
 #include "Zombie.h"
 #include "Chomper.h"
+#include "Diamond.h"
 #include "Level1.h"
 #include "LevelUi.h"
 #include "Peashooter.h"
 #include "Plant.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
@@ -11,7 +13,6 @@
 #include "gif.h"
 #include "levelselect.h"
 #include "menu.h"
-#include "PotatoMine.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,9 +37,8 @@ void UpdateZombies(void)
         }
         if (!spawned)
         {
-           spawned = SpawnZombie(ThinkingZombie, &ThinkingZombiePic, &CurrentLevelInfo->ThinkingZombie,
-                       CurrentLevelInfo->MaxThinkingZombieAllowed
-                    );
+            spawned = SpawnZombie(ThinkingZombie, &ThinkingZombiePic, &CurrentLevelInfo->ThinkingZombie,
+                                  CurrentLevelInfo->MaxThinkingZombieAllowed);
         }
         if (!spawned)
         {
@@ -46,53 +46,69 @@ void UpdateZombies(void)
                                   CurrentLevelInfo->MaxZombieNormalAllowed);
         }
     }
-
-    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
+    if (!FreezeBurstEffect)
     {
-
-        UpdateZombieMovement(&ZombieNormal[i], &CurrentLevelInfo->ZombieNormal);
-        ZombiesAttackPlants(&ZombieNormal[i]);
-        EnableZombieAttack(&ZombieNormal[i], &ZombieNormalAttack1, 107, 122);
-        ZombiesAttackPlants(&ZombieNormal[i]);
-        DisableZombieAttack(&ZombieNormal[i], &ZombieNormal1, 107, 122);
-        CheckLawnMowerCollision(&ZombieNormal[i]);
-    }
-    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
-    {
-
-        UpdateZombieMovement(&ThinkingZombie[i], &CurrentLevelInfo->ThinkingZombie);
-        ZombiesAttackPlants(&ThinkingZombie[i]);
-        EnableZombieAttack(&ThinkingZombie[i], &ThinkingZombieAttackPic, 107, 122);
-        ZombiesAttackPlants(&ThinkingZombie[i]);
-        DisableZombieAttack(&ThinkingZombie[i], &ThinkingZombiePic, 107, 122);
-        CheckLawnMowerCollision(&ThinkingZombie[i]);
-        UpdateThinkingZombieVerticalMovement(&ThinkingZombie[i]);
-    }
-    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
-    {
-        if (ZombieNormal[i].isAlive && ZombieNormal[i].Attack && ZombieNormal[i].Markaz.x <= END_X)
+        for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
         {
-            PlayEatSound(&plantEatSoundPlayed);
-            break;
+
+            UpdateZombieMovement(&ZombieNormal[i], &CurrentLevelInfo->ZombieNormal);
+            ZombiesAttackPlants(&ZombieNormal[i]);
+            EnableZombieAttack(&ZombieNormal[i], &ZombieNormalAttack1, 107, 122);
+            ZombiesAttackPlants(&ZombieNormal[i]);
+            DisableZombieAttack(&ZombieNormal[i], &ZombieNormal1, 107, 122);
+            CheckLawnMowerCollision(&ZombieNormal[i]);
         }
-    }
-    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
-    {
-        if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Attack && ThinkingZombie[i].Markaz.x <= END_X)
+        for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
         {
-            PlayEatSound(&plantEatSoundPlayed);
-            break;
+
+            UpdateZombieMovement(&ThinkingZombie[i], &CurrentLevelInfo->ThinkingZombie);
+            ZombiesAttackPlants(&ThinkingZombie[i]);
+            EnableZombieAttack(&ThinkingZombie[i], &ThinkingZombieAttackPic, 107, 122);
+            ZombiesAttackPlants(&ThinkingZombie[i]);
+            DisableZombieAttack(&ThinkingZombie[i], &ThinkingZombiePic, 107, 122);
+            CheckLawnMowerCollision(&ThinkingZombie[i]);
+            UpdateThinkingZombieVerticalMovement(&ThinkingZombie[i]);
+        }
+        for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
+        {
+            if (ZombieNormal[i].isAlive && ZombieNormal[i].Attack && ZombieNormal[i].Markaz.x <= END_X)
+            {
+                PlayEatSound(&plantEatSoundPlayed);
+                break;
+            }
+        }
+        for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
+        {
+            if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Attack && ThinkingZombie[i].Markaz.x <= END_X)
+            {
+                PlayEatSound(&plantEatSoundPlayed);
+                break;
+            }
         }
     }
     UpdateEatSound(&plantEatSoundPlayed);
 }
 void DrawZombiesObject(Zombies *ZombiesType, int MaxCount)
 {
+    Color color;
+    if (FireStormEffect)
+    {
+        color = RED;
+    }
+    else if (FreezeBurstEffect)
+    {
+        color = BLUE;
+    }
+    else
+    {
+        color = WHITE;
+    }
+
     for (int i = 0; i < MaxCount; i++)
     {
         if (ZombiesType[i].isAlive)
         {
-            DrawAnimatedObject(&ZombiesType[i].ZombieObj, WHITE);
+            DrawAnimatedObject(&ZombiesType[i].ZombieObj, color);
         }
     }
 }
@@ -136,7 +152,7 @@ bool SpawnZombie(Zombies *ZombiesType, Texture2D *ZombieSheet, struct ZombieInfo
         }
         GenerateZombies(&ZombiesType[FreeIndex], ZombieSheet, Zombie);
         ZombiesSpawned++;
-    Zombie->ZombieSpawned++;
+        Zombie->ZombieSpawned++;
         return true;
     }
 }
@@ -169,8 +185,8 @@ void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
     {
         zombie->X_Cell = (zombie->Markaz.x - START_X) / (RectangleWidth);
         // printf("%d\n" , zombie[0].Y_Cell );
-        zombie->Y_Cell = (zombie->Markaz.y - START_Y) / (RectangleHeight);
     }
+    zombie->Y_Cell = (zombie->Markaz.y - START_Y) / (RectangleHeight);
 }
 void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight)
 {
@@ -210,7 +226,8 @@ void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWi
         return;
     }
     if (CellContent[zombie->Y_Cell][zombie->X_Cell] == EMPTY ||
-        CellContent[zombie->Y_Cell][zombie->X_Cell] == LAWNMOWER || CellContent[zombie->Y_Cell][zombie->X_Cell] == EXPLODEDPOTATOMINE)
+        CellContent[zombie->Y_Cell][zombie->X_Cell] == LAWNMOWER ||
+        CellContent[zombie->Y_Cell][zombie->X_Cell] == EXPLODEDPOTATOMINE)
     {
         ResetAnimatedObject(&zombie->ZombieObj);
 
@@ -238,7 +255,6 @@ void ZombiesAttackPlants(Zombies *zombie)
         ApplyZombieDamageToPlant(zombie, &Chomper[i].Base);
         ApplyZombieDamageToPlant(zombie, &Rose[i].Base);
         ApplyZombieDamageToPlant(zombie, &PotatoMine[i].Base);
-
     }
 }
 void ApplyZombieDamageToPlant(Zombies *zombie, PlantBase *Plant)
@@ -261,7 +277,7 @@ void ApplyZombieDamageToPlant(Zombies *zombie, PlantBase *Plant)
         CellContent[Plant->Y_Cell][Plant->X_Cell] = EMPTY;
         RowStatus[Plant->Y_Cell].plantCount--;
         RowStatus[Plant->Y_Cell].rowChanged = true;
-                            RowStatus[Plant->Y_Cell].WeightChanged = true;
+        RowStatus[Plant->Y_Cell].WeightChanged = true;
 
         Plant->isAlive = false;
     }
@@ -321,12 +337,17 @@ bool IsZombieInRow(int row, int plantXCell)
 }
 void KillAllZombiesInCell(int Row, int Col)
 {
+    int Chancepercentage = 5;
+    bool kill = false;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
         if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X && ZombieNormal[j].Y_Cell == Row &&
             ZombieNormal[j].X_Cell == Col)
         {
             ZombieNormal[j].isAlive = false;
+            kill = true;
+
+            Chancepercentage *= 2;
             ZombiesKilled++;
         }
     }
@@ -336,15 +357,29 @@ void KillAllZombiesInCell(int Row, int Col)
             ThinkingZombie[j].X_Cell == Col)
         {
             ThinkingZombie[j].isAlive = false;
+            Chancepercentage *= 2;
+            kill = true;
             ZombiesKilled++;
         }
+    }
+    if (Chancepercentage > 100)
+    {
+        Chancepercentage = 10;
+    }
+    if (kill)
+    {
+        CreatingDiamondLuck(DiamondElementArray, START_X + Col * RectangleWidth + RectangleWidth / 2,
+                            START_Y + Row * RectangleHeight + RectangleHeight / 2, Chancepercentage);
     }
 }
 void UpdateRowWeights()
 {
     for (int i = 0; i < ROWS; i++)
     {
-        if(!RowStatus[i].WeightChanged){continue;}
+        if (!RowStatus[i].WeightChanged)
+        {
+            continue;
+        }
         float mowerFactor = (CellContent[i][0] == LAWNMOWER) ? 1.0f : 0.0f;
         if (RowStatus[i].rowChanged)
         {
@@ -385,7 +420,7 @@ double UpdateThinkingZombiesDeterminant(int Row)
             S += RelativeHP;
             Q += (RelativeHP * RelativeHP);
         }
-                if (PotatoMine[i].Base.isAlive && PotatoMine[i].Base.Y_Cell == Row)
+        if (PotatoMine[i].Base.isAlive && PotatoMine[i].Base.Y_Cell == Row)
         {
             double RelativeHP = PotatoMine[i].Base.Health / CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth;
             S += RelativeHP;
@@ -400,16 +435,16 @@ void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
     {
         return;
     }
-    if (zombie->Markaz.x >= END_X)
+    if (zombie->Markaz.x >= END_X + 150) // ! حتما  بعدا چک کن!!!!!!!!!!!!!!!!!!!!!!!
     {
         return;
     }
     UpdateRowWeights(); // اول وزن‌ها را آپدیت کن
-// for (int i = 0; i < 5; i++)
-// {
-//    printf("W RoW %d = %f\n" ,i+1, RowStatus[i].RowWeights);
-// }
- 
+                        // for (int i = 0; i < 5; i++)
+                        // {
+                        //    printf("W RoW %d = %f\n" ,i+1, RowStatus[i].RowWeights);
+                        // }
+
     int currentRow = zombie->Y_Cell;
     int bestRow = currentRow;
     double minWeight = RowStatus[currentRow].RowWeights;
@@ -460,6 +495,6 @@ void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
 
         zombie->signSpeedY = 0;
     }
-  
+
     // printf("Sp Y = %f\n"  , zombie->ZombieObj.speedY);
 }

@@ -1,5 +1,6 @@
 #include "Level2.h"
 #include "Chomper.h"
+#include "Diamond.h"
 #include "LawnMower.h"
 #include "Level1.h"
 #include "LevelBase.h"
@@ -8,6 +9,7 @@
 #include "Plant.h"
 #include "PotatoMine.h"
 #include "Rose.h"
+#include "Shop.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
 #include "Sunflower.h"
@@ -127,6 +129,9 @@ void InitLevel2Info(void)
     Level2Info.SunElementInfoLevel.Value = VALUESUN;
     Level2Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level2Info.SunElementInfoLevel.Regenerate = GENERATESUN;
+    Level2Info.DiamondElementInfoLevel.Value = VALUESUN;
+    Level2Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
+    Level2Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
     Level2Info.ZombieNormal.Regenerate = 5;
     Level2Info.ZombieNormal.Timer = 0;
     Level2Info.ZombieNormal.BassSpeedX = -20;
@@ -196,6 +201,9 @@ void InitLevel2Animation(void)
             Peashooter[i].Pea[j].isActive = false;
             Peashooter[i].Pea[j].PeaBulletHit.DisplayTime = 0.1f;
             Peashooter[i].Pea[j].PeaBulletHit.DisplayTimer = 0.0;
+            Peashooter[i].Pea[j].PeaBulletHit.isActive = false;
+            Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj =
+                GenerateAnimatedObject(&PeaBulletHit, 49, 43, 100000, 0, 0, 0, 0, 0, 0);
         }
     }
 
@@ -205,6 +213,12 @@ void InitLevel2Animation(void)
         SunElementArray[i].sun = GenerateAnimatedObject(&SunElementSheet, 79, 79, 60, 0, 0, 0, 45, 0, 0);
         SunElementArray[i].Available = false;
         SunElementArray[i].time = 0.0f;
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        DiamondElementArray[i].Diamond = GenerateAnimatedObject(&MapDiamond, 58, 47, 10000, 0, 0, 0, 45, 0, 0);
+        DiamondElementArray[i].Available = false;
+        DiamondElementArray[i].Time = 0.0f;
     }
     ZombieTimer = 0;
     for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)

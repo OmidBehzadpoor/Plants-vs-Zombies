@@ -1,11 +1,13 @@
 #include "LevelUi.h"
 #include "Chomper.h"
+#include "Diamond.h"
 #include "Level1.h"
 #include "LevelBase.h"
 #include "Peashooter.h"
 #include "Plant.h"
 #include "PotatoMine.h"
 #include "Rose.h"
+#include "Shop.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
 #include "Sunflower.h"
@@ -17,7 +19,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-WarningMessage LackSunWarning, LockWarning;
+WarningMessage LackSunWarning, LockWarning, LackDiamondWarning;
+CircleButtonAnim FireStormButton, FreezeBurstButton, SunPackButton;
 Rectangle MapCell[ROWS][COLUMNS];
 
 int SunBank = 0;
@@ -39,41 +42,44 @@ GameState CurrentGameState = PLAYING;
 bool IsDrawVictory = false;
 bool IsDrawGameOver = false;
 bool IsDrawYesOrNo = false;
+bool FireStormEffect = false;
+bool FreezeBurstEffect = false;
+float FireStormEffectTimer = 4;
+float FireStormEffectTimerSecondsCounter = 1;
+float FreezeBurstEffectTimer = 4;
+
 RowManager RowStatus[ROWS] = {0};
 
 void DrawUI(void)
 {
     DrawLevelItems();
     DrawSelectionTick();
-    DrawLackSunWarning();
-    DrawLockWarning();
+    DrawWarning(&LackSunWarning, RED);
+    DrawWarning(&LockWarning, GoldOrange);
+    DrawWarning(&LackDiamondWarning, BLUE);
+    DrawDiamondElement();
     DrawLockPicture();
+    DrawSpecialItems();
 }
 void UpdateUI(void)
 {
     UpdateLevelItems();
-    UpdateLackSunWarning();
-
-    UpdateLockWarning();
-
+    UpdateWarning(&LackSunWarning);
+    UpdateWarning(&LockWarning);
+    UpdateWarning(&LackDiamondWarning);
+    UpdateDiamondElement();
     CheckSelect();
     UpdateSelectionItems();
     UpdateBottom();
+    UpdateSpecialItems();
 }
 
-void ShowLackSunWarning(void)
+void ShowWarning(WarningMessage *Warning, char *text)
 {
 
-    strcpy(LackSunWarning.text, "SUN NOT ENOUGH!");
-    LackSunWarning.isActive = true;
-    LackSunWarning.timer = LackSunWarning.duration; // ریست تایمر
-}
-void ShowLockWarning(void)
-{
-
-    strcpy(LockWarning.text, "Lock!");
-    LockWarning.isActive = true;
-    LockWarning.timer = LockWarning.duration; // ریست تایمر
+    strcpy(Warning->text, text);
+    Warning->isActive = true;
+    Warning->timer = Warning->duration; // ریست تایمر
 }
 //----------------------------------------------------------------------------//
 // ---------------------- Update Functions-----------------------  //
@@ -103,12 +109,12 @@ void CheckSelect(void)
                     }
                     else
                     {
-                        ShowLackSunWarning();
+                        ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
                     }
                 }
                 else
                 {
-                    ShowLockWarning();
+                    ShowWarning(&LockWarning, "Lock!");
                 }
                 break;
             case 1:
@@ -120,12 +126,12 @@ void CheckSelect(void)
                     }
                     else
                     {
-                        ShowLackSunWarning();
+                        ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
                     }
                 }
                 else
                 {
-                    ShowLockWarning();
+                    ShowWarning(&LockWarning, "Lock!");
                 }
                 break;
             case 2:
@@ -137,12 +143,12 @@ void CheckSelect(void)
                     }
                     else
                     {
-                        ShowLackSunWarning();
+                        ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
                     }
                 }
                 else
                 {
-                    ShowLockWarning();
+                    ShowWarning(&LockWarning, "Lock!");
                 }
                 break;
             case 3:
@@ -154,29 +160,30 @@ void CheckSelect(void)
                     }
                     else
                     {
-                        ShowLackSunWarning();
+                        ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
                     }
                 }
                 else
                 {
-                    ShowLockWarning();
+                    ShowWarning(&LockWarning, "Lock!");
                 }
                 break;
             case 4:
                 if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable && !CurrentLevelInfo->PotatoMineInfoLevel.Lock)
                 {
-                    if (SunBank >= CurrentLevelInfo->PotatoMineInfoLevel.price) //? اصلاح
+                    if (PotatoMineItems.PlayerInventory > 0) //? اصلاح
                     {
                         Selection = POTATOMINE;
                     }
                     else
                     {
-                        ShowLackSunWarning(); //? اصلاح
+                        ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+                        //? اصلاح
                     }
                 }
                 else
                 {
-                    ShowLockWarning();
+                    ShowWarning(&LockWarning, "Lock!");
                 }
                 break;
             default:
@@ -217,30 +224,19 @@ void UpdateLevelItems(void)
     if (Screen == LVL4)
         CalculateSurvivalTimeHMS();
 }
-void UpdateLackSunWarning(void)
+void UpdateWarning(WarningMessage *Warning)
 {
-    if (!LackSunWarning.isActive)
+    if (!Warning->isActive)
     {
         return;
     }
-    LackSunWarning.timer -= GetFrameTime();
-    if (LackSunWarning.timer <= 0.0f)
+    Warning->timer -= GetFrameTime();
+    if (Warning->timer <= 0.0f)
     {
-        LackSunWarning.isActive = false;
+        Warning->isActive = false;
     }
 }
-void UpdateLockWarning(void)
-{
-    if (!LockWarning.isActive)
-    {
-        return;
-    }
-    LockWarning.timer -= GetFrameTime();
-    if (LockWarning.timer <= 0.0f)
-    {
-        LockWarning.isActive = false;
-    }
-}
+
 void UpdateSelectionItems(void)
 {
     if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
@@ -343,7 +339,7 @@ void UpdateSelectionItems(void)
             {
                 for (int i = 0; i < MAXNUMITEMS; i++)
                 {
-                    if (PotatoMine[i].Base.isAlive == false &&PotatoMine[i].Explosion == false)
+                    if (PotatoMine[i].Base.isAlive == false && PotatoMine[i].Explosion == false)
                     {
                         GeneratePotatoMine(&PotatoMine[i], X_Cell, Y_Cell);
                         CellContent[Y_Cell][X_Cell] = POTATOMINE;
@@ -351,7 +347,7 @@ void UpdateSelectionItems(void)
                         RowStatus[Y_Cell].rowChanged = true;
                         RowStatus[Y_Cell].WeightChanged = true;
 
-                        SunBank -= CurrentLevelInfo->PotatoMineInfoLevel.price;
+                        PotatoMineItems.PlayerInventory--;
                         CurrentLevelInfo->PotatoMineInfoLevel.Lock = true;
                         Selection = EMPTY;
                         PlaySound(PlantingSound[rand() % 3]);
@@ -391,8 +387,24 @@ void DrawSelectionTick(void)
 }
 void DrawLevelItems(void)
 {
+    char text[5];
+
     DrawTexture(Map, 0, 0, WHITE);
+    for (int i = 0; i < 10; i++)
+    {
+        if (DiamondElementArray[i].IsCollected)
+        {
+            DrawTexture(DiamondBankFrame, 0, SunBankPic.height - 20, WHITE);
+            sprintf(text, "%d", DiamondBank);
+            DrawText(text, 120, 10 + SunBankPic.height, 25, (Color){243, 222, 142, 255});
+            DrawText("x  Diamond", 85, 35 + SunBankPic.height, 17, WHITE);
+            break;
+        }
+    }
+
     DrawTexture(SunBankPic, 0, 0, WHITE);
+    sprintf(text, "%d", SunBank);
+    DrawText(text, 85, 40, 30, GoldOrange);
     for (int i = 0; i < 5; i++)
     {
         DrawTexture(Frame, 300 + i * Frame.width, 0, WHITE);
@@ -400,9 +412,6 @@ void DrawLevelItems(void)
         DrawTexture(Price[i], 445 + i * Frame.width, 75, WHITE);
     }
 
-    char sunbanktext[5];
-    sprintf(sunbanktext, "%d", SunBank);
-    DrawText(sunbanktext, 85, 40, 30, GoldOrange);
     if (CurrentGameState == PLAYING)
     {
         DrawTexture(LoseNowpic, 1490, 780, WHITE);
@@ -426,14 +435,14 @@ void DrawLevelItems(void)
                    (BestSurvivalTime > SurvivalTimer) ? GRAY : GREEN);
     }
 }
-void DrawLackSunWarning(void)
+void DrawWarning(WarningMessage *Warning, Color color)
 {
-    if (!LackSunWarning.isActive)
+    if (!Warning->isActive)
     {
         return;
     }
     // محاسبه زمان سپری شده از شروع نمایش (برعکس تایمر)
-    float elapsed = LackSunWarning.duration - LackSunWarning.timer;
+    float elapsed = Warning->duration - Warning->timer;
 
     // **افکت ۱: حرکت عمودی نوسانی (Bouncing)**
     // استفاده از sin برای نوسان نرم
@@ -443,40 +452,23 @@ void DrawLackSunWarning(void)
 
     // **افکت ۲: بزرگ شدن/کوچک شدن (Scaling)**
     // استفاده از sin برای تغییر اندازه (اوج در وسط مدت نمایش)
-    float scaleFactor = 1.0f + 0.1f * sinf(elapsed * 2 * PI / LackSunWarning.duration);
+    float scaleFactor = 1.0f + 0.1f * sinf(elapsed * 2 * PI / Warning->duration);
 
-    Vector2 textPosition = LackSunWarning.startPos;
+    Vector2 textPosition = Warning->startPos;
     textPosition.y += offset; // اعمال نوسان عمودی
 
-    float currentSize = LackSunWarning.baseSize * scaleFactor;
+    float currentSize = Warning->baseSize * scaleFactor;
 
     // برای وسط قرار گرفتن متن، ابتدا اندازه آن را بگیرید
-    Vector2 measure = MeasureTextEx(HorrorFont, LackSunWarning.text, currentSize, 2.0f);
+    Vector2 measure = MeasureTextEx(HorrorFont, Warning->text, currentSize, 2.0f);
     textPosition.x -= measure.x / 2.0f; // وسط قرار دادن افقی
     textPosition.y -= measure.y / 2.0f; // وسط قرار دادن عمودی
 
-    DrawTextEx(HorrorFont, LackSunWarning.text, textPosition, currentSize, 2.0f,
-               RED // می‌توانید رنگ را به قرمز تغییر دهید
+    DrawTextEx(HorrorFont, Warning->text, textPosition, currentSize, 2.0f,
+               color // می‌توانید رنگ را به قرمز تغییر دهید
     );
 }
-void DrawLockWarning(void)
-{
-    if (!LockWarning.isActive)
-    {
-        return;
-    }
 
-    float elapsed = LockWarning.timer;
-    float offset = 5 * sinf(elapsed * 20);
-    float scaleFactor = 1 + 0.1 * sinf(elapsed * 2 * PI / LockWarning.duration);
-    float currentSize = LockWarning.baseSize * scaleFactor;
-    Vector2 textPosition = LackSunWarning.startPos;
-    textPosition.y += offset;
-    Vector2 measure = MeasureTextEx(HorrorFont, LockWarning.text, currentSize, 2.0f);
-    textPosition.x -= measure.x / 2.0f; // وسط قرار دادن افقی
-    textPosition.y -= measure.y / 2.0f; // وسط قرار دادن عمودی
-    DrawTextEx(HorrorFont, LockWarning.text, textPosition, currentSize, 2.0f, GoldOrange);
-}
 void DrawGameOver(void)
 {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, scaleGameOverPic * 0.6f));
@@ -512,7 +504,9 @@ void DrawVictory(void)
                    (Rectangle){pos.x, pos.y, scaledWidth, scaledHeight}, (Vector2){0, 0}, 0.0f, WHITE);
 
     if (scaleVictoryPic < 1.0f)
+    {
         scaleVictoryPic += scaleSpeed;
+    }
     else
     {
         scaleVictoryPic = 1.0f;
@@ -635,6 +629,7 @@ void UpdateBottom(void)
             else if (ButtonRestartWIN.hovered)
             {
                 Screen += 1;
+                restart = true;
             }
         }
     }
@@ -747,7 +742,8 @@ void DrawLockPicture(void)
         Vector2 Pos = (Vector2){441 + 3 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
-    if (!CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable || CurrentLevelInfo->PotatoMineInfoLevel.Lock)
+    if (!CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable || CurrentLevelInfo->PotatoMineInfoLevel.Lock ||
+        PotatoMineItems.PlayerInventory == 0)
     {
         DrawTexture(LockPic, 370 + 4 * Frame.width, 30, WHITE);
         int frame =
@@ -804,6 +800,8 @@ void ResetUi(void)
     CurrentLevelInfo->ChompertInfoLevel.Lock = false;
     CurrentLevelInfo->RosetInfoLevel.Lock = false;
     ResetRowManager();
+    FireStormEffect = false;
+    FreezeBurstEffect = false;
 }
 void UpdateLoseNowButton(void)
 {
@@ -819,6 +817,195 @@ void UpdateLoseNowButton(void)
         {
             CurrentGameState = YesNo;
             return;
+        }
+    }
+}
+void InitSpecialItems(void)
+{
+    FreezeBurstButton.Picture = SnowIcon;
+    SetTextureFilter(FreezeBurstButton.Picture, TEXTURE_FILTER_BILINEAR);
+    FreezeBurstButton.Radius = 25;
+    FreezeBurstButton.ScaleNow = 0.80f;
+    FreezeBurstButton.DefaultScale = 0.80f;
+    FreezeBurstButton.scaleSpeed = 1.3f;
+    FreezeBurstButton.targetScale = 1.0f;
+    FreezeBurstButton.CenterPosition.x = 245;
+    FreezeBurstButton.CenterPosition.y = 35;
+    FreezeBurstButton.rotation = 0;
+    FreezeBurstButton.rotationSpeed = 10;
+    FreezeBurstButton.rotational = true;
+
+    FireStormButton.Picture = FireIcon;
+    SetTextureFilter(FireStormButton.Picture, TEXTURE_FILTER_BILINEAR);
+    FireStormButton.Radius = 25;
+    FireStormButton.ScaleNow = 0.80f;
+    FireStormButton.DefaultScale = 0.80f;
+    FireStormButton.scaleSpeed = 1.3f;
+    FireStormButton.targetScale = 1.0f;
+    FireStormButton.CenterPosition.x = 245;
+    FireStormButton.CenterPosition.y = 85;
+    FireStormButton.rotation = 0;
+    FireStormButton.rotational = false;
+
+    SunPackButton.Picture = SunIcon;
+    SetTextureFilter(SunPackButton.Picture, TEXTURE_FILTER_BILINEAR);
+    SunPackButton.Radius = 25;
+    SunPackButton.ScaleNow = 0.80f;
+    SunPackButton.DefaultScale = 0.80f;
+    SunPackButton.scaleSpeed = 1.3f;
+    SunPackButton.targetScale = 1.0f;
+    SunPackButton.CenterPosition.x = 245;
+    SunPackButton.CenterPosition.y = 135;
+    SunPackButton.rotation = 0;
+    SunPackButton.rotationSpeed = 10;
+    SunPackButton.rotational = true;
+}
+void UpdateSpecialItems(void)
+{
+    if (CurrentGameState != PLAYING)
+    {
+        return;
+    }
+    CircleButtonAnimation(&FreezeBurstButton);
+    CircleButtonAnimation(&FireStormButton);
+    CircleButtonAnimation(&SunPackButton);
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        if (FreezeBurstButton.IsHover && !FreezeBurstEffect)
+        {
+            if (FreezeBurst.PlayerInventory > 0)
+            {
+                FreezeBurstEffect = true;
+                FreezeBurstEffectTimer = 4;
+                FreezeBurst.PlayerInventory--;
+            }
+            else
+            {
+                ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+            }
+        }
+        if (FireStormButton.IsHover && !FireStormEffect)
+        {
+            if (FireStorm.PlayerInventory > 0)
+
+            {
+                FireStormEffect = true;
+                FireStormEffectTimer = 4;
+                FireStormEffectTimerSecondsCounter = 1;
+                FireStorm.PlayerInventory--;
+            }
+            else
+            {
+                ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+            }
+        }
+        if (SunPackButton.IsHover)
+        {
+            if (SunPack.PlayerInventory > 0)
+
+            {
+                SunPack.PlayerInventory--;
+                SunBank += 250;
+            }
+            else
+            {
+                ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+            }
+        }
+    }
+    float dt = GetFrameTime();
+    if (FireStormEffect)
+    {
+        FireStormEffectTimer -= dt;
+        FireStormEffectTimerSecondsCounter -= dt;
+        if (FireStormEffectTimerSecondsCounter <= 0)
+        {
+            FireStormEffectTimerSecondsCounter = 1;
+            ApplyDamageFireStorm();
+        }
+        if (FireStormEffectTimer <= 0)
+        {
+            FireStormEffect = false;
+        }
+    }
+    if (FreezeBurstEffect)
+    {
+        FreezeBurstEffectTimer -= dt;
+        if (FreezeBurstEffectTimer < 0)
+        {
+            FreezeBurstEffect = false;
+        }
+    }
+}
+void DrawSpecialItems(void)
+{
+    if (CurrentGameState == PLAYING)
+    {
+        // DrawCircleLinesV(FireStormButton.CenterPosition, FireStormButton.Radius, RED);
+        // DrawCircleLinesV(FreezeBurstButton.CenterPosition, FreezeBurstButton.Radius, RED);
+        // DrawCircleLinesV(SunPackButton.CenterPosition, SunPackButton.Radius, RED);
+        DrawTexture(CircularFrame, FireStormButton.CenterPosition.x - FireStormButton.Radius,
+                    FireStormButton.CenterPosition.y - FireStormButton.Radius, WHITE);
+        DrawTexture(CircularFrame, FreezeBurstButton.CenterPosition.x - FreezeBurstButton.Radius,
+                    FreezeBurstButton.CenterPosition.y - FreezeBurstButton.Radius, WHITE);
+        DrawTexture(CircularFrame, SunPackButton.CenterPosition.x - SunPackButton.Radius,
+                    SunPackButton.CenterPosition.y - SunPackButton.Radius, WHITE);
+
+        if (FreezeBurstButton.IsHover)
+        {
+            float pulse = 0.8f - sinf(GetTime() * 2.5f) * 0.3f;
+
+            DrawCircleGradient(FreezeBurstButton.CenterPosition.x, FreezeBurstButton.CenterPosition.y,
+                               FreezeBurstButton.Radius + pulse * 15, Fade(BLUE, pulse), BLANK);
+        }
+
+        DrawCircleButton(&FreezeBurstButton);
+        if (FireStormButton.IsHover)
+        {
+            float pulse = 0.8f - sinf(GetTime() * 2.5f) * 0.3f;
+
+            DrawCircleGradient(FireStormButton.CenterPosition.x, FireStormButton.CenterPosition.y,
+                               FireStormButton.Radius + pulse * 15, Fade(RED, pulse), BLANK);
+        }
+        DrawCircleButton(&FireStormButton);
+        if (SunPackButton.IsHover)
+        {
+            float pulse = 0.8f - sinf(GetTime() * 2.5f) * 0.3f;
+
+            DrawCircleGradient(SunPackButton.CenterPosition.x, SunPackButton.CenterPosition.y,
+                               SunPackButton.Radius + pulse * 15, Fade(YELLOW, pulse), BLANK);
+        }
+        DrawCircleButton(&SunPackButton);
+    }
+}
+void ApplyDamageFireStorm(void)
+{
+    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
+    {
+        if (ZombieNormal[i].isAlive)
+        {
+            ZombieNormal[i].Health -= 15;
+            if (ZombieNormal[i].Health <= 0)
+            {
+                ZombieNormal[i].isAlive = false;
+                CreatingDiamondLuck(DiamondElementArray, ZombieNormal[i].Markaz.x, ZombieNormal[i].Markaz.y, 10);
+
+                ZombiesKilled++;
+            }
+        }
+    }
+    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
+    {
+        if (ThinkingZombie[i].isAlive)
+        {
+            ThinkingZombie[i].Health -= 15;
+            if (ThinkingZombie[i].Health <= 0)
+            {
+                ThinkingZombie[i].isAlive = false;
+                CreatingDiamondLuck(DiamondElementArray, ThinkingZombie[i].Markaz.x, ThinkingZombie[i].Markaz.y, 10);
+
+                ZombiesKilled++;
+            }
         }
     }
 }

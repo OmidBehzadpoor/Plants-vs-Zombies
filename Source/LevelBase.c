@@ -42,6 +42,7 @@ void InitGame(void)
 {
     InitLevelTexture();
     InitLevelFont();
+    InitSpecialItems();
 }
 void InitLevelTexture(void)
 {

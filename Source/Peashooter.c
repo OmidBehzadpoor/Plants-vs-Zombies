@@ -1,12 +1,13 @@
 #include "Peashooter.h"
 #include "Chomper.h"
+#include "Diamond.h"
 #include "Level1.h"
 #include "Plant.h"
+#include "PotatoMine.h"
 #include "Rose.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
 #include "Sunflower.h"
-#include "PotatoMine.h"
 #include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
@@ -153,7 +154,7 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
 
     Zombies *finalTarget = NULL;
     float minX = 2000.0f;
-
+    int Chancepercentage = 0;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
         if (!ZombieNormal[j].isAlive || ZombieNormal[j].Y_Cell != Peashooter->Pea[PeaNumber].Y_Cell)
@@ -174,6 +175,7 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
         {
             minX = ZombieNormal[j].Markaz.x;
             finalTarget = &ZombieNormal[j];
+            Chancepercentage = 15;
         }
     }
 
@@ -197,6 +199,7 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
         {
             minX = ThinkingZombie[j].Markaz.x;
             finalTarget = &ThinkingZombie[j]; // آدرس زامبی نوع ۲ را ذخیره کن
+            Chancepercentage = 25;
         }
     }
 
@@ -218,6 +221,8 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
         if (finalTarget->Health <= 0)
         {
             finalTarget->isAlive = false;
+            CreatingDiamondLuck(DiamondElementArray, finalTarget->Markaz.x, finalTarget->Markaz.y, Chancepercentage);
+
             ZombiesKilled++;
         }
     }

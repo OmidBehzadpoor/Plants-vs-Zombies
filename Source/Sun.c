@@ -1,5 +1,11 @@
+#include "Sun.h"
+#include "Chomper.h"
 #include "Level1.h"
+#include "Peashooter.h"
+#include "Plant.h"
+#include "Rose.h"
 #include "SoundandMusic.h"
+#include "Sunflower.h"
 #include "gif.h"
 #include "levelselect.h"
 #include "menu.h"
@@ -7,13 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Plant.h"
-#include "Chomper.h"
-#include "Peashooter.h"
-#include "Rose.h"
-#include "Sunflower.h"
-#include "Sun.h"
- SunElement SunElementArray[MAXSUNELEMENT];
+SunElement SunElementArray[MAXSUNELEMENT];
 int CurrentSunIndex = 0;
 
 void GenerateSun(SunElement *obj, int x, int y)
@@ -54,7 +54,11 @@ void GenerateSun(SunElement *obj, int x, int y)
 
 void CollectSunElement(void)
 {
- if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){return;}    Vector2 MousePos = GetMousePosition();
+    if (!IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        return;
+    }
+    Vector2 MousePos = GetMousePosition();
 
     for (int i = 0; i < MAXSUNELEMENT; i++)
     {

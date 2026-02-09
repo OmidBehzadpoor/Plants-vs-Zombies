@@ -6,6 +6,7 @@
 #include "SoundandMusic.h"
 #include "levelselect.h"
 #include "menu.h"
+#include "Shop.h"
 #include "raylib.h"
 #include <stdlib.h>
 #include <time.h>
@@ -26,6 +27,7 @@ int main()
     InitSound();
     InitMusic();
     InitMenu();
+    InitShop();
     Initlevelselect();
     InitGame();
     InitLevel1();
@@ -44,6 +46,10 @@ int main()
         else if (Screen == LEVEL_SELECT)
         {
             Updatelevelselect();
+        }
+        else if (Screen == SHOP)
+        {
+            UpdateShop();
         }
         else if (Screen == LVL1)
         {
@@ -72,6 +78,10 @@ int main()
         else if (Screen == LEVEL_SELECT)
         {
             Drawlevelselect();
+        }
+        else if (Screen == SHOP)
+        {
+            DrawShop();
         }
         else if (Screen == LVL1)
         {

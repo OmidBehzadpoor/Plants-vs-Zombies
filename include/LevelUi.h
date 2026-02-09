@@ -1,12 +1,14 @@
 #pragma once
 #ifndef LEVELUI_H
 #define LEVELUI_H
-#include <stdbool.h>
 #include "raylib.h"
+#include <stdbool.h>
 #define ROWS 5
 #define COLUMNS 10
-extern bool IsDrawVictory ;
-extern bool IsDrawGameOver ;
+extern bool IsDrawVictory;
+extern bool IsDrawGameOver;
+extern bool FireStormEffect;
+extern bool FreezeBurstEffect;
 
 typedef struct
 {
@@ -19,7 +21,7 @@ typedef enum GameState
     PLAYING,
     WIN,
     LOSE,
-    PAUSED ,
+    PAUSED,
     YesNo
 } GameState;
 extern GameState CurrentGameState;
@@ -45,38 +47,41 @@ typedef struct WarningMessage
 } WarningMessage;
 typedef struct RowManager
 {
-    int plantCount;   
-    bool rowChanged; //  هر گونه تغییر در کاشت  یا تغییر خون که نیاز به محاسبه دترمینان باشد 
+    int plantCount;
+    bool rowChanged;    //  هر گونه تغییر در کاشت  یا تغییر خون که نیاز به محاسبه دترمینان باشد
     bool WeightChanged; // تغییر ردیف یا چمن زن
     double ThinkingZombiesDeterminant;
-    double RowWeights ;
+    double RowWeights;
 } RowManager;
 
 extern RowManager RowStatus[ROWS];
-extern WarningMessage LackSunWarning, LockWarning;
+extern WarningMessage LackSunWarning, LockWarning, LackDiamondWarning;
 extern MapContent Selection;
 extern MapContent CellContent[ROWS][COLUMNS];
 extern Rectangle MapCell[ROWS][COLUMNS];
 extern float RectangleWidth;
 extern float RectangleHeight;
-extern float scaleVictoryPic ;
+extern float scaleVictoryPic;
 extern float scaleGameOverPic;
-extern int  SunBank;
+extern float FireStormEffectTimer;
+extern float FireStormEffectTimerSecondsCounter;
+extern float FreezeBurstEffectTimer;
+extern int SunBank;
 void UpdateBottom(void);
 void DrawBottom(void);
 void DrawVictory(void);
 void DrawGameOver(void);
-void DrawLockWarning(void);
-void DrawLackSunWarning(void);
+void DrawWarning(WarningMessage *Warning, Color color);
+
 void DrawLevelItems(void);
 void DrawSelectionTick(void);
 void UpdateSelectionItems(void);
-void UpdateLackSunWarning(void);
-void UpdateLockWarning(void);
+void UpdateWarning(WarningMessage *Warning);
+
 void UpdateLevelItems(void);
 void CheckSelect(void);
-void ShowLackSunWarning(void);
-void ShowLockWarning(void);
+void ShowWarning(WarningMessage *Warning, char *text);
+
 void DrawUI(void);
 void UpdateUI(void);
 void DrawLockPicture(void);
@@ -85,4 +90,8 @@ void UpdateLoseNowButton(void);
 void ResetRowManager(void);
 void DrawYesOrNop(char *Question);
 void UpdateYesOrNop(void);
+void InitSpecialItems(void);
+void UpdateSpecialItems(void);
+void DrawSpecialItems(void);
+void ApplyDamageFireStorm(void);
 #endif

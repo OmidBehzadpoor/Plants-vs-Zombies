@@ -1,5 +1,6 @@
 #include "Level1.h"
 #include "Chomper.h"
+#include "Diamond.h"
 #include "LawnMower.h"
 #include "LevelBase.h"
 #include "LevelUi.h"
@@ -7,6 +8,7 @@
 #include "Plant.h"
 #include "PotatoMine.h"
 #include "Rose.h"
+#include "Shop.h"
 #include "SoundandMusic.h"
 #include "Sun.h"
 #include "Sunflower.h"
@@ -43,18 +45,17 @@ void DrawLevel1(void)
     {
 
         DrawGameOver();
-        DrawBottom();
     }
     if (CurrentGameState == WIN)
     {
 
         DrawVictory();
-        DrawBottom();
     }
     if (CurrentGameState == YesNo)
     {
         DrawYesOrNop("       There's still a chance...\n\n\nAre you sure you want to give up? ");
     }
+    DrawBottom();
 }
 void UpdateLevel1(void)
 {
@@ -177,6 +178,9 @@ void InitLevel1Info(void)
     Level1Info.SunElementInfoLevel.Value = VALUESUN;
     Level1Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.SunElementInfoLevel.Regenerate = GENERATESUN;
+    Level1Info.DiamondElementInfoLevel.Value = VALUESUN;
+    Level1Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
+    Level1Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
     Level1Info.ZombieNormal.Regenerate = 5;
     Level1Info.ZombieNormal.Timer = 0;
     Level1Info.ZombieNormal.BassSpeedX = -20;
@@ -254,6 +258,9 @@ void InitLevel1Animation(void)
             Peashooter[i].Pea[j].isActive = false;
             Peashooter[i].Pea[j].PeaBulletHit.DisplayTime = 0.1f;
             Peashooter[i].Pea[j].PeaBulletHit.DisplayTimer = 0.0;
+            Peashooter[i].Pea[j].PeaBulletHit.isActive = false;
+            Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj =
+                GenerateAnimatedObject(&PeaBulletHit, 49, 43, 100000, 0, 0, 0, 0, 0, 0);
         }
     }
 
@@ -263,6 +270,12 @@ void InitLevel1Animation(void)
         SunElementArray[i].sun = GenerateAnimatedObject(&SunElementSheet, 79, 79, 60, 0, 0, 0, 45, 0, 0);
         SunElementArray[i].Available = false;
         SunElementArray[i].time = 0.0f;
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        DiamondElementArray[i].Diamond = GenerateAnimatedObject(&MapDiamond, 58, 47, 10000, 0, 0, 0, 45, 0, 0);
+        DiamondElementArray[i].Available = false;
+        DiamondElementArray[i].Time = 0.0f;
     }
     ZombieTimer = 0;
     for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
@@ -340,7 +353,7 @@ void resartLevel(void)
             CellContent[i][j] = EMPTY;
         }
     }
-
+    // ! نشتی مموری در سان و دایموند
     for (int i = 0; i < ROWLAWNMOWER; i++)
     {
         ResetAnimatedObject(&LawnMower[i].LawnMowerObj);

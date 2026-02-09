@@ -9,6 +9,8 @@
 #include "levelselect.h"
 #include "menu.h"
 #include <math.h>
+#include "Diamond.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
