@@ -391,16 +391,17 @@ void UpdateRowWeights()
 }
 double UpdateThinkingZombiesDeterminant(int Row)
 {
-    int n = RowStatus[Row].plantCount;
+    int N = RowStatus[Row].plantCount;
     double S = 0;
     double Q = 0;
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
         if (SunFlower[i].Base.isAlive && SunFlower[i].Base.Y_Cell == Row)
         {
-            double RelativeHP = SunFlower[i].Base.Health / CurrentLevelInfo->SunFlowertInfoLevel.BaseHealth;
-            S += RelativeHP;
-            Q += (RelativeHP * RelativeHP);
+            // double RelativeHP = SunFlower[i].Base.Health / CurrentLevelInfo->SunFlowertInfoLevel.BaseHealth;
+            // S += RelativeHP;
+            // Q += (RelativeHP * RelativeHP);
+            N--;
         }
         if (Peashooter[i].Base.isAlive && Peashooter[i].Base.Y_Cell == Row)
         {
@@ -416,9 +417,10 @@ double UpdateThinkingZombiesDeterminant(int Row)
         }
         if (Rose[i].Base.isAlive && Rose[i].Base.Y_Cell == Row)
         {
-            double RelativeHP = Rose[i].Base.Health / CurrentLevelInfo->RosetInfoLevel.BaseHealth;
-            S += RelativeHP;
-            Q += (RelativeHP * RelativeHP);
+            // double RelativeHP = Rose[i].Base.Health / CurrentLevelInfo->RosetInfoLevel.BaseHealth;
+            // S += RelativeHP;
+            // Q += (RelativeHP * RelativeHP);
+            N--;
         }
         if (PotatoMine[i].Base.isAlive && PotatoMine[i].Base.Y_Cell == Row)
         {
@@ -427,7 +429,8 @@ double UpdateThinkingZombiesDeterminant(int Row)
             Q += (RelativeHP * RelativeHP);
         }
     }
-    return 1 - (n * n) - (Q * Q) - (S * S) + (2 * S * Q * n); // Det
+    //   return 1 - (N * N) - (Q * Q) - (S * S) + (2 * S * Q * N); // Det
+    return 1 + (N * N) + (Q * Q) + (S * S); // Det
 }
 void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
 {
