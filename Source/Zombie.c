@@ -71,7 +71,7 @@ void UpdateZombies(void)
         }
         for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
         {
-            if (ZombieNormal[i].isAlive && ZombieNormal[i].Attack && ZombieNormal[i].Markaz.x <= END_X)
+            if (ZombieNormal[i].isAlive && ZombieNormal[i].Attack && ZombieNormal[i].Markaz.x <= CurrentLevelInfo->END_X)
             {
                 PlayEatSound(&plantEatSoundPlayed);
                 break;
@@ -79,7 +79,7 @@ void UpdateZombies(void)
         }
         for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
         {
-            if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Attack && ThinkingZombie[i].Markaz.x <= END_X)
+            if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Attack && ThinkingZombie[i].Markaz.x <= CurrentLevelInfo->END_X)
             {
                 PlayEatSound(&plantEatSoundPlayed);
                 break;
@@ -181,12 +181,12 @@ void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
     zombie->Markaz.y = (zombie->ZombieObj.posY + zombie->ZombieObj.frames[0].height / 2);
     zombie->CollisionBox.x = zombie->ZombieObj.posX + 40;
     zombie->CollisionBox.y = zombie->ZombieObj.posY + 20;
-    if (zombie->Markaz.x < END_X)
+    if (zombie->Markaz.x < CurrentLevelInfo->END_X)
     {
-        zombie->X_Cell = (zombie->Markaz.x - START_X) / (RectangleWidth);
+        zombie->X_Cell = (zombie->Markaz.x - CurrentLevelInfo->START_X) / (RectangleWidth);
         // printf("%d\n" , zombie[0].Y_Cell );
     }
-    zombie->Y_Cell = (zombie->Markaz.y - START_Y) / (RectangleHeight);
+    zombie->Y_Cell = (zombie->Markaz.y - CurrentLevelInfo->START_Y) / (RectangleHeight);
 }
 void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight)
 {
@@ -194,7 +194,7 @@ void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int Frame
     {
         return;
     }
-    if (zombie->Markaz.x >= END_X || !zombie->isAlive)
+    if (zombie->Markaz.x >= CurrentLevelInfo->END_X || !zombie->isAlive)
     {
         return;
     }
@@ -221,7 +221,7 @@ void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWi
     {
         return;
     }
-    if (zombie->Markaz.x >= END_X || !zombie->isAlive)
+    if (zombie->Markaz.x >= CurrentLevelInfo->END_X || !zombie->isAlive)
     {
         return;
     }
@@ -240,7 +240,7 @@ void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWi
 }
 void ZombiesAttackPlants(Zombies *zombie)
 {
-    if (zombie->Markaz.x >= END_X || !zombie->isAlive)
+    if (zombie->Markaz.x >= CurrentLevelInfo->END_X || !zombie->isAlive)
     {
         return;
     }
@@ -290,7 +290,7 @@ void GenerateZombies(Zombies *obj, Texture2D *ZombieSheet, ZombieInfo *Zombie)
     int Row = rand() % 5;
     int xstart = SCREEN_WIDTH;
     int Xfinal = 0;
-    int Ystart = START_Y + Row * RectangleHeight - 10;
+    int Ystart = CurrentLevelInfo->START_Y + Row * RectangleHeight - 10;
     int Yfinal = Ystart;
     obj->Markaz.x = 1600;
     obj->Y_Cell = Row;
@@ -318,7 +318,7 @@ bool IsZombieInRow(int row, int plantXCell)
 {
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
-        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X && ZombieNormal[j].Y_Cell == row &&
+        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= CurrentLevelInfo->END_X && ZombieNormal[j].Y_Cell == row &&
             ZombieNormal[j].X_Cell >= plantXCell)
         {
             return true;
@@ -326,7 +326,7 @@ bool IsZombieInRow(int row, int plantXCell)
     }
     for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
     {
-        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= END_X && ThinkingZombie[j].Y_Cell == row &&
+        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= CurrentLevelInfo->END_X && ThinkingZombie[j].Y_Cell == row &&
             ThinkingZombie[j].X_Cell >= plantXCell)
         {
             return true;
@@ -341,7 +341,7 @@ void KillAllZombiesInCell(int Row, int Col)
     bool kill = false;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
-        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= END_X && ZombieNormal[j].Y_Cell == Row &&
+        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= CurrentLevelInfo->END_X && ZombieNormal[j].Y_Cell == Row &&
             ZombieNormal[j].X_Cell == Col)
         {
             ZombieNormal[j].isAlive = false;
@@ -353,7 +353,7 @@ void KillAllZombiesInCell(int Row, int Col)
     }
     for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
     {
-        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= END_X && ThinkingZombie[j].Y_Cell == Row &&
+        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= CurrentLevelInfo->END_X && ThinkingZombie[j].Y_Cell == Row &&
             ThinkingZombie[j].X_Cell == Col)
         {
             ThinkingZombie[j].isAlive = false;
@@ -368,8 +368,8 @@ void KillAllZombiesInCell(int Row, int Col)
     }
     if (kill)
     {
-        CreatingDiamondLuck(DiamondElementArray, START_X + Col * RectangleWidth + RectangleWidth / 2,
-                            START_Y + Row * RectangleHeight + RectangleHeight / 2, Chancepercentage);
+        CreatingDiamondLuck(DiamondElementArray, CurrentLevelInfo->START_X + Col * RectangleWidth + RectangleWidth / 2,
+                            CurrentLevelInfo->START_Y + Row * RectangleHeight + RectangleHeight / 2, Chancepercentage);
     }
 }
 void UpdateRowWeights()
@@ -438,7 +438,7 @@ void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
     {
         return;
     }
-    if (zombie->Markaz.x >= END_X + 150) // ! حتما  بعدا چک کن!!!!!!!!!!!!!!!!!!!!!!!
+    if (zombie->Markaz.x >=CurrentLevelInfo->END_X + 150) // ! حتما  بعدا چک کن!!!!!!!!!!!!!!!!!!!!!!!
     {
         return;
     }

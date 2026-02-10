@@ -122,11 +122,3 @@ void UnloadMenu(void)
     UnloadTexture(Menu3Button);
     UnloadTexture(Menu4Button);
 }
-void MouseSelection(void)
-{
-    Vector2 mousePos = GetMousePosition();
-    char coordText[50];
-    sprintf(coordText, "X: %.0f, Y: %.0f", mousePos.x, mousePos.y);
-
-    DrawText(coordText, 10, 850, 40, RED);
-}

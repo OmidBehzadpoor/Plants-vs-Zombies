@@ -24,6 +24,12 @@ void GenerateDiamond(DiamondElement *obj, int x, int y)
     }
     if (target == NULL)
         return;
+    if (x == GENERATERANDOM && y == GENERATERANDOM)
+    {
+        x = CurrentLevelInfo->START_X + rand() % (CurrentLevelInfo->END_X - CurrentLevelInfo->START_X);
+        y = CurrentLevelInfo->START_Y + rand() % (CurrentLevelInfo->END_Y - CurrentLevelInfo->START_Y);
+    }
+
     int rand1 = rand() % 2;
     target->Diamond.posY = y - 40;
     if (rand1)
@@ -107,6 +113,7 @@ void UpdateDiamondElement(void)
                     DiamondElementArray[i].Diamond.posY == DiamondElementArray[i].Diamond.finalY)
                 {
                     DiamondBank += CurrentLevelInfo->DiamondElementInfoLevel.Value;
+                    SaveGame();
                     DiamondElementArray[i].Available = false;
                 }
             }

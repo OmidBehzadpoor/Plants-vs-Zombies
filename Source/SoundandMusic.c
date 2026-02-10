@@ -49,7 +49,7 @@ void InitMusic(void)
 }
 void UpdateMusic(void)
 {
-    if (CurrentBackgroundMusic != -1 && (Screen == MENU || Screen == LEVEL_SELECT))
+    if (CurrentBackgroundMusic != -1 && (Screen == MENU || Screen == LEVEL_SELECT ||Screen == SHOP))
     {
         UpdateMusicStream(MusicBackgrand[CurrentBackgroundMusic]);
     }

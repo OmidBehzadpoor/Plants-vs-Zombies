@@ -30,6 +30,5 @@ void InitMenu(void);
 void DrawMenu(void);
 void UpdateMenu(void);
 void UnloadMenu(void);
-void MouseSelection(void);
 
 #endif

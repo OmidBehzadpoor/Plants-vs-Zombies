@@ -24,8 +24,8 @@ CircleButtonAnim FireStormButton, FreezeBurstButton, SunPackButton;
 Rectangle MapCell[ROWS][COLUMNS];
 
 int SunBank = 0;
-float RectangleWidth = (float)(END_X - START_X) / COLUMNS; // 107.5
-float RectangleHeight = (float)(END_Y - START_Y) / ROWS;   // 122
+float RectangleWidth;  //= (float)(CurrentLevelInfo->END_X - CurrentLevelInfo->START_X) / COLUMNS; // 107.5
+float RectangleHeight; // = (float)(CurrentLevelInfo->END_Y - CurrentLevelInfo->START_Y) / ROWS;   // 122
 float scaleVictoryPic = 0.1f;
 float scaleGameOverPic = 0.1f;
 float scaleYesOrNo = 0.1f;
@@ -193,7 +193,8 @@ void CheckSelect(void)
         }
         else
         {
-            if (!(MousePos.x >= START_X && MousePos.x <= END_X && MousePos.y >= START_Y && MousePos.y <= END_Y))
+            if (!(MousePos.x >= CurrentLevelInfo->START_X && MousePos.x <= CurrentLevelInfo->END_X &&
+                  MousePos.y >= CurrentLevelInfo->START_Y && MousePos.y <= CurrentLevelInfo->END_Y))
             {
                 Selection = EMPTY;
             }
@@ -245,10 +246,11 @@ void UpdateSelectionItems(void)
     }
     Vector2 MousePos = GetMousePosition();
 
-    if (MousePos.x >= START_X && MousePos.x <= END_X && MousePos.y >= START_Y && MousePos.y <= END_Y)
+    if (MousePos.x >= CurrentLevelInfo->START_X && MousePos.x <= CurrentLevelInfo->END_X &&
+        MousePos.y >= CurrentLevelInfo->START_Y && MousePos.y <= CurrentLevelInfo->END_Y)
     {
-        int X_Cell = (MousePos.x - START_X) / RectangleWidth;
-        int Y_Cell = (MousePos.y - START_Y) / RectangleHeight;
+        int X_Cell = (MousePos.x - CurrentLevelInfo->START_X) / RectangleWidth;
+        int Y_Cell = (MousePos.y - CurrentLevelInfo->START_Y) / RectangleHeight;
         if (Selection != EMPTY)
         {
             if (Selection == SUNFLOWER && CellContent[Y_Cell][X_Cell] == EMPTY)
@@ -348,6 +350,8 @@ void UpdateSelectionItems(void)
                         RowStatus[Y_Cell].WeightChanged = true;
 
                         PotatoMineItems.PlayerInventory--;
+                        SaveGame();
+
                         CurrentLevelInfo->PotatoMineInfoLevel.Lock = true;
                         Selection = EMPTY;
                         PlaySound(PlantingSound[rand() % 3]);
@@ -389,7 +393,14 @@ void DrawLevelItems(void)
 {
     char text[5];
 
-    DrawTexture(Map, 0, 0, WHITE);
+    if (Screen == LVL1 || Screen == LVL2 || Screen == LVL4)
+    {
+        DrawTexture(Map, 0, 0, WHITE);
+    }
+    else if (Screen == LVL3)
+    {
+        DrawTexture(map_naght, 0, 0, WHITE);
+    }
     for (int i = 0; i < 10; i++)
     {
         if (DiamondElementArray[i].IsCollected)
@@ -779,6 +790,8 @@ void ResetUi(void)
     scaleVictoryPic = 0.1f;
     scaleGameOverPic = 0.1f;
     scaleYesOrNo = 0.1f;
+    RectangleWidth = (float)(CurrentLevelInfo->END_X - CurrentLevelInfo->START_X) / COLUMNS; // 107.5
+    RectangleHeight = (float)(CurrentLevelInfo->END_Y - CurrentLevelInfo->START_Y) / ROWS;   // 122
     IsDrawVictory = false;
     IsDrawGameOver = false;
     ZombiesSpawned = 0;
@@ -878,6 +891,7 @@ void UpdateSpecialItems(void)
                 FreezeBurstEffect = true;
                 FreezeBurstEffectTimer = 4;
                 FreezeBurst.PlayerInventory--;
+                SaveGame();
             }
             else
             {
@@ -893,6 +907,7 @@ void UpdateSpecialItems(void)
                 FireStormEffectTimer = 4;
                 FireStormEffectTimerSecondsCounter = 1;
                 FireStorm.PlayerInventory--;
+                SaveGame();
             }
             else
             {
@@ -906,6 +921,7 @@ void UpdateSpecialItems(void)
             {
                 SunPack.PlayerInventory--;
                 SunBank += 250;
+                SaveGame();
             }
             else
             {

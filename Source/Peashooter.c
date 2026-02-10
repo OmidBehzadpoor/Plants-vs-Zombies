@@ -82,8 +82,8 @@ void GeneratePea(PeashooterElement *obj)
         if (!(obj->Pea[i].isActive))
         {
             ResetAnimatedObject(&obj->Pea[i].Pea);
-            obj->Pea[i].Pea = GenerateAnimatedObject(&pea, 29, 32, 1000, 385 + obj->Base.X_Cell * RectangleWidth,
-                                                     247 + obj->Base.Y_Cell * RectangleHeight, 300, 0, END_X, 385);
+            obj->Pea[i].Pea = GenerateAnimatedObject(&pea, 29, 32, 1000, 385.0f/305.0f*CurrentLevelInfo->START_X + obj->Base.X_Cell * RectangleWidth,
+                                                     247.0f/230.0f*CurrentLevelInfo->START_Y + obj->Base.Y_Cell * RectangleHeight, 300, 0, CurrentLevelInfo->END_X, 385);
             obj->Pea[i].Radius = (obj->Pea[i].Pea.frames[0].width / 2.0f) * 0.80f;
             obj->Pea[i].Markaz.x = obj->Pea[i].Pea.posX + obj->Pea[i].Radius;
             obj->Pea[i].Markaz.y = obj->Pea[i].Pea.posY + obj->Pea[i].Radius;
@@ -136,14 +136,14 @@ void UpdatePeashooterSinglePea(PeashooterElement *Peashooter, int PeaNumber)
         (Peashooter->Pea[PeaNumber].Pea.posX + Peashooter->Pea[PeaNumber].Pea.frames[0].width / 2);
     Peashooter->Pea[PeaNumber].Markaz.y =
         (Peashooter->Pea[PeaNumber].Pea.posY + Peashooter->Pea[PeaNumber].Pea.frames[0].height / 2);
-    if (Peashooter->Pea[PeaNumber].Markaz.x >= END_X)
+    if (Peashooter->Pea[PeaNumber].Markaz.x >= CurrentLevelInfo->END_X)
     {
         Peashooter->Pea[PeaNumber].isActive = false;
         return;
     }
 
     Peashooter->Pea[PeaNumber].Y_Cell = Peashooter->Base.Y_Cell;
-    Peashooter->Pea[PeaNumber].X_Cell = (Peashooter->Pea[PeaNumber].Markaz.x - START_X) / (RectangleWidth);
+    Peashooter->Pea[PeaNumber].X_Cell = (Peashooter->Pea[PeaNumber].Markaz.x - CurrentLevelInfo->START_X) / (RectangleWidth);
     // printf("%d\n", Peashooter->Pea[PeaNumber].X_Cell);
     HandlePeaZombieCollision(Peashooter, PeaNumber);
 }
@@ -214,7 +214,7 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
         ResetAnimatedObject(&Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj);
 
         Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj = GenerateAnimatedObject(
-            &PeaBulletHit, 49, 43, 100000, finalTarget->Markaz.x - 20, Peashooter->Pea[PeaNumber].Markaz.y,
+            &PeaBulletHit, 49, 43, 100000, finalTarget->Markaz.x - 20, finalTarget->Markaz.y-20 ,
             finalTarget->ZombieObj.speedX, finalTarget->ZombieObj.speedY, finalTarget->ZombieObj.finalX,
             finalTarget->ZombieObj.finalY);
 

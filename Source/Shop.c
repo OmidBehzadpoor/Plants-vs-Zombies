@@ -13,13 +13,13 @@
 #include <stdlib.h>
 #include <time.h>
 Texture2D ShopBG, SunIcon, SnowIcon, FireIcon, PotatoMineIconOFF, PotatoMineIconON, DiamondBankFrame, MiniDiamond,
-    MapDiamond, infinityPic , CircularFrame;
+    MapDiamond, infinityPic, CircularFrame;
 StoreItems FireStorm;
 StoreItems FreezeBurst;
 StoreItems SunPack;
 StoreItems PotatoMineItems;
 CircleButtonAnim FireButton, SnowButton, SunButton, PotatoMineButton;
-int DiamondBank = 9999;
+int DiamondBank = 0;
 void InitShop(void)
 {
     ShopBG = LoadTexture("../assets/Shop/Shop.png");
@@ -85,7 +85,7 @@ void InitShop(void)
     FireStorm.Price = 25;
     FireStorm.StoreInventory = 0;
     FireStorm.PlayerInventory = 0;
-    FireStorm.InfiniteInventory = true;
+    FireStorm.InfiniteInventory = false;
 
     FreezeBurst.Price = 25;
     FreezeBurst.StoreInventory = 0;
@@ -104,8 +104,9 @@ void InitShop(void)
 
     LackDiamondWarning.isActive = false;
     LackDiamondWarning.duration = 2.0f;
-    LackDiamondWarning.baseSize = 30.0f;
-    LackDiamondWarning.startPos = (Vector2){(float)GetScreenWidth() / 2.0f, 170};
+    LackDiamondWarning.baseSize = 25.0f;
+    LackDiamondWarning.startPos = (Vector2){(float)GetScreenWidth() / 2.0f, 190};
+    LoadGame();
 }
 
 void UpdateShop(void)
@@ -138,12 +139,12 @@ void DrawShop(void)
     DrawTexture(DiamondBankFrame, 0, 0, WHITE);
     char DiamondBanktext[5];
     sprintf(DiamondBanktext, "%d", DiamondBank);
-    DrawText(DiamondBanktext, 120, 30, 25, (Color){243, 222, 142, 255});
+    DrawText(DiamondBanktext, 100, 30, 25, (Color){243, 222, 142, 255});
     DrawText("x  Diamond", 85, 55, 17, WHITE);
 
     // DrawCircleLinesV(SnowButton.CenterPosition,SnowButton.Radius, RED);
     // DrawCircleLinesV(FireButton.CenterPosition, FireButton.Radius, RED);
-   // DrawCircleLinesV(SunButton.CenterPosition, SunButton.Radius, RED);
+    // DrawCircleLinesV(SunButton.CenterPosition, SunButton.Radius, RED);
 
     DrawButton(&BackButton);
     if (SnowButton.IsHover)
@@ -205,8 +206,18 @@ void DrawStoreItemsInfo(StoreItems *Items, int ItemsNumber)
     }
     else
     {
-        sprintf(text, "x%d", Items->StoreInventory);
-        DrawText(text, 352 + 290 * ItemsNumber, 618, 20, WHITE);
+        if (Items->StoreInventory != 0)
+        {
+            sprintf(text, "x%d", Items->StoreInventory);
+            DrawText(text, 352 + 290 * ItemsNumber, 618, 20, WHITE);
+        }
+        else{
+                    float pulse = 0.4f - sinf(GetTime() * 2.0f) * 0.3f;
+
+                    DrawCircleGradient(333 + 31 + 290 * ItemsNumber, 627, 40 + pulse * 15, Fade(RED, pulse), BLANK);
+
+              DrawText("SOLD OUT", 320 + 290 * ItemsNumber, 618, 20, RED);
+        }
     }
 }
 void BuyingItems(StoreItems *Items, CircleButtonAnim *Button)
@@ -216,16 +227,17 @@ void BuyingItems(StoreItems *Items, CircleButtonAnim *Button)
     {
         return;
     }
-    if (DiamondBank > Items->Price)
+    if (DiamondBank >= Items->Price)
     {
         if ((Items->StoreInventory <= 0 && !Items->InfiniteInventory))
         {
-            ShowWarning(&LackDiamondWarning, "THE STORE HAS INSUFFICIENT INVENTORY!");
+            ShowWarning(&LackDiamondWarning, "Low on resources!");
             return;
         }
         DiamondBank -= Items->Price;
         Items->PlayerInventory++;
         Items->StoreInventory--;
+        SaveGame();
     }
     else
     {

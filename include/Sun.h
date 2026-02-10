@@ -14,4 +14,5 @@ extern SunElement SunElementArray[MAXSUNELEMENT];
 void CollectSunElement(void);
 void GenerateSun(SunElement *obj, int x, int y);
 void UpdateSUNELEMENT(void);
+void DrawSunElement(void);
 #endif

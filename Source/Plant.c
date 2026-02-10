@@ -215,9 +215,9 @@ void GeneratePlantBase(PlantBase *obj, PlantType Type, float HP, int X_Cell, int
     obj->X_Cell = X_Cell;
     obj->Y_Cell = Y_Cell;
     obj->HpDisplay.frameHP = (Rectangle){65 * 99, 0, 65, 5};
-    obj->HpDisplay.posHP = (Vector2){322.5 + X_Cell * 107.5, 238 + Y_Cell * 122};
+    obj->HpDisplay.posHP = (Vector2){322.5f/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y + Y_Cell * RectangleHeight};
     obj->HpDisplay.frameOverhealBar = (Rectangle){65 * 0, 0, 65, 3};
-    obj->HpDisplay.posOverhealBar = (Vector2){322.5 + X_Cell * 107.5, 235 + Y_Cell * 122};
+    obj->HpDisplay.posOverhealBar = (Vector2){322.5f/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y -3 + Y_Cell * RectangleHeight};
     obj->HpDisplay.HpPercentage = 100;
     obj->Type = Type;
     obj->isAlive = true;

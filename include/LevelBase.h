@@ -49,11 +49,16 @@ typedef struct LevelInfo
 
     int MaxZombieNormalAllowed;
     int MaxThinkingZombieAllowed;
+
+    int START_X;
+    int END_X;
+    int START_Y;
+    int END_Y;
 } LevelInfo;
 extern LevelInfo *CurrentLevelInfo;
 extern Font HorrorFont;
 extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[5], GameOver, Victory, ButtonWin,
-    ButtonLose;
+    ButtonLose , map_naght;
 extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,
     ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic,
     RingBar, ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic, PotatoMineNotReadyPic,
@@ -82,4 +87,12 @@ void SaveBestTime(void);
 void LoadBestTime(void);
 void CalculateBestTimeHMS(void);
 void CalculateSurvivalTimeHMS(void);
+void LoadGame(void);
+void SaveGame(void);
+void ResetCellContent(void);
+void ResetAllAnimation(void);
+void CheckWin(void);
+void CheckLose(void);
+void InitAllAnimation(void);
+void SetupLawnMowerAnimation(void);
 #endif

@@ -21,7 +21,8 @@ void ChomperEffect(ChomperElement *chomper, Zombies *zombieArray, int count)
     for (int j = 0; j < count; j++)
     {
 
-        if (zombieArray[j].isAlive && zombieArray[j].Markaz.x < END_X && zombieArray[j].Y_Cell == chomper->Base.Y_Cell)
+        if (zombieArray[j].isAlive && zombieArray[j].Markaz.x < CurrentLevelInfo->END_X &&
+            zombieArray[j].Y_Cell == chomper->Base.Y_Cell)
         {
             zombieArray[j].slowFactor *= 2.0f / 3.0f; // هر چامپر 1/3 سرعت کم می‌کند
         }
@@ -43,7 +44,6 @@ void UpdateChomper(ChomperElement *chomper)
         RowStatus[chomper->Base.Y_Cell].plantCount--;
         RowStatus[chomper->Base.Y_Cell].rowChanged = true;
         RowStatus[chomper->Base.Y_Cell].WeightChanged = true;
-        
     }
 }
 
@@ -54,7 +54,8 @@ void GenerateChomper(ChomperElement *obj, int X_Cell, int Y_Cell)
     obj->ChomperObj.posY = obj->ChomperObj.finalY = MapCell[Y_Cell][X_Cell].y + 15;
 
     obj->LifetimeDisplay.frameBAR = (Rectangle){65 * 99, 0, 65, 3};
-    obj->LifetimeDisplay.posBar = (Vector2){322.5 + X_Cell * 107.5, 243 + Y_Cell * 122};
+    obj->LifetimeDisplay.posBar = (Vector2){322.5 / 305.0f * CurrentLevelInfo->START_X + X_Cell * RectangleWidth,
+                                            238.0f / 230.f * CurrentLevelInfo->START_Y + 5 + Y_Cell * RectangleHeight};
     obj->LifetimeDisplay.TimePercentage = 100;
     GeneratePlantBase(&obj->Base, PLANT_CHOMPER, CurrentLevelInfo->ChompertInfoLevel.BaseHealth, X_Cell, Y_Cell);
 

@@ -92,7 +92,7 @@ void GenerateRose(RoseElement *obj, int X_Cell, int Y_Cell)
     obj->Timer = 0;
 
     obj->LifetimeDisplay.frameBAR = (Rectangle){65 * 99, 0, 65, 3};
-    obj->LifetimeDisplay.posBar = (Vector2){322.5 + X_Cell * 107.5, 243 + Y_Cell * 122};
+    obj->LifetimeDisplay.posBar = (Vector2){322.5/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y+5 + Y_Cell * RectangleHeight};
     obj->LifetimeDisplay.TimePercentage = 100;
     GeneratePlantBase(&obj->Base, PLANT_ROSE, CurrentLevelInfo->RosetInfoLevel.BaseHealth, X_Cell, Y_Cell);
 

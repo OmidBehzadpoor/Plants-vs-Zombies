@@ -2,11 +2,13 @@
 #include "Level2.h"
 #include "Level3.h"
 #include "Level4.h"
+#include "Debug.h"
+
 #include "LevelBase.h"
+#include "Shop.h"
 #include "SoundandMusic.h"
 #include "levelselect.h"
 #include "menu.h"
-#include "Shop.h"
 #include "raylib.h"
 #include <stdlib.h>
 #include <time.h>

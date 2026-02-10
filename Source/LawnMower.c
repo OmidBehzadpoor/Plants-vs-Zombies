@@ -1,5 +1,6 @@
 
 #include "LawnMower.h"
+#include "Diamond.h"
 #include "Level1.h"
 #include "Plant.h"
 #include "SoundandMusic.h"
@@ -9,7 +10,6 @@
 #include "levelselect.h"
 #include "menu.h"
 #include <math.h>
-#include "Diamond.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,7 +23,7 @@ void DrawLawnMowers(void)
         if (LawnMower[i].LawnMowerObj.posX == LawnMower[i].LawnMowerObj.finalX && CellContent[i][0] == LAWNMOWER)
         {
 
-            DrawTexture(OFFlawnMowerRow, LawnMower[i].LawnMowerObj.finalX, LawnMower[i].LawnMowerObj.finalY, WHITE);
+            DrawTexture(OFFlawnMowerRow, LawnMower[i].LawnMowerObj.posX, LawnMower[i].LawnMowerObj.posY, WHITE);
         }
         else if (LawnMower[i].isActive)
         {
@@ -37,7 +37,8 @@ void UpdateLawnMowers(void)
     {
         if (LawnMower[i].isActive)
         {
-            if (LawnMower[i].Markaz.x >= END_X || LawnMower[i].LawnMowerObj.posX == LawnMower[i].LawnMowerObj.finalX)
+            if (LawnMower[i].Markaz.x >= CurrentLevelInfo->END_X ||
+                LawnMower[i].LawnMowerObj.posX == LawnMower[i].LawnMowerObj.finalX)
             {
                 LawnMower[i].isActive = false;
             }
@@ -45,7 +46,7 @@ void UpdateLawnMowers(void)
             LawnMower[i].Markaz.x = LawnMower[i].LawnMowerObj.posX + LawnMower[i].LawnMowerObj.frames[0].width / 2;
             LawnMower[i].Markaz.y = LawnMower[i].LawnMowerObj.posY + LawnMower[i].LawnMowerObj.frames[0].height / 2;
             UpdateAnimatedObject(&LawnMower[i].LawnMowerObj);
-            LawnMower[i].X_Cell = (LawnMower[i].Markaz.x - START_X) / (RectangleWidth);
+            LawnMower[i].X_Cell = (LawnMower[i].Markaz.x - CurrentLevelInfo->START_X) / (RectangleWidth);
         }
     }
 }
@@ -57,14 +58,14 @@ void ActivateLawnMower(int Row)
 
     ResetAnimatedObject(&LawnMower[Row].LawnMowerObj);
 
-    LawnMower[Row].LawnMowerObj = GenerateAnimatedObject(&LawnMowerSheet, 70, 57, 80, 320, 270 + RectangleHeight * Row,
-                                                         500, 0, END_X, 270 + RectangleHeight * Row);
+    LawnMower[Row].LawnMowerObj = GenerateAnimatedObject(&LawnMowerSheet, 70, 57, 80, 15.0f / 305.0f * CurrentLevelInfo->START_X + CurrentLevelInfo->START_X, CurrentLevelInfo->START_Y + (40.0f / 61.0f * RectangleHeight / 2) + RectangleHeight *  Row,
+                                                         195.0f / 305.0f * CurrentLevelInfo->START_X + CurrentLevelInfo->START_X, 0, CurrentLevelInfo->END_X, CurrentLevelInfo->START_Y + (40.0f / 61.0f * RectangleHeight / 2) + RectangleHeight * Row);
     LawnMower[Row].isActive = true;
     PlaySound(LawnmowerSound);
 }
 void CheckLawnMowerCollision(Zombies *zombie)
 {
-    if (zombie->Markaz.x >= END_X || !zombie->isAlive)
+    if (zombie->Markaz.x >= CurrentLevelInfo->END_X || !zombie->isAlive)
     {
         return;
     }

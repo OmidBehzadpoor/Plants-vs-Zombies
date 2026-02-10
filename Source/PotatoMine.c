@@ -69,7 +69,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
 int Chancepercentage =0 ;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
-        if (!ZombieNormal[j].isAlive || ZombieNormal[j].Markaz.x > END_X ||
+        if (!ZombieNormal[j].isAlive || ZombieNormal[j].Markaz.x > CurrentLevelInfo->END_X ||
             ZombieNormal[j].Y_Cell != PotatoMine->Base.Y_Cell)
             continue;
 
@@ -88,7 +88,7 @@ int Chancepercentage =0 ;
 
     for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
     {
-        if (!ThinkingZombie[j].isAlive || ThinkingZombie[j].Markaz.x >= END_X ||
+        if (!ThinkingZombie[j].isAlive || ThinkingZombie[j].Markaz.x >= CurrentLevelInfo->END_X ||
             ThinkingZombie[j].Y_Cell != PotatoMine->Base.Y_Cell)
             continue;
 

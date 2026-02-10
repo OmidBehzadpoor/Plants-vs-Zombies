@@ -1,5 +1,6 @@
 #include "Level4.h"
 #include "Chomper.h"
+#include "Debug.h"
 #include "Diamond.h"
 #include "LawnMower.h"
 #include "Level1.h"
@@ -26,10 +27,9 @@ LevelInfo Level4Info;
 
 void InitLevel4(void)
 {
-
+    InitLevel4Info();
     InitLevel4Animation();
     InitLevel4MapCell();
-    InitLevel4Info();
 }
 
 void DrawLevel4(void)
@@ -63,8 +63,10 @@ void UpdateLevel4(void)
     if (restart)
     {
         resartLevel4();
-        InitLevel4Animation();
         ResetUi();
+
+        InitLevel4Animation();
+        InitLevel4MapCell();
     }
 
     UpdateUI();
@@ -82,6 +84,24 @@ void UpdateLevel4(void)
     {
         if (SurvivalTimer > BestSurvivalTime)
         {
+            GenerateDiamond(DiamondElementArray, 1410, 30);
+            GenerateDiamond(DiamondElementArray, 1410, 30);
+
+            for (int i = 0; i < 10; i++)
+            {
+                if (DiamondElementArray[i].Available)
+                {
+                    PlaySound(CollectSound);
+                    DiamondElementArray[i].IsCollected = true;
+                    //   DrawTexture(MapDiamond, 31, 105, WHITE);
+                    DiamondElementArray[i].Diamond.finalX = 31;
+                    DiamondElementArray[i].Diamond.finalY = 105;
+
+                    DiamondElementArray[i].Diamond.speedX = (31 - DiamondElementArray[i].Diamond.posX) / 1.5;
+                    DiamondElementArray[i].Diamond.speedY = (105 - DiamondElementArray[i].Diamond.posY) / 1.5;
+                }
+            }
+            SaveGame();
             BestSurvivalTime = SurvivalTimer;
             CalculateBestTimeHMS();
             SaveBestTime();
@@ -158,6 +178,10 @@ void InitLevel4Info(void)
     Level4Info.ThinkingZombie.BassFrameDelay = 40.0f;
     Level4Info.MaxThinkingZombieAllowed = MAXNUZOMBIES;
     Level4Info.MaxZombieNormalAllowed = MAXNUZOMBIES;
+    Level4Info.START_X = 305;
+    Level4Info.START_Y = 230;
+    Level4Info.END_X = 1380;
+    Level4Info.END_Y = 840;
     LackSunWarning.isActive = false;
     LackSunWarning.duration = 2.0f;
     LackSunWarning.baseSize = 30.0f;
@@ -171,89 +195,16 @@ void InitLevel4Info(void)
 void InitLevel4Animation(void)
 {
     CurrentLevelInfo = &Level4Info;
-    for (int i = 0; i < 5; i++)
-    {
-        int pixel = (i == 2) ? 80 : 71;
-        int pixelY = (i == 2) ? 14 : 25;
-        int k = (i == 2 || i == 4) ? 12 : 0;
-
-        icon[i] = GenerateAnimatedObject(&iconPic[i], pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
-                                         370 - k + Frame.width * i, 25);
-    }
-    for (int i = 0; i < ROWLAWNMOWER; i++)
-    {
-        LawnMower[i].LawnMowerObj = GenerateAnimatedObject(&LawnMowerSheet, 70, 57, 80, 210, 270 + RectangleHeight * i,
-                                                           50, 0, 320, 270 + RectangleHeight * i);
-        LawnMower[i].Y_Cell = i;
-        LawnMower[i].X_Cell = 0;
-        LawnMower[i].Available = true;
-        LawnMower[i].isActive = true;
-        CellContent[i][0] = LAWNMOWER;
-        LawnMower[i].Markaz.x = LawnMower[i].LawnMowerObj.posX + LawnMower[i].LawnMowerObj.frames[0].width / 2;
-        LawnMower[i].Markaz.y = LawnMower[i].LawnMowerObj.posY + LawnMower[i].LawnMowerObj.frames[0].height / 2;
-    }
-    for (int i = 0; i < MAXNUMITEMS; i++)
-    {
-        SunFlower[i].SunFlowerObj = GenerateAnimatedObject(&SunFlowerSheet, 80, 80, 60, 0, 0, 0, 0, 0, 0);
-        SunFlower[i].Base.isAlive = false;
-        SunFlower[i].Base.Health = 100;
-        Rose[i].RoseObj = GenerateAnimatedObject(&RoseSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
-        Rose[i].Base.Health = 100;
-        Rose[i].Base.isAlive = false;
-        Chomper[i].ChomperObj = GenerateAnimatedObject(&ChomperSheet, 80, 80, 80, 0, 0, 0, 0, 0, 0);
-        Chomper[i].Base.isAlive = false;
-        Peashooter[i].PeashooterObj = GenerateAnimatedObject(&PeashooterSheet, 80, 80, 16.75, 0, 0, 0, 0, 0, 0);
-        Peashooter[i].Base.isAlive = false;
-        Peashooter[i].FireTimer = 0;
-        Peashooter[i].Firing = false;
-        PotatoMine[i].PotatoMineObj = GenerateAnimatedObject(&PotatoMineNotReadyPic, 75, 55, 80, 0, 0, 0, 0, 0, 0);
-        PotatoMine[i].Base.isAlive = false;
-        for (int j = 0; j < 10; j++)
-        {
-            Peashooter[i].Pea[j].isActive = false;
-            Peashooter[i].Pea[j].Pea = GenerateAnimatedObject(&pea, 29, 32, 80, 0, 0, 0, 0, 0, 0);
-            Peashooter[i].Pea[j].isActive = false;
-            Peashooter[i].Pea[j].PeaBulletHit.DisplayTime = 0.1f;
-            Peashooter[i].Pea[j].PeaBulletHit.DisplayTimer = 0.0;
-            Peashooter[i].Pea[j].PeaBulletHit.isActive = false;
-            Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj =
-                GenerateAnimatedObject(&PeaBulletHit, 49, 43, 100000, 0, 0, 0, 0, 0, 0);
-        }
-    }
-
-    SunTimer = 0;
-    for (int i = 0; i < MAXSUNELEMENT; i++)
-    {
-        SunElementArray[i].sun = GenerateAnimatedObject(&SunElementSheet, 79, 79, 60, 0, 0, 0, 45, 0, 0);
-        SunElementArray[i].Available = false;
-        SunElementArray[i].time = 0.0f;
-    }
-    for (int i = 0; i < 10; i++)
-    {
-        DiamondElementArray[i].Diamond = GenerateAnimatedObject(&MapDiamond, 58, 47, 10000, 0, 0, 0, 45, 0, 0);
-        DiamondElementArray[i].Available = false;
-        DiamondElementArray[i].Time = 0.0f;
-    }
-    ZombieTimer = 0;
-    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
-    {
-        ZombieNormal[i].isAlive = false;
-        ZombieNormal[i].Attack = false;
-        ZombieNormal[i].ZombieObj = GenerateAnimatedObject(&ZombieNormal1, 12, 12, 0, 0, 0, 0, 0, 0, 0);
-    }
-    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
-    {
-        ThinkingZombie[i].isAlive = false;
-        ThinkingZombie[i].Attack = false;
-        ThinkingZombie[i].ZombieObj = GenerateAnimatedObject(&ThinkingZombiePic, 12, 12, 0, 0, 0, 0, 0, 0, 0);
-    }
+    SetupLawnMowerAnimation();
+    InitAllAnimation();
 }
 void InitLevel4MapCell(void)
 {
-    for (int Y = START_Y, i = 0, j = 0; Y <= END_Y - RectangleHeight; Y = Y + RectangleHeight)
+    for (int Y = CurrentLevelInfo->START_Y, i = 0, j = 0; Y <= CurrentLevelInfo->END_Y - RectangleHeight;
+         Y = Y + RectangleHeight)
     {
         j = 0;
-        for (int X = START_X; X <= END_X - RectangleWidth; X = X + RectangleWidth)
+        for (int X = CurrentLevelInfo->START_X; X <= CurrentLevelInfo->END_X - RectangleWidth; X = X + RectangleWidth)
         {
             MapCell[i][j].x = X;
             MapCell[i][j].y = Y;
@@ -268,52 +219,10 @@ void InitLevel4MapCell(void)
 
 void resartLevel4(void)
 {
-    for (int i = 0; i < ROWS; i++)
-    {
-        for (int j = 0; j < COLUMNS; j++)
-        {
-            CellContent[i][j] = EMPTY;
-        }
-    }
-
-    for (int i = 0; i < ROWLAWNMOWER; i++)
-    {
-        ResetAnimatedObject(&LawnMower[i].LawnMowerObj);
-        LawnMower[i].isActive = false;
-        LawnMower[i].Available = false;
-    }
-    for (int i = 0; i < MAXNUMITEMS; i++)
-    {
-        ResetAnimatedObject(&SunFlower[i].SunFlowerObj);
-        ResetAnimatedObject(&Peashooter[i].PeashooterObj);
-        ResetAnimatedObject(&Chomper[i].ChomperObj);
-        ResetAnimatedObject(&Rose[i].RoseObj);
-        ResetAnimatedObject(&PotatoMine[i].PotatoMineObj);
-        PotatoMine[i].Explosion = false;
-
-        for (int j = 0; j < 10; j++)
-        {
-            ResetAnimatedObject(&Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
-            ResetAnimatedObject(&Peashooter[i].Pea[j].Pea);
-        }
-    }
-    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
-    {
-        ZombieNormal[i].isAlive = false;
-        ZombieNormal[i].Attack = false;
-        ResetAnimatedObject(&ZombieNormal[i].ZombieObj);
-    }
-    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
-    {
-        ThinkingZombie[i].isAlive = false;
-        ThinkingZombie[i].Attack = false;
-        ResetAnimatedObject(&ThinkingZombie[i].ZombieObj);
-    }
+    ResetCellContent();
+    ResetAllAnimation();
     FirstRun = true;
-    for (int i = 0; i < 5; i++)
-    {
-        ResetAnimatedObject(&icon[i]);
-    }
+
     CurrentLevelInfo = &Level4Info;
     restart = false;
 }
