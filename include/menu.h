@@ -13,6 +13,7 @@ typedef enum GameScreen
     LVL2,
     LVL3,
     LVL4,
+    MUSICPLAYER,
     EXITING
 } GameScreen;
 extern GameScreen Screen;

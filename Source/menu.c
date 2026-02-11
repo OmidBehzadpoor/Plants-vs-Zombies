@@ -6,9 +6,11 @@
 #include <stdlib.h>
 
 Texture2D Menu3Button, Menu4Button;
-Rectangle PlayButton =(Rectangle) { 660 , 260 ,920 - 660 ,  320 - 260 };
-Rectangle ShopButton=(Rectangle) { 660 , 350 ,920 - 660 ,  415 - 350 };
-Rectangle ExitButton=(Rectangle) { 660 , 535 ,920 - 660 ,  600 - 535 };
+Rectangle PlayButton = (Rectangle){660, 260, 920 - 660, 320 - 260};
+Rectangle ShopButton = (Rectangle){660, 350, 920 - 660, 415 - 350};
+Rectangle MusicPlayerButton = (Rectangle){660, 442, 920 - 660, 510 - 442};
+Rectangle ExitButton = (Rectangle){660, 535, 920 - 660, 600 - 535};
+bool MusicPlayerHoverPlayed = false;
 bool shopHoverPlayed = false;
 bool exitHoverPlayed = false;
 bool playHoverPlayed = false;
@@ -45,6 +47,8 @@ void DrawMenu(void)
     DrawText("Play", 733, 265, 50, playHoverPlayed ? GREEN : SaffronYellow);
 
     DrawText("Shop", 733, 365, 45, shopHoverPlayed ? BLUE : SaffronYellow);
+
+    DrawText("Music player", 675, 455, 38, MusicPlayerHoverPlayed ? GRAY : SaffronYellow);
 
     DrawText("Exit", 733, 545, 50, exitHoverPlayed ? RED : SaffronYellow);
 }
@@ -97,6 +101,19 @@ void UpdateMenu(void)
     {
         exitHoverPlayed = false;
     }
+
+    if (CheckCollisionPointRec(mousePos, MusicPlayerButton))
+    {
+        if (!MusicPlayerHoverPlayed)
+        {
+            PlaySound(menuHover);
+            MusicPlayerHoverPlayed = true;
+        }
+    }
+    else
+    {
+        MusicPlayerHoverPlayed = false;
+    }
     // کلیک دکمه‌ها
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
@@ -114,6 +131,11 @@ void UpdateMenu(void)
         {
             PlaySound(menuSelect);
             Screen = EXITING;
+        }
+        else if (MusicPlayerHoverPlayed)
+        {
+            PlaySound(menuSelect);
+            Screen = MUSICPLAYER;
         }
     }
 }

@@ -1,14 +1,16 @@
+#include "SoundandMusic.h"
 #include "menu.h"
+#include "stdbool.h"
 #include "raylib.h"
 #include <stdlib.h>
 #include <time.h>
-#include "SoundandMusic.h"
 int CurrentBackgroundMusic = -1;
 Sound menuOpen, menuSelect, menuHover, BackButtonSoundClick, Clocks, SetupLawnMowerSound, LawnmowerSound,
-    EatPlantsSound[2], StartLevelSound, CollectSound, PlantingSound[3], ZombieSound, EndGameSound, BulletHitSound[4] , PeaShootSfx , VictorySound;
+    EatPlantsSound[2], StartLevelSound, CollectSound, PlantingSound[3], ZombieSound, EndGameSound, BulletHitSound[4],
+    PeaShootSfx, VictorySound;
 Music MusicBackgrand[4];
 EatSound plantEatSoundPlayed;
-
+bool isMusicPaused = false;
 void InitSound(void)
 {
     BackButtonSoundClick = LoadSound("../assets/Sounds/buttonclick.mp3");
@@ -31,8 +33,8 @@ void InitSound(void)
     BulletHitSound[1] = LoadSound("../assets/Sounds/splat1.mp3");
     BulletHitSound[2] = LoadSound("../assets/Sounds/splat2.mp3");
     BulletHitSound[3] = LoadSound("../assets/Sounds/splat3.mp3");
-   PeaShootSfx = LoadSound("../assets/Sounds/shoop.ogg");
-   VictorySound =LoadSound("../assets/Sounds/Victory.ogg");
+    PeaShootSfx = LoadSound("../assets/Sounds/shoop.ogg");
+    VictorySound = LoadSound("../assets/Sounds/Victory.ogg");
     SetSoundVolume(menuHover, 0.25f);
     SetSoundVolume(menuSelect, 0.5f);
 }
@@ -49,7 +51,7 @@ void InitMusic(void)
 }
 void UpdateMusic(void)
 {
-    if (CurrentBackgroundMusic != -1 && (Screen == MENU || Screen == LEVEL_SELECT ||Screen == SHOP))
+    if (CurrentBackgroundMusic != -1 && (Screen == MENU || Screen == LEVEL_SELECT || Screen == SHOP))
     {
         UpdateMusicStream(MusicBackgrand[CurrentBackgroundMusic]);
     }

@@ -407,7 +407,7 @@ void DrawLevelItems(void)
         {
             DrawTexture(DiamondBankFrame, 0, SunBankPic.height - 20, WHITE);
             sprintf(text, "%d", DiamondBank);
-            DrawText(text, 120, 10 + SunBankPic.height, 25, (Color){243, 222, 142, 255});
+            DrawTextCentered(GetFontDefault(), text, (Vector2){140, 122}, 25, 1, (Color){243, 222, 142, 255});
             DrawText("x  Diamond", 85, 35 + SunBankPic.height, 17, WHITE);
             break;
         }

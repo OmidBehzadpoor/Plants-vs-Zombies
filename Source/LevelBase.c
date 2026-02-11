@@ -439,3 +439,9 @@ void SetupLawnMowerAnimation(void)
         LawnMower[i].Markaz.y = LawnMower[i].LawnMowerObj.posY + LawnMower[i].LawnMowerObj.frames[0].height / 2;
     }
 }
+void DrawTextCentered(Font font, const char *text, Vector2 center, float fontSize, float spacing, Color color)
+{
+    Vector2 size = MeasureTextEx(font, text, fontSize, spacing);
+    Vector2 pos = {center.x - size.x / 2.0f, center.y - size.y / 2.0f};
+    DrawTextEx(font, text, pos, fontSize, spacing, color);
+}

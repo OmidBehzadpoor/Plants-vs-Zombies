@@ -9,6 +9,7 @@ typedef struct EatSound
     int CurrentSound;
 } EatSound;
 extern EatSound plantEatSoundPlayed;
+extern bool isMusicPaused ;
 
 extern Sound menuOpen, menuSelect, menuHover, BackButtonSoundClick, Clocks, SetupLawnMowerSound, LawnmowerSound,
     EatPlantsSound[2], StartLevelSound, CollectSound, PlantingSound[3], ZombieSound, EndGameSound, BulletHitSound[4],

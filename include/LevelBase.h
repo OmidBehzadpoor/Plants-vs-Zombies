@@ -95,4 +95,5 @@ void CheckWin(void);
 void CheckLose(void);
 void InitAllAnimation(void);
 void SetupLawnMowerAnimation(void);
+void DrawTextCentered(Font font, const char *text, Vector2 center, float fontSize, float spacing, Color color);
 #endif

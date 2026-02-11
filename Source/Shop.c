@@ -139,7 +139,7 @@ void DrawShop(void)
     DrawTexture(DiamondBankFrame, 0, 0, WHITE);
     char DiamondBanktext[5];
     sprintf(DiamondBanktext, "%d", DiamondBank);
-    DrawText(DiamondBanktext, 100, 30, 25, (Color){243, 222, 142, 255});
+    DrawTextCentered(GetFontDefault() , DiamondBanktext ,(Vector2){140,40} , 25, 1 ,(Color){243, 222, 142, 255} );
     DrawText("x  Diamond", 85, 55, 17, WHITE);
 
     // DrawCircleLinesV(SnowButton.CenterPosition,SnowButton.Radius, RED);

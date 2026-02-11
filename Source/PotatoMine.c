@@ -25,7 +25,7 @@ void GeneratePotatoMine(PotatoMineElement *obj, int X_Cell, int Y_Cell)
     obj->PotatoMineObj.posX = obj->PotatoMineObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->PotatoMineObj.posY = obj->PotatoMineObj.finalY = MapCell[Y_Cell][X_Cell].y + 25;
     obj->ActivationDisplay.frameBAR = (Rectangle){65 * 99, 0, 65, 3};
-    obj->ActivationDisplay.posBar = (Vector2){322.5 + X_Cell * 107.5, 243 + Y_Cell * 122};
+    obj->ActivationDisplay.posBar = (Vector2){322.5/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y+5 + Y_Cell * RectangleHeight};
     obj->ActivationDisplay.TimePercentage = 0;
     obj->Timer = 0;
     obj->Active = false;
