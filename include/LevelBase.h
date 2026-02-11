@@ -33,7 +33,10 @@ struct PlantsInfo
     bool Lock;
     bool IsAvailable;
 };
-
+typedef struct Circle {
+    Vector2 center; // مختصات x و y مرکز
+    float radius;   // شعاع دایره
+} Circle;
 typedef struct LevelInfo
 {
     struct PlantsInfo SunFlowertInfoLevel;

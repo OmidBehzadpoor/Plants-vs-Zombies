@@ -14,6 +14,7 @@ extern bool isMusicPaused ;
 extern Sound menuOpen, menuSelect, menuHover, BackButtonSoundClick, Clocks, SetupLawnMowerSound, LawnmowerSound,
     EatPlantsSound[2], StartLevelSound, CollectSound, PlantingSound[3], ZombieSound, EndGameSound, BulletHitSound[4],
     PeaShootSfx , VictorySound;
+extern Texture2D  MusicPlayerPlay , MusicPlayerPause;
 extern Music MusicBackgrand[4];
 void InitSound(void);
 void InitMusic(void);
@@ -22,4 +23,7 @@ void PlayRandomMenuMusic(void);
 void UnloadSoundAndMusic(void);
 void UpdateEatSound(EatSound *eat);
 void PlayEatSound(EatSound *eat);
+void DrawMusicPlayer(void);
+void UpdateMusicPlayerLogic(void);
+void DrawMusicAnimationGrid(Texture2D spriteSheet, int rows, int cols, Vector2 position, float scale);
 #endif

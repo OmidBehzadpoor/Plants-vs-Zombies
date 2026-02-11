@@ -1,9 +1,8 @@
+#include "Debug.h"
 #include "Level1.h"
 #include "Level2.h"
 #include "Level3.h"
 #include "Level4.h"
-#include "Debug.h"
-
 #include "LevelBase.h"
 #include "Shop.h"
 #include "SoundandMusic.h"
@@ -69,6 +68,10 @@ int main()
         {
             UpdateLevel4();
         }
+        else if (Screen == MUSICPLAYER)
+        {
+            UpdateMusicPlayerLogic();
+        }
         BeginDrawing();
 
         ClearBackground(WHITE);
@@ -100,6 +103,10 @@ int main()
         else if (Screen == LVL4)
         {
             DrawLevel4();
+        }
+        else if (Screen == MUSICPLAYER)
+        {
+            DrawMusicPlayer();
         }
         MouseSelection();
         EndDrawing();
