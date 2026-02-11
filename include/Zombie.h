@@ -24,7 +24,7 @@ extern Zombies ZombieNormal[MAXNUZOMBIES];
 extern Zombies ThinkingZombie[MAXNUZOMBIES];
 
 void DrawZombiesObject(Zombies *ZombiesType, int MaxCount);
-bool IsZombieSpawnTime(float *timer, float regenerateTime);
+bool IsZombieSpawnTime(float *timer, float *regenerateTime);
 bool IsZombieInRow(int row, int plantXCell);
 int GetFreeZombieIndex(Zombies *ZombiesType, int MaxCount);
 bool SpawnZombie(Zombies *ZombiesType, Texture2D *ZombieSheet, ZombieInfo *Zombie,

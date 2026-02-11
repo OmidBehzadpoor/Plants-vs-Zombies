@@ -27,7 +27,7 @@ void DrawZombies(void)
 
 void UpdateZombies(void)
 {
-    if (IsZombieSpawnTime(&ZombieTimer, CurrentLevelInfo->ZombieNormal.Regenerate)) // بعدا ریجنریت اصلاح شود
+    if (IsZombieSpawnTime(&ZombieTimer, &CurrentLevelInfo->ZombieRegenerateTimer))   
     {
         bool spawned = false;
         if (rand() % 2 == 0)
@@ -113,12 +113,13 @@ void DrawZombiesObject(Zombies *ZombiesType, int MaxCount)
     }
 }
 
-bool IsZombieSpawnTime(float *timer, float regenerateTime)
+bool IsZombieSpawnTime(float *timer, float *regenerateTime)
 {
     *timer += GetFrameTime();
-    if (*timer >= regenerateTime)
+    if (*timer >= *regenerateTime)
     {
         *timer = 0;
+        *regenerateTime = 2.0f + ((float)rand() / (float)RAND_MAX) * 6.0f;
         return true;
     }
     return false;

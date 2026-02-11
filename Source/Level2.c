@@ -132,14 +132,16 @@ void InitLevel2Info(void)
     Level2Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level2Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level2Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level2Info.ZombieNormal.Regenerate = 5;
-    Level2Info.ZombieNormal.Timer = 0;
+        Level2Info.ZombieRegenerateTimer = 5 ;
+
+//    Level2Info.ZombieNormal.Regenerate = 5;
+//    Level2Info.ZombieNormal.Timer = 0;
     Level2Info.ZombieNormal.BassSpeedX = -20;
     Level2Info.ZombieNormal.BassSpeedY = 0;
     Level2Info.ZombieNormal.BassRunSpeedY = 0;
     Level2Info.ZombieNormal.ZombieSpawned = 0;
     Level2Info.ZombieNormal.BassFrameDelay = 40.0f;
-    Level2Info.ThinkingZombie.Timer = 0;
+//    Level2Info.ThinkingZombie.Timer = 0;
     Level2Info.ThinkingZombie.BassSpeedX = -20;
     Level2Info.ThinkingZombie.BassSpeedY = 0;
     Level2Info.ThinkingZombie.BassRunSpeedY = 20;

@@ -13,8 +13,8 @@ typedef struct ElementInfo
 
 typedef struct ZombieInfo
 {
-    float Regenerate;
-    float Timer;
+  //  float Regenerate; // ! در حال حاضر از استفاده نمیشود
+   // float Timer;  // ! فعلا در پروژه کاربرد ندارد
     float BassSpeedX;
     float BassSpeedY;
     float BassRunSpeedY;
@@ -52,7 +52,7 @@ typedef struct LevelInfo
 
     int MaxZombieNormalAllowed;
     int MaxThinkingZombieAllowed;
-
+    float ZombieRegenerateTimer;
     int START_X;
     int END_X;
     int START_Y;

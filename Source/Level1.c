@@ -169,8 +169,9 @@ void InitLevel1Info(void)
     Level1Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level1Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level1Info.ZombieNormal.Regenerate = 5;
-    Level1Info.ZombieNormal.Timer = 0;
+    Level1Info.ZombieRegenerateTimer = 5 ;
+    //   //    Level1Info.ZombieNormal.Regenerate = 5;
+    //   // Level1Info.ZombieNormal.Timer = 0;
     Level1Info.ZombieNormal.BassSpeedX = -20;
     Level1Info.ZombieNormal.BassSpeedY = 0;
     Level1Info.ZombieNormal.BassRunSpeedY = 0;
@@ -179,7 +180,7 @@ void InitLevel1Info(void)
     Level1Info.ThinkingZombie.InfiniteSpan = false;
     Level1Info.ThinkingZombie.ZombieSpawned = 0;
     Level1Info.ZombieNormal.BassFrameDelay = 40.0f;
-    Level1Info.ThinkingZombie.Timer = 0;
+    //   //   Level1Info.ThinkingZombie.Timer = 0;
     Level1Info.ThinkingZombie.BassSpeedX = -20;
     Level1Info.ThinkingZombie.BassSpeedY = 0;
     Level1Info.ThinkingZombie.BassRunSpeedY = 20;
@@ -205,8 +206,8 @@ void InitLevel1Info(void)
 void InitLevel1Animation(void)
 {
     CurrentLevelInfo = &Level1Info;
-   SetupLawnMowerAnimation();
-   InitAllAnimation();
+    SetupLawnMowerAnimation();
+    InitAllAnimation();
 }
 void InitLevel1MapCell(void)
 {
@@ -226,7 +227,6 @@ void InitLevel1MapCell(void)
     }
 }
 //------------------------------------------------------------------------------------------------//
-
 
 void resartLevel1(void)
 {

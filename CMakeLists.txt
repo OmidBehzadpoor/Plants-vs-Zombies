@@ -6,18 +6,19 @@ set(CMAKE_C_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # -----------------------------
-# Source files
+# پیدا کردن خودکار تمام فایل‌های سورس و هدر
 # -----------------------------
-set(SOURCES
-        Source/PlantsVsZombies.c
-        Source/menu.c
-        Source/levelselect.c
-)
+# تمام فایل‌های .c در پوشه Source و زیرپوشه‌های آن را پیدا می‌کند
+file(GLOB_RECURSE SOURCES "Source/*.c")
+
+# تمام فایل‌های .h در پوشه include و زیرپوشه‌های آن را پیدا می‌کند (اختیاری برای نمایش در IDE)
+file(GLOB_RECURSE HEADERS "include/*.h")
 
 # -----------------------------
 # Executable
 # -----------------------------
-add_executable(PlantsVsZombies ${SOURCES})
+# فایل‌های پیدا شده را به پروژه اضافه می‌کند
+add_executable(PlantsVsZombies ${SOURCES} ${HEADERS})
 
 # -----------------------------
 # Include path

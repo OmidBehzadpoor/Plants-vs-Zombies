@@ -137,14 +137,16 @@ void InitLevel3Info(void)
     Level3Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level3Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level3Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level3Info.ZombieNormal.Regenerate = 5;
-    Level3Info.ZombieNormal.Timer = 0;
+        Level3Info.ZombieRegenerateTimer = 5 ;
+
+  //  Level3Info.ZombieNormal.Regenerate = 5;
+  //  Level3Info.ZombieNormal.Timer = 0;
     Level3Info.ZombieNormal.BassSpeedX = -20;
     Level3Info.ZombieNormal.BassSpeedY = 0;
     Level3Info.ZombieNormal.BassRunSpeedY = 0;
     Level3Info.ZombieNormal.ZombieSpawned = 0;
     Level3Info.ZombieNormal.BassFrameDelay = 40.0f;
-    Level3Info.ThinkingZombie.Timer = 0;
+ //   Level3Info.ThinkingZombie.Timer = 0;
     Level3Info.ThinkingZombie.BassSpeedX = -20;
     Level3Info.ThinkingZombie.BassSpeedY = 0;
     Level3Info.ThinkingZombie.BassRunSpeedY = 20;
