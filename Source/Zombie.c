@@ -27,7 +27,7 @@ void DrawZombies(void)
 
 void UpdateZombies(void)
 {
-    if (IsZombieSpawnTime(&ZombieTimer, &CurrentLevelInfo->ZombieRegenerateTimer))   
+    if (IsZombieSpawnTime(&ZombieTimer, &CurrentLevelInfo->ZombieRegenerateTimer))
     {
         bool spawned = false;
         if (rand() % 2 == 0)
@@ -71,7 +71,8 @@ void UpdateZombies(void)
         }
         for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
         {
-            if (ZombieNormal[i].isAlive && ZombieNormal[i].Attack && ZombieNormal[i].Markaz.x <= CurrentLevelInfo->END_X)
+            if (ZombieNormal[i].isAlive && ZombieNormal[i].Attack &&
+                ZombieNormal[i].Markaz.x <= CurrentLevelInfo->END_X)
             {
                 PlayEatSound(&plantEatSoundPlayed);
                 break;
@@ -79,7 +80,8 @@ void UpdateZombies(void)
         }
         for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
         {
-            if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Attack && ThinkingZombie[i].Markaz.x <= CurrentLevelInfo->END_X)
+            if (ThinkingZombie[i].isAlive && ThinkingZombie[i].Attack &&
+                ThinkingZombie[i].Markaz.x <= CurrentLevelInfo->END_X)
             {
                 PlayEatSound(&plantEatSoundPlayed);
                 break;
@@ -167,14 +169,9 @@ void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
     if (!zombie->Attack)
     {
         zombie->ZombieObj.speedX = zombieInfo->BassSpeedX * zombie->slowFactor;
-        if (zombie->IsMovedVertically)
-        {
+
             zombie->ZombieObj.speedY = zombieInfo->BassRunSpeedY * zombie->slowFactor * zombie->signSpeedY;
-        }
-        else
-        {
-            zombie->ZombieObj.speedY = zombieInfo->BassSpeedY * zombie->slowFactor * zombie->signSpeedY;
-        }
+
     }
     zombie->ZombieObj.frameDelay = zombieInfo->BassFrameDelay / zombie->slowFactor;
     //   if(i==0) printf("zombie[%d] speedX = %f \n ", i, zombie->ZombieObj.speedX);  //debug
@@ -319,16 +316,16 @@ bool IsZombieInRow(int row, int plantXCell)
 {
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
-        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= CurrentLevelInfo->END_X && ZombieNormal[j].Y_Cell == row &&
-            ZombieNormal[j].X_Cell >= plantXCell)
+        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= CurrentLevelInfo->END_X &&
+            ZombieNormal[j].Y_Cell == row && ZombieNormal[j].X_Cell >= plantXCell)
         {
             return true;
         }
     }
     for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
     {
-        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= CurrentLevelInfo->END_X && ThinkingZombie[j].Y_Cell == row &&
-            ThinkingZombie[j].X_Cell >= plantXCell)
+        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= CurrentLevelInfo->END_X &&
+            ThinkingZombie[j].Y_Cell == row && ThinkingZombie[j].X_Cell >= plantXCell)
         {
             return true;
         }
@@ -342,8 +339,8 @@ void KillAllZombiesInCell(int Row, int Col)
     bool kill = false;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
-        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= CurrentLevelInfo->END_X && ZombieNormal[j].Y_Cell == Row &&
-            ZombieNormal[j].X_Cell == Col)
+        if (ZombieNormal[j].isAlive && ZombieNormal[j].Markaz.x <= CurrentLevelInfo->END_X &&
+            ZombieNormal[j].Y_Cell == Row && ZombieNormal[j].X_Cell == Col)
         {
             ZombieNormal[j].isAlive = false;
             kill = true;
@@ -354,8 +351,8 @@ void KillAllZombiesInCell(int Row, int Col)
     }
     for (int j = 0; j < CurrentLevelInfo->MaxThinkingZombieAllowed; j++)
     {
-        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= CurrentLevelInfo->END_X && ThinkingZombie[j].Y_Cell == Row &&
-            ThinkingZombie[j].X_Cell == Col)
+        if (ThinkingZombie[j].isAlive && ThinkingZombie[j].Markaz.x <= CurrentLevelInfo->END_X &&
+            ThinkingZombie[j].Y_Cell == Row && ThinkingZombie[j].X_Cell == Col)
         {
             ThinkingZombie[j].isAlive = false;
             Chancepercentage *= 2;
@@ -439,7 +436,7 @@ void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
     {
         return;
     }
-    if (zombie->Markaz.x >=CurrentLevelInfo->END_X + 150) // ! حتما  بعدا چک کن!!!!!!!!!!!!!!!!!!!!!!!
+    if (zombie->Markaz.x >= CurrentLevelInfo->END_X + 150) // ! حتما  بعدا چک کن!!!!!!!!!!!!!!!!!!!!!!!
     {
         return;
     }
@@ -472,32 +469,30 @@ void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
         }
     }
 
-    if (!zombie->IsMovedVertically)
+    zombie->ZombieObj.finalY = (CurrentLevelInfo->START_Y + bestRow * RectangleHeight - 10);
+    float signSpeedY = zombie->signSpeedY;
+    if (zombie->ZombieObj.finalY > zombie->ZombieObj.posY)
     {
-        float signSpeedY = 0;
-        if (bestRow > currentRow)
-        {
-            signSpeedY = 1.0;
-        }
-        else if (bestRow < currentRow)
-        {
-            signSpeedY = -1.0;
-        }
-        else
-        {
-            signSpeedY = 0;
-        }
-        zombie->signSpeedY = signSpeedY;
-        zombie->ZombieObj.speedY = CurrentLevelInfo->ThinkingZombie.BassRunSpeedY * signSpeedY;
-        zombie->ZombieObj.finalY += RectangleHeight * signSpeedY;
-        zombie->IsMovedVertically = true;
-        // printf("%f\n", CurrentLevelInfo->ThinkingZombie.BassRunSpeedY);
+        signSpeedY = 1.0;
     }
+    else if (zombie->ZombieObj.finalY < zombie->ZombieObj.posY)
+    {
+        signSpeedY = -1.0;
+    }
+    zombie->signSpeedY = signSpeedY;
+    zombie->ZombieObj.speedY = CurrentLevelInfo->ThinkingZombie.BassRunSpeedY * signSpeedY;
+
+    // printf("%f\n", CurrentLevelInfo->ThinkingZombie.BassRunSpeedY);
+
     if (zombie->ZombieObj.posY == zombie->ZombieObj.finalY)
     {
-        zombie->IsMovedVertically = false;
 
         zombie->signSpeedY = 0;
+    }
+    if (zombie->Attack)
+    {
+        zombie->signSpeedY = 0;
+        zombie->ZombieObj.speedY = 0;
     }
 
     // printf("Sp Y = %f\n"  , zombie->ZombieObj.speedY);

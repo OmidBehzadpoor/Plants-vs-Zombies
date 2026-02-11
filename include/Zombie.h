@@ -15,7 +15,7 @@ typedef struct Zombies
     float slowFactor;
     bool isAlive;
     bool Attack;
-    bool IsMovedVertically;
+//    bool IsMovedVertically;  // !  منسوخ شد
     float signSpeedY;
     Rectangle CollisionBox;
 } Zombies;
