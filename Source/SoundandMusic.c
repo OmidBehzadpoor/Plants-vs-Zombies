@@ -1,6 +1,7 @@
 #include "SoundandMusic.h"
 #include "LevelBase.h"
 #include "menu.h"
+#include "levelselect.h"
 #include "raylib.h"
 #include "stdbool.h"
 #include <stdio.h>
@@ -155,6 +156,8 @@ void DrawMusicPlayer(void)
         sprintf(text, "Song %d of 4", CurrentBackgroundMusic + 1);
         DrawTextCentered(HorrorFont, text, (Vector2){1035, 330}, 25, 2, (Color){222, 163, 105, 255});
     }
+        DrawButton(&BackButton);
+
 }
 // تابع برای تغییر آهنگ (بعدی یا قبلی)
 void ChangeMusicTrack(int direction)
@@ -194,7 +197,7 @@ void UpdateMusicPlayerLogic(void)
         return;
 
     Vector2 mousePos = GetMousePosition();
-
+        ButtonAnimation(&BackButton);
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
 
@@ -237,6 +240,14 @@ void UpdateMusicPlayerLogic(void)
         {
             SeekMusic(-5.0f);
         }
+    
+        if (CheckCollisionPointRec(mousePos, BackButton.ClickArea))
+        {
+            PlaySound(BackButtonSoundClick);
+
+            Screen = MENU;
+        }
+    
     }
 }
 void DrawMusicAnimationGrid(Texture2D spriteSheet, int rows, int cols, Vector2 position, float scale)
