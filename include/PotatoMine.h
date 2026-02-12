@@ -6,8 +6,8 @@
 typedef struct Zombies Zombies;
 typedef struct PotatoMineElement
 {
-    AnimatedObject PotatoMineObj;
-    PlantBase Base;
+    AnimatedObject PotatoMineObj;  // انیمیشن و ویژگی‌های ظاهری
+    PlantBase Base;   // ویژگی‌های پایه گیاه
     ActiveTimeBar ActivationDisplay;
     float Timer;
     bool Active;

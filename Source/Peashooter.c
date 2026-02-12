@@ -44,7 +44,6 @@ void DrawPeashooterBullets(void)
                 DrawAnimatedObject(&Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj, WHITE);
             }
         }
-        DrawPotatoMineExplosionEffect(&PotatoMine[i]);
     }
 }
 
@@ -82,8 +81,10 @@ void GeneratePea(PeashooterElement *obj)
         if (!(obj->Pea[i].isActive))
         {
             ResetAnimatedObject(&obj->Pea[i].Pea);
-            obj->Pea[i].Pea = GenerateAnimatedObject(&pea, 29, 32, 1000, 385.0f/305.0f*CurrentLevelInfo->START_X + obj->Base.X_Cell * RectangleWidth,
-                                                     247.0f/230.0f*CurrentLevelInfo->START_Y + obj->Base.Y_Cell * RectangleHeight, 300, 0, CurrentLevelInfo->END_X, 385);
+            obj->Pea[i].Pea = GenerateAnimatedObject(
+                &pea, 29, 32, 1000, 385.0f / 305.0f * CurrentLevelInfo->START_X + obj->Base.X_Cell * RectangleWidth,
+                247.0f / 230.0f * CurrentLevelInfo->START_Y + obj->Base.Y_Cell * RectangleHeight, 300, 0,
+                CurrentLevelInfo->END_X, 385);
             obj->Pea[i].Radius = (obj->Pea[i].Pea.frames[0].width / 2.0f) * 0.80f;
             obj->Pea[i].Markaz.x = obj->Pea[i].Pea.posX + obj->Pea[i].Radius;
             obj->Pea[i].Markaz.y = obj->Pea[i].Pea.posY + obj->Pea[i].Radius;
@@ -106,6 +107,7 @@ void UpdatePeashooterFiring(PeashooterElement *Peashooter)
     }
     if (Peashooter->Firing)
     {
+        // ! فرمول نرخ شلیک: سرعت پایه تقسیم بر ضریب تقویت رز
         Peashooter->FireTimer += GetFrameTime();
         if (Peashooter->FireTimer >= Peashooter->Firingspeed / Peashooter->EffectiveFireRate)
         {
@@ -143,7 +145,8 @@ void UpdatePeashooterSinglePea(PeashooterElement *Peashooter, int PeaNumber)
     }
 
     Peashooter->Pea[PeaNumber].Y_Cell = Peashooter->Base.Y_Cell;
-    Peashooter->Pea[PeaNumber].X_Cell = (Peashooter->Pea[PeaNumber].Markaz.x - CurrentLevelInfo->START_X) / (RectangleWidth);
+    Peashooter->Pea[PeaNumber].X_Cell =
+        (Peashooter->Pea[PeaNumber].Markaz.x - CurrentLevelInfo->START_X) / (RectangleWidth);
     // printf("%d\n", Peashooter->Pea[PeaNumber].X_Cell);
     HandlePeaZombieCollision(Peashooter, PeaNumber);
 }
@@ -153,7 +156,7 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
         return;
 
     Zombies *finalTarget = NULL;
-    float minX = 2000.0f;
+    float minX = 2000.0f; // * پیدا کردن نزدیک‌ترین زامبی
     int Chancepercentage = 0;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
@@ -166,16 +169,20 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
             Peashooter->Pea[PeaNumber].Pea.finalX = ZombieNormal[j].Markaz.x;
 
         if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX)
-            hasHit = true;
+        {
+            hasHit = true; // ! برای زمانی که مستطیل زامبی کمی جلو تر از نقطه تولید تیر است اما هنوز در سلول گیاه است
+        }
         else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius,
                                          ZombieNormal[j].CollisionBox))
+        {
             hasHit = true;
+        } // ! تشخیص برخورد دایره تیر با مستطیل برخورد زامبی
 
         if (hasHit && ZombieNormal[j].Markaz.x < minX)
         {
             minX = ZombieNormal[j].Markaz.x;
             finalTarget = &ZombieNormal[j];
-            Chancepercentage = 15;
+            Chancepercentage = 15; // ? درصد شانس الماس برای زامبی معمولی
         }
     }
 
@@ -190,31 +197,37 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
             Peashooter->Pea[PeaNumber].Pea.finalX = ThinkingZombie[j].Markaz.x;
 
         if (Peashooter->Pea[PeaNumber].Pea.finalX <= Peashooter->Pea[PeaNumber].Pea.posX)
+        {
             hasHit = true;
+        } // ! برای زمانی که مستطیل زامبی کمی جلو تر از نقطه تولید تیر است اما هنوز در سلول گیاه است
         else if (CheckCollisionCircleRec(Peashooter->Pea[PeaNumber].Markaz, Peashooter->Pea[PeaNumber].Radius,
                                          ThinkingZombie[j].CollisionBox))
+        {
             hasHit = true;
+        } // ! تشخیص برخورد دایره تیر با مستطیل برخورد زامبی
 
         if (hasHit && ThinkingZombie[j].Markaz.x < minX)
         {
             minX = ThinkingZombie[j].Markaz.x;
             finalTarget = &ThinkingZombie[j]; // آدرس زامبی نوع ۲ را ذخیره کن
-            Chancepercentage = 25;
+            Chancepercentage = 25;            // ? درصد شانس الماس برای زامبی متفکر
         }
     }
-
     if (finalTarget != NULL)
     {
         finalTarget->Health -= Peashooter->peaDamege;
         PlaySound(BulletHitSound[rand() % 4]);
 
+        // * غیرفعال کردن تیر و فعال کردن افکت انفجار
         Peashooter->Pea[PeaNumber].isActive = false;
         Peashooter->Pea[PeaNumber].PeaBulletHit.isActive = true;
+
         Peashooter->Pea[PeaNumber].PeaBulletHit.DisplayTimer = 0;
         ResetAnimatedObject(&Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj);
 
+        // * تولید افکت بصری در محل برخورد
         Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj = GenerateAnimatedObject(
-            &PeaBulletHit, 49, 43, 100000, finalTarget->Markaz.x - 20, finalTarget->Markaz.y-20 ,
+            &PeaBulletHit, 49, 43, 100000, finalTarget->Markaz.x - 20, finalTarget->Markaz.y - 20,
             finalTarget->ZombieObj.speedX, finalTarget->ZombieObj.speedY, finalTarget->ZombieObj.finalX,
             finalTarget->ZombieObj.finalY);
 
@@ -227,6 +240,7 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
         }
     }
 }
+
 void UpdatePeaHitEffect(struct BulletHit *PeaBulletHit)
 {
     UpdateAnimatedObject(&PeaBulletHit->BulletHitObj);

@@ -81,7 +81,7 @@ void UpdateRose(RoseElement *rose)
         CellContent[rose->Base.Y_Cell][rose->Base.X_Cell] = EMPTY;
         RowStatus[rose->Base.Y_Cell].plantCount--;
         RowStatus[rose->Base.Y_Cell].rowChanged = true;
-        RowStatus[rose->Base.Y_Cell].WeightChanged = true;
+        RowStatus[rose->Base.Y_Cell].WeightChanged = true; // ? باعث تفکر مجدد زامبی متفکر میشود
     }
 }
 

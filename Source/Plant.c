@@ -1,22 +1,21 @@
 
-#include "Level1.h"
 #include "Plant.h"
-#include "Sun.h"
+#include "Chomper.h"
+#include "Level1.h"
+#include "Peashooter.h"
+#include "PotatoMine.h"
+#include "Rose.h"
 #include "SoundandMusic.h"
+#include "Sun.h"
+#include "Sunflower.h"
+#include "Zombie.h"
 #include "gif.h"
 #include "levelselect.h"
 #include "menu.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Zombie.h"
 #include <string.h>
-#include "Chomper.h"
-#include "Peashooter.h"
-#include "PotatoMine.h"
-#include "Rose.h"
-#include "Sunflower.h"
-#include "Sun.h"
 void UpdatePlants(void)
 {
     UpdatePlantsTimer();
@@ -35,10 +34,11 @@ void DrawPlantsUnderZombie(void)
 void DrawPlantsOverZombie(void)
 {
     DrawPeashooterBullets();
+    DrawPotatoMineExplosionEffect(PotatoMine);
 }
 void CooldownUpdate(void)
 {
-    if (CurrentLevelInfo->SunFlowertInfoLevel.IsAvailable&&CurrentLevelInfo->SunFlowertInfoLevel.Lock)
+    if (CurrentLevelInfo->SunFlowertInfoLevel.IsAvailable && CurrentLevelInfo->SunFlowertInfoLevel.Lock)
     {
         CurrentLevelInfo->SunFlowertInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->SunFlowertInfoLevel.Timer >= CurrentLevelInfo->SunFlowertInfoLevel.Cooldown)
@@ -47,7 +47,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->SunFlowertInfoLevel.Timer = 0;
         }
     }
-    if (CurrentLevelInfo->PeashooterInfoLevel.IsAvailable&&CurrentLevelInfo->PeashooterInfoLevel.Lock)
+    if (CurrentLevelInfo->PeashooterInfoLevel.IsAvailable && CurrentLevelInfo->PeashooterInfoLevel.Lock)
     {
         CurrentLevelInfo->PeashooterInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->PeashooterInfoLevel.Timer >= CurrentLevelInfo->PeashooterInfoLevel.Cooldown)
@@ -56,7 +56,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->PeashooterInfoLevel.Timer = 0;
         }
     }
-    if (CurrentLevelInfo->ChompertInfoLevel.IsAvailable&&CurrentLevelInfo->ChompertInfoLevel.Lock)
+    if (CurrentLevelInfo->ChompertInfoLevel.IsAvailable && CurrentLevelInfo->ChompertInfoLevel.Lock)
     {
         CurrentLevelInfo->ChompertInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->ChompertInfoLevel.Timer >= CurrentLevelInfo->ChompertInfoLevel.Cooldown)
@@ -65,7 +65,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->ChompertInfoLevel.Timer = 0;
         }
     }
-    if (CurrentLevelInfo->RosetInfoLevel.IsAvailable&&CurrentLevelInfo->RosetInfoLevel.Lock)
+    if (CurrentLevelInfo->RosetInfoLevel.IsAvailable && CurrentLevelInfo->RosetInfoLevel.Lock)
     {
         CurrentLevelInfo->RosetInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->RosetInfoLevel.Timer >= CurrentLevelInfo->RosetInfoLevel.Cooldown)
@@ -74,7 +74,7 @@ void CooldownUpdate(void)
             CurrentLevelInfo->RosetInfoLevel.Timer = 0;
         }
     }
-        if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable&&CurrentLevelInfo->PotatoMineInfoLevel.Lock)
+    if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable && CurrentLevelInfo->PotatoMineInfoLevel.Lock)
     {
         CurrentLevelInfo->PotatoMineInfoLevel.Timer += GetFrameTime();
         if (CurrentLevelInfo->PotatoMineInfoLevel.Timer >= CurrentLevelInfo->PotatoMineInfoLevel.Cooldown)
@@ -90,17 +90,7 @@ void UpdatePlantsTimer(void)
     ResetEffectiveFireRate();
     for (int i = 0; i < MAXNUMITEMS; i++)
     {
-        if (SunFlower[i].Base.isAlive)
-        {
-            SunFlower[i].Cooldown -= GetFrameTime();
-            if (SunFlower[i].Cooldown <= 0)
-            {
-                SunFlower[i].Cooldown = GENERATESUN; //?اصلاح
-                GenerateSun(&SunElementArray[CurrentSunIndex], SunFlower[i].SunFlowerObj.posX,
-                            SunFlower[i].SunFlowerObj.posY);
-                CurrentSunIndex = (CurrentSunIndex + 1) % MAXSUNELEMENT;
-            }
-        }
+        UpdateSunFlower(&SunFlower[i]);
         UpdateRose(&Rose[i]);
         UpdateChomper(&Chomper[i]);
         UpdatePotatoMine(&PotatoMine[i]);
@@ -144,7 +134,9 @@ void DrawPlantsObject(void)
         if (PotatoMine[i].Base.isAlive)
         {
             DrawAnimatedObject(&PotatoMine[i].PotatoMineObj, WHITE);
-          if(!PotatoMine[i].Active)  DrawTextureRec(LifetimeBar, PotatoMine[i].ActivationDisplay.frameBAR, PotatoMine[i].ActivationDisplay.posBar, WHITE);
+            if (!PotatoMine[i].Active)
+                DrawTextureRec(LifetimeBar, PotatoMine[i].ActivationDisplay.frameBAR,
+                               PotatoMine[i].ActivationDisplay.posBar, WHITE);
             DrawHpBar(&PotatoMine[i].Base.HpDisplay);
         }
     }
@@ -205,7 +197,9 @@ void UpdatePlantsAnimation(void)
         {
             UpdateAnimatedObject(&PotatoMine[i].PotatoMineObj);
             UpdateHpBar(&PotatoMine[i].Base, CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth);
-          if(!PotatoMine[i].Active)  UpdateLifetimeBar(&PotatoMine[i].ActivationDisplay, PotatoMine[i].Timer, CurrentLevelInfo->PotatoMineInfoLevel.ActivationTime);
+            if (!PotatoMine[i].Active)
+                UpdateLifetimeBar(&PotatoMine[i].ActivationDisplay, PotatoMine[i].Timer,
+                                  CurrentLevelInfo->PotatoMineInfoLevel.ActivationTime);
         }
     }
 }
@@ -215,9 +209,12 @@ void GeneratePlantBase(PlantBase *obj, PlantType Type, float HP, int X_Cell, int
     obj->X_Cell = X_Cell;
     obj->Y_Cell = Y_Cell;
     obj->HpDisplay.frameHP = (Rectangle){65 * 99, 0, 65, 5};
-    obj->HpDisplay.posHP = (Vector2){322.5f/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y + Y_Cell * RectangleHeight};
+    obj->HpDisplay.posHP = (Vector2){322.5f / 305.0f * CurrentLevelInfo->START_X + X_Cell * RectangleWidth,
+                                     238.0f / 230.f * CurrentLevelInfo->START_Y + Y_Cell * RectangleHeight};
     obj->HpDisplay.frameOverhealBar = (Rectangle){65 * 0, 0, 65, 3};
-    obj->HpDisplay.posOverhealBar = (Vector2){322.5f/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y -3 + Y_Cell * RectangleHeight};
+    obj->HpDisplay.posOverhealBar =
+        (Vector2){322.5f / 305.0f * CurrentLevelInfo->START_X + X_Cell * RectangleWidth,
+                  238.0f / 230.f * CurrentLevelInfo->START_Y - 3 + Y_Cell * RectangleHeight};
     obj->HpDisplay.HpPercentage = 100;
     obj->Type = Type;
     obj->isAlive = true;

@@ -1,11 +1,12 @@
 #include "PotatoMine.h"
 #include "Chomper.h"
+#include "Diamond.h"
 #include "Level1.h"
 #include "Peashooter.h"
 #include "Plant.h"
 #include "Rose.h"
-#include "SoundandMusic.h"
 #include "Shop.h"
+#include "SoundandMusic.h"
 #include "Sun.h"
 #include "Sunflower.h"
 #include "Zombie.h"
@@ -13,7 +14,6 @@
 #include "levelselect.h"
 #include "menu.h"
 #include <math.h>
-#include "Diamond.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +25,9 @@ void GeneratePotatoMine(PotatoMineElement *obj, int X_Cell, int Y_Cell)
     obj->PotatoMineObj.posX = obj->PotatoMineObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->PotatoMineObj.posY = obj->PotatoMineObj.finalY = MapCell[Y_Cell][X_Cell].y + 25;
     obj->ActivationDisplay.frameBAR = (Rectangle){65 * 99, 0, 65, 3};
-    obj->ActivationDisplay.posBar = (Vector2){322.5/305.0f*CurrentLevelInfo->START_X + X_Cell * RectangleWidth, 238.0f/230.f*CurrentLevelInfo->START_Y+5 + Y_Cell * RectangleHeight};
+    obj->ActivationDisplay.posBar =
+        (Vector2){322.5 / 305.0f * CurrentLevelInfo->START_X + X_Cell * RectangleWidth,
+                  238.0f / 230.f * CurrentLevelInfo->START_Y + 5 + Y_Cell * RectangleHeight};
     obj->ActivationDisplay.TimePercentage = 0;
     obj->Timer = 0;
     obj->Active = false;
@@ -66,7 +68,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
     }
     Zombies *finalTarget = NULL;
     float minX = 2000.0f;
-int Chancepercentage =0 ;
+    int Chancepercentage = 0;
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
         if (!ZombieNormal[j].isAlive || ZombieNormal[j].Markaz.x > CurrentLevelInfo->END_X ||
@@ -82,7 +84,7 @@ int Chancepercentage =0 ;
         {
             minX = ZombieNormal[j].Markaz.x;
             finalTarget = &ZombieNormal[j];
-            Chancepercentage =10;
+            Chancepercentage = 10;
         }
     }
 
@@ -102,7 +104,7 @@ int Chancepercentage =0 ;
         {
             minX = ThinkingZombie[j].Markaz.x;
             finalTarget = &ThinkingZombie[j]; // آدرس زامبی نوع ۲ را ذخیره کن
-            Chancepercentage=25;
+            Chancepercentage = 25;
         }
     }
     if (finalTarget != NULL)
@@ -110,7 +112,7 @@ int Chancepercentage =0 ;
         finalTarget->isAlive = false;
         PotatoMine->Explosion = true;
         ZombiesKilled++;
-        CreatingDiamondLuck( DiamondElementArray, finalTarget->Markaz.x ,finalTarget->Markaz.y ,Chancepercentage);
+        CreatingDiamondLuck(DiamondElementArray, finalTarget->Markaz.x, finalTarget->Markaz.y, Chancepercentage);
         CellContent[PotatoMine->Base.Y_Cell][PotatoMine->Base.X_Cell] = EXPLODEDPOTATOMINE;
         RowStatus[PotatoMine->Base.Y_Cell].plantCount--;
         RowStatus[PotatoMine->Base.Y_Cell].rowChanged = true;
@@ -133,11 +135,15 @@ void UpdatePotatoMineExplosionEffect(PotatoMineElement *PotatoMine)
 }
 void DrawPotatoMineExplosionEffect(PotatoMineElement *PotatoMine)
 {
-    if (!PotatoMine->Explosion)
+    for (int i = 0; i < MAXNUMITEMS; i++)
     {
-        return;
-    }
-    DrawTexture(PotatoMineMashedPic, PotatoMine->PotatoMineObj.posX - 10, PotatoMine->PotatoMineObj.posY + 15, WHITE);
+        if (PotatoMine[i].Explosion)
+        {
+            DrawTexture(PotatoMineMashedPic, PotatoMine[i].PotatoMineObj.posX - 10,
+                        PotatoMine[i].PotatoMineObj.posY + 15, WHITE);
 
-    DrawTexture(ExplosionSpudow, PotatoMine->PotatoMineObj.posX - 15, PotatoMine->PotatoMineObj.posY - 15, WHITE);
+            DrawTexture(ExplosionSpudow, PotatoMine[i].PotatoMineObj.posX - 15, PotatoMine[i].PotatoMineObj.posY - 15,
+                        WHITE);
+        }
+    }
 }

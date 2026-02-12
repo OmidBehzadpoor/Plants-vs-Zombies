@@ -3,6 +3,7 @@
 #define LEVELUI_H
 #include "raylib.h"
 #include <stdbool.h>
+#include "Shop.h"
 #define ROWS 5
 #define COLUMNS 10
 extern bool IsDrawVictory;
@@ -59,6 +60,7 @@ extern WarningMessage LackSunWarning, LockWarning, LackDiamondWarning;
 extern MapContent Selection;
 extern MapContent CellContent[ROWS][COLUMNS];
 extern Rectangle MapCell[ROWS][COLUMNS];
+extern CircleButtonAnim FireStormButton, FreezeBurstButton, SunPackButton;
 extern float RectangleWidth;
 extern float RectangleHeight;
 extern float scaleVictoryPic;

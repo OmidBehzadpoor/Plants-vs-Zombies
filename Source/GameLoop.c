@@ -114,7 +114,6 @@ void InitGame(void)
 
     InitLevelTexture();
     InitLevelFont();
-    InitSpecialItems();
     InitSound();
     InitMusic();
     InitMusicPlayer();
@@ -125,6 +124,7 @@ void InitGame(void)
     InitLevel2();
     InitLevel3();
     InitLevel4();
+    InitSpecialItems();
     PlayRandomMenuMusic();
 }
 void UnloadGame(void)
