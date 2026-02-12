@@ -21,22 +21,30 @@ PotatoMineElement PotatoMine[MAXNUMITEMS];
 void GeneratePotatoMine(PotatoMineElement *obj, int X_Cell, int Y_Cell)
 {
     ResetAnimatedObject(&obj->PotatoMineObj);
+ 
+    // * ایجاد انیمیشن اولیه (حالت زیر زمین)
     obj->PotatoMineObj = GenerateAnimatedObject(&PotatoMineNotReadyPic, 75, 55, 80, 0, 0, 0, 0, 0, 0);
     obj->PotatoMineObj.posX = obj->PotatoMineObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
     obj->PotatoMineObj.posY = obj->PotatoMineObj.finalY = MapCell[Y_Cell][X_Cell].y + 25;
+
+    // * تنظیم نوار پیشرفت مسلح شدن
     obj->ActivationDisplay.frameBAR = (Rectangle){65 * 99, 0, 65, 3};
     obj->ActivationDisplay.posBar =
         (Vector2){322.5 / 305.0f * CurrentLevelInfo->START_X + X_Cell * RectangleWidth,
                   238.0f / 230.f * CurrentLevelInfo->START_Y + 5 + Y_Cell * RectangleHeight};
     obj->ActivationDisplay.TimePercentage = 0;
+
     obj->Timer = 0;
     obj->Active = false;
     obj->TamirShowsExplosion = 0;
     obj->Explosion = false;
+
+    // * ثبت ویژگی‌های پایه گیاه
     GeneratePlantBase(&obj->Base, PLANT_POTATOMINE, CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth, X_Cell, Y_Cell);
 
     return;
 }
+
 void UpdatePotatoMine(PotatoMineElement *PotatoMine)
 {
     UpdatePotatoMineExplosionEffect(PotatoMine);
@@ -52,6 +60,7 @@ void UpdatePotatoMine(PotatoMineElement *PotatoMine)
         {
             PotatoMine->Active = true;
             ResetAnimatedObject(&PotatoMine->PotatoMineObj);
+            // * تغییر انیمیشن به حالت مسلح (آماده انفجار)
             PotatoMine->PotatoMineObj = GenerateAnimatedObject(
                 &PotatoMineSheet, 75, 55, 80, PotatoMine->PotatoMineObj.posX, PotatoMine->PotatoMineObj.posY,
                 PotatoMine->PotatoMineObj.speedX, PotatoMine->PotatoMineObj.speedY, PotatoMine->PotatoMineObj.finalX,
@@ -69,6 +78,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
     Zombies *finalTarget = NULL;
     float minX = 2000.0f;
     int Chancepercentage = 0;
+     // ? جستجو برای نزدیک‌ترین زامبی در محدوده انفجار (هم‌ردیف و هم‌سلول)
     for (int j = 0; j < CurrentLevelInfo->MaxZombieNormalAllowed; j++)
     {
         if (!ZombieNormal[j].isAlive || ZombieNormal[j].Markaz.x > CurrentLevelInfo->END_X ||
@@ -109,7 +119,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
     }
     if (finalTarget != NULL)
     {
-        finalTarget->isAlive = false;
+        finalTarget->isAlive = false; // ! مرگ آنی زامبی
         PotatoMine->Explosion = true;
         ZombiesKilled++;
         CreatingDiamondLuck(DiamondElementArray, finalTarget->Markaz.x, finalTarget->Markaz.y, Chancepercentage);
