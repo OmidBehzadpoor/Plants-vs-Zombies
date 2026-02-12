@@ -61,6 +61,7 @@ void UpdateChomper(ChomperElement *chomper);
  * می‌شود
  * @param X_Cell شماره ستون در جدول بازی
  * @param Y_Cell شماره ردیف در جدول بازی
+ * 
  * ? نکته: مختصات پیکسلی به طور خودکار بر اساس شماره سلول محاسبه
  * می‌شود
  */
