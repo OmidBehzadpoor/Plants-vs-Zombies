@@ -85,7 +85,7 @@ extern bool restart;
 extern bool FirstRun;
 void InitLevelTexture(void);
 void InitLevelFont(void);
-void InitGame(void);
+void UnloadLevelFont(void);
 void SaveBestTime(void);
 void LoadBestTime(void);
 void CalculateBestTimeHMS(void);
@@ -99,4 +99,7 @@ void CheckLose(void);
 void InitAllAnimation(void);
 void SetupLawnMowerAnimation(void);
 void DrawTextCentered(Font font, const char *text, Vector2 center, float fontSize, float spacing, Color color);
+void UnloadLevelTexture(void);
+
+
 #endif

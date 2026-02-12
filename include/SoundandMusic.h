@@ -26,4 +26,6 @@ void PlayEatSound(EatSound *eat);
 void DrawMusicPlayer(void);
 void UpdateMusicPlayerLogic(void);
 void DrawMusicAnimationGrid(Texture2D spriteSheet, int rows, int cols, Vector2 position, float scale);
+void UnloadMusicPlayer(void);
+void InitMusicPlayer(void);
 #endif

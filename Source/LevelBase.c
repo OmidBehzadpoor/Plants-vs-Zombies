@@ -4,6 +4,8 @@
 #include "Diamond.h"
 #include "LawnMower.h"
 #include "Level1.h"
+#include "Level2.h"
+#include "Level3.h"
 #include "Level4.h"
 #include "LevelUi.h"
 #include "Peashooter.h"
@@ -52,12 +54,6 @@ int SurvivalSeconds;
 float SunTimer, ZombieTimer;
 bool FirstRun = true;
 
-void InitGame(void)
-{
-    InitLevelTexture();
-    InitLevelFont();
-    InitSpecialItems();
-}
 void InitLevelTexture(void)
 {
     Map = LoadTexture("../assets/map/level1_map.png");
@@ -107,9 +103,52 @@ void InitLevelTexture(void)
         Price[i] = LoadTexture(temp);
     }
 }
+void UnloadLevelTexture(void)
+{
+
+    UnloadTexture(OverhealBar);
+    UnloadTexture(LoseNowpic);
+    UnloadTexture(Victory);
+    UnloadTexture(LifetimeBar);
+    UnloadTexture(HpBar);
+    UnloadTexture(PeaBulletHit);
+    UnloadTexture(pea);
+    UnloadTexture(Frame);
+    UnloadTexture(SunElementSheet);
+    UnloadTexture(LawnMowerSheet);
+    UnloadTexture(ChomperSheet);
+    UnloadTexture(RoseSheet);
+    UnloadTexture(ZombieNormalAttack1);
+    UnloadTexture(ZombieNormal1);
+    UnloadTexture(ZombieNormal2);
+    UnloadTexture(PeashooterSheet);
+    UnloadTexture(SunFlowerSheet);
+    UnloadTexture(OFFlawnMowerRow);
+    UnloadTexture(selectpic);
+    UnloadTexture(SunBankPic);
+    UnloadTexture(Map);
+    UnloadTexture(ExplosionSpudow);
+    UnloadTexture(PotatoMineSheet);
+    UnloadTexture(map_naght);
+    UnloadTexture(PotatoMineNotReadyPic);
+    UnloadTexture(LockPic);
+    UnloadTexture(PotatoMineMashedPic);
+    UnloadTexture(TimeFramePic);
+    UnloadTexture(YesOrNopic);
+    UnloadTexture(ThinkingZombieAttackPic);
+    UnloadTexture(RingBar);
+    UnloadTexture(ButtonWin);
+    UnloadTexture(ButtonLose);
+    UnloadTexture(ThinkingZombiePic);
+    UnloadTexture(GameOver);
+}
 void InitLevelFont(void)
 {
     HorrorFont = LoadFont("../assets/Level1/houseofterrormedium.ttf");
+}
+void UnloadLevelFont(void)
+{
+    UnloadFont(HorrorFont);
 }
 void SaveBestTime(void)
 {
@@ -118,16 +157,12 @@ void SaveBestTime(void)
 
 void LoadBestTime(void)
 {
-    if (FileExists("../assets/Level1/BestTime.dat"))
+    FILE *file = fopen("../assets/Level1/BestTime.dat", "rb"); // باز کردن فایل برای خواندن
+    if (file != NULL)
     {
-        unsigned int bytesRead = 0;
-        unsigned char *data = LoadFileData("../assets/Level1/BestTime.dat", &bytesRead);
-        if (data != NULL && bytesRead == sizeof(float))
-        {
-            BestSurvivalTime = *(float *)data;
-            CalculateBestTimeHMS();
-            UnloadFileData(data);
-        }
+        fread(&BestSurvivalTime, sizeof(int), 1, file);
+        CalculateBestTimeHMS();
+        fclose(file);
     }
 }
 void CalculateBestTimeHMS(void)
@@ -175,10 +210,6 @@ void LoadGame(void)
         fread(&PotatoMineItems.StoreInventory, sizeof(int), 1, file);
         fread(&SunPack.StoreInventory, sizeof(int), 1, file);
         fclose(file);
-    }
-    else
-    {
-        DiamondBank = 0;
     }
 }
 

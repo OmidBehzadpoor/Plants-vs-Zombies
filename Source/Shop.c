@@ -139,7 +139,7 @@ void DrawShop(void)
     DrawTexture(DiamondBankFrame, 0, 0, WHITE);
     char DiamondBanktext[5];
     sprintf(DiamondBanktext, "%d", DiamondBank);
-    DrawTextCentered(GetFontDefault() , DiamondBanktext ,(Vector2){140,40} , 25, 1 ,(Color){243, 222, 142, 255} );
+    DrawTextCentered(GetFontDefault(), DiamondBanktext, (Vector2){140, 40}, 25, 1, (Color){243, 222, 142, 255});
     DrawText("x  Diamond", 85, 55, 17, WHITE);
 
     // DrawCircleLinesV(SnowButton.CenterPosition,SnowButton.Radius, RED);
@@ -211,12 +211,13 @@ void DrawStoreItemsInfo(StoreItems *Items, int ItemsNumber)
             sprintf(text, "x%d", Items->StoreInventory);
             DrawText(text, 352 + 290 * ItemsNumber, 618, 20, WHITE);
         }
-        else{
-                    float pulse = 0.4f - sinf(GetTime() * 2.0f) * 0.3f;
+        else
+        {
+            float pulse = 0.4f - sinf(GetTime() * 2.0f) * 0.3f;
 
-                    DrawCircleGradient(333 + 31 + 290 * ItemsNumber, 627, 40 + pulse * 15, Fade(RED, pulse), BLANK);
+            DrawCircleGradient(333 + 31 + 290 * ItemsNumber, 627, 40 + pulse * 15, Fade(RED, pulse), BLANK);
 
-              DrawText("SOLD OUT", 320 + 290 * ItemsNumber, 618, 20, RED);
+            DrawText("SOLD OUT", 320 + 290 * ItemsNumber, 618, 20, RED);
         }
     }
 }
@@ -243,4 +244,18 @@ void BuyingItems(StoreItems *Items, CircleButtonAnim *Button)
     {
         ShowWarning(&LackDiamondWarning, "DIAMOND NOT ENOUGH!");
     }
+}
+void UnloadShop(void)
+{
+    UnloadTexture(SnowIcon);
+    UnloadTexture(ShopBG);
+    UnloadTexture(FireIcon);
+    UnloadTexture(MapDiamond);
+    UnloadTexture(CircularFrame);
+    UnloadTexture(SunIcon);
+    UnloadTexture(PotatoMineIconOFF);
+    UnloadTexture(PotatoMineIconON);
+    UnloadTexture(DiamondBankFrame);
+    UnloadTexture(MiniDiamond);
+    UnloadTexture(infinityPic);
 }

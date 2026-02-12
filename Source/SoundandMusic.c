@@ -1,7 +1,7 @@
 #include "SoundandMusic.h"
 #include "LevelBase.h"
-#include "menu.h"
 #include "levelselect.h"
+#include "menu.h"
 #include "raylib.h"
 #include "stdbool.h"
 #include <stdio.h>
@@ -50,12 +50,19 @@ void InitSound(void)
     SetSoundVolume(menuHover, 0.25f);
     SetSoundVolume(menuSelect, 0.5f);
 }
-void InitMusic(void)
+void UnloadMusicPlayer(void)
 {
-    MusicBackgrand[0] = LoadMusicStream("../assets/Sounds/Cerebrawl.mp3");
-    MusicBackgrand[1] = LoadMusicStream("../assets/Sounds/Garden.ogg");
-    MusicBackgrand[2] = LoadMusicStream("../assets/Sounds/GrazeTheRoof2.mp3");
-    MusicBackgrand[3] = LoadMusicStream("../assets/Sounds/IZ.mp3");
+    for (int i = 0; i < 4; i++)
+    {
+        UnloadTexture(MusicBGpic[i]);
+    }
+    UnloadTexture(MusicPlayerPause);
+    UnloadTexture(MusicPlayerPlay);
+    UnloadTexture(spritesheetgreen);
+    UnloadTexture(MusicPonter);
+}
+void InitMusicPlayer(void)
+{
     MusicPlayerPause = LoadTexture("../assets/MusicPlayer/Pause.png");
     MusicPlayerPlay = LoadTexture("../assets/MusicPlayer/Play.png");
     spritesheetgreen = LoadTexture("../assets/MusicPlayer/spritesheetgreen.png");
@@ -64,6 +71,13 @@ void InitMusic(void)
     MusicBGpic[1] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
     MusicBGpic[2] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
     MusicBGpic[3] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
+}
+void InitMusic(void)
+{
+    MusicBackgrand[0] = LoadMusicStream("../assets/Sounds/Cerebrawl.mp3");
+    MusicBackgrand[1] = LoadMusicStream("../assets/Sounds/Garden.ogg");
+    MusicBackgrand[2] = LoadMusicStream("../assets/Sounds/GrazeTheRoof2.mp3");
+    MusicBackgrand[3] = LoadMusicStream("../assets/Sounds/IZ.mp3");
 
     for (int i = 0; i < 4; i++)
     {
@@ -156,8 +170,7 @@ void DrawMusicPlayer(void)
         sprintf(text, "Song %d of 4", CurrentBackgroundMusic + 1);
         DrawTextCentered(HorrorFont, text, (Vector2){1035, 330}, 25, 2, (Color){222, 163, 105, 255});
     }
-        DrawButton(&BackButton);
-
+    DrawButton(&BackButton);
 }
 // تابع برای تغییر آهنگ (بعدی یا قبلی)
 void ChangeMusicTrack(int direction)
@@ -197,7 +210,7 @@ void UpdateMusicPlayerLogic(void)
         return;
 
     Vector2 mousePos = GetMousePosition();
-        ButtonAnimation(&BackButton);
+    ButtonAnimation(&BackButton);
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
 
@@ -240,14 +253,13 @@ void UpdateMusicPlayerLogic(void)
         {
             SeekMusic(-5.0f);
         }
-    
+
         if (CheckCollisionPointRec(mousePos, BackButton.ClickArea))
         {
             PlaySound(BackButtonSoundClick);
 
             Screen = MENU;
         }
-    
     }
 }
 void DrawMusicAnimationGrid(Texture2D spriteSheet, int rows, int cols, Vector2 position, float scale)

@@ -10,6 +10,7 @@ Rectangle PlayButton = (Rectangle){660, 260, 920 - 660, 320 - 260};
 Rectangle ShopButton = (Rectangle){660, 350, 920 - 660, 415 - 350};
 Rectangle MusicPlayerButton = (Rectangle){660, 442, 920 - 660, 510 - 442};
 Rectangle ExitButton = (Rectangle){660, 535, 920 - 660, 600 - 535};
+GameScreen Screen = MENU;
 bool MusicPlayerHoverPlayed = false;
 bool shopHoverPlayed = false;
 bool exitHoverPlayed = false;

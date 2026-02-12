@@ -85,46 +85,6 @@ void UpdateLevel1(void)
         UpdateYesOrNop();
     }
 }
-void UnloadLevel1(void)
-{
-    UnloadTexture(Map);
-    UnloadTexture(SunBankPic);
-    UnloadTexture(selectpic);
-    UnloadTexture(SunFlowerSheet);
-    UnloadTexture(LawnMowerSheet);
-    UnloadTexture(SunElementSheet);
-    UnloadTexture(Frame);
-
-    for (int i = 0; i < ROWLAWNMOWER; i++)
-    {
-        UnloadAnimatedObject(&LawnMower[i].LawnMowerObj);
-    }
-    UnloadTexture(OFFlawnMowerRow);
-
-    for (int i = 0; i < MAXSUNELEMENT; i++)
-    {
-        UnloadAnimatedObject(&SunElementArray[i].sun);
-    }
-    for (int i = 0; i < 5; i++)
-    {
-        UnloadAnimatedObject(&icon[i]);
-        UnloadTexture(Price[i]);
-    }
-
-    for (int i = 0; i < MAXNUMITEMS; i++)
-    {
-        UnloadAnimatedObject(&SunFlower[i].SunFlowerObj);
-        UnloadAnimatedObject(&Chomper[i].ChomperObj);
-        UnloadAnimatedObject(&Peashooter[i].PeashooterObj);
-        UnloadAnimatedObject(&Rose[i].RoseObj);
-    }
-    UnloadFont(HorrorFont);
-}
-// ---------------------- Generate Functions-----------------------  //
-
-//--------------------------------------------------------------------------------//
-
-// ---------------------- Init Functions-----------------------------------------  //
 
 void InitLevel1Info(void)
 {
@@ -226,7 +186,6 @@ void InitLevel1MapCell(void)
         i++;
     }
 }
-//------------------------------------------------------------------------------------------------//
 
 void resartLevel1(void)
 {

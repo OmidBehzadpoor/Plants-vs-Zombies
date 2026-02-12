@@ -19,31 +19,10 @@
 #define VALUESUN 25
 #define INFINITE -1
 
-// ------------------- Enumerations -------------------
 
-
-
-// ------------------- Structures -------------------
-
-
-
-
-
-
-
-// ------------------- Extern Variables -------------------
-
-
-
-
-
-
-
-// ------------------- Function Prototypes -------------------
 void InitLevel1(void);
 void DrawLevel1(void);
 void UpdateLevel1(void);
-void UnloadLevel1(void);
 
 
 void InitLevel1Animation(void);

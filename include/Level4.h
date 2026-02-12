@@ -7,7 +7,6 @@
 #include "gif.h"
 #include "raylib.h"
 
-// ------------------- Constants -------------------
 
 void InitLevel4(void);
 void DrawLevel4(void);
@@ -16,12 +15,5 @@ void InitLevel4Info(void);
 void InitLevel4Animation(void);
 void InitLevel4MapCell(void);
 void resartLevel4(void);
-// ------------------- Enumerations -------------------
-
-// ------------------- Structures -------------------
-
-// ------------------- Extern Variables -------------------
-
-// ------------------- Function Prototypes -------------------
 
 #endif

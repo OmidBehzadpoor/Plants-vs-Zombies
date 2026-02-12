@@ -143,7 +143,7 @@ void CircleButtonAnimation(CircleButtonAnim *btn)
     float scaledRadius = btn->Radius * btn->ScaleNow;
     if (btn->rotational)
     {
-        btn->rotation += dt *  btn->rotationSpeed;
+        btn->rotation += dt * btn->rotationSpeed;
         if (btn->rotation >= 360)
         {
             btn->rotation = 0;
@@ -161,14 +161,14 @@ void CircleButtonAnimation(CircleButtonAnim *btn)
                 btn->ScaleNow = btn->targetScale;
         }
         btn->IsHover = true;
-            if (btn->rotational)
-    {
-        btn->rotation += dt *  btn->rotationSpeed;
-        if (btn->rotation >= 360)
+        if (btn->rotational)
         {
-            btn->rotation = 0;
+            btn->rotation += dt * btn->rotationSpeed;
+            if (btn->rotation >= 360)
+            {
+                btn->rotation = 0;
+            }
         }
-    }
     }
     else
     {
@@ -181,7 +181,7 @@ void CircleButtonAnimation(CircleButtonAnim *btn)
                 btn->ScaleNow = btn->DefaultScale;
         }
         btn->IsHover = false;
-         btn->rotation = 0;
+        btn->rotation = 0;
     }
 }
 
@@ -250,4 +250,9 @@ void Updatelevelselect(void)
 void Unloadlevelselect(void)
 {
     UnloadTexture(BackgroundLevelselect);
+    UnloadTexture(BackButton.Picture);
+    UnloadTexture(LVL1Picture);
+    UnloadTexture(LVL2Picture);
+    UnloadTexture(LVL3Picture);
+    UnloadTexture(LVL4Picture);
 }

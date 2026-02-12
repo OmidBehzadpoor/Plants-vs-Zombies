@@ -23,5 +23,5 @@ extern StoreItems SunPack;
 extern StoreItems PotatoMineItems;
 void DrawStoreItemsInfo(StoreItems *Items, int ItemsNumber);
 void BuyingItems(StoreItems *Items, CircleButtonAnim *Button);
-
+void UnloadShop(void);
 #endif
