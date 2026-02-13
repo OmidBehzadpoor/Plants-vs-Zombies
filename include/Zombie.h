@@ -30,12 +30,11 @@ int GetFreeZombieIndex(Zombies *ZombiesType, int MaxCount);
 bool SpawnZombie(Zombies *ZombiesType, Texture2D *ZombieSheet, ZombieInfo *Zombie,
                 float MaxSpawnCount);
 void UpdateZombieMovement(Zombies *zombie , ZombieInfo *zombieInfo);
-void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWidth, int FrameHeight);
-void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight);
+void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWidth, int FrameHeight ,ZombieInfo *zombieInfo);
+void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight ,ZombieInfo *zombieInfo);
 void ApplyZombieDamageToPlant(Zombies *zombie, PlantBase *Plant);
 void CheckLawnMowerCollision(Zombies *zombie);
 void GenerateZombies(Zombies *obj, Texture2D *ZombieSheet, ZombieInfo *Zombie);
-void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight);
 void ZombiesAttackPlants(Zombies *zombie);
 void UpdateZombies(void);
 void DrawZombies(void);

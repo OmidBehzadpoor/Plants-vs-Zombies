@@ -53,9 +53,9 @@ void UpdateZombies(void)
 
             UpdateZombieMovement(&ZombieNormal[i], &CurrentLevelInfo->ZombieNormal);
             ZombiesAttackPlants(&ZombieNormal[i]);
-            EnableZombieAttack(&ZombieNormal[i], &ZombieNormalAttack1, 107, 122);
+            EnableZombieAttack(&ZombieNormal[i], &ZombieNormalAttack1, 107, 122, &CurrentLevelInfo->ZombieNormal);
             ZombiesAttackPlants(&ZombieNormal[i]);
-            DisableZombieAttack(&ZombieNormal[i], &ZombieNormal1, 107, 122);
+            DisableZombieAttack(&ZombieNormal[i], &ZombieNormal1, 107, 122, &CurrentLevelInfo->ZombieNormal);
             CheckLawnMowerCollision(&ZombieNormal[i]);
         }
         for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
@@ -63,9 +63,10 @@ void UpdateZombies(void)
 
             UpdateZombieMovement(&ThinkingZombie[i], &CurrentLevelInfo->ThinkingZombie);
             ZombiesAttackPlants(&ThinkingZombie[i]);
-            EnableZombieAttack(&ThinkingZombie[i], &ThinkingZombieAttackPic, 107, 122);
+            EnableZombieAttack(&ThinkingZombie[i], &ThinkingZombieAttackPic, 107, 122,
+                               &CurrentLevelInfo->ThinkingZombie);
             ZombiesAttackPlants(&ThinkingZombie[i]);
-            DisableZombieAttack(&ThinkingZombie[i], &ThinkingZombiePic, 107, 122);
+            DisableZombieAttack(&ThinkingZombie[i], &ThinkingZombiePic, 107, 122, &CurrentLevelInfo->ThinkingZombie);
             CheckLawnMowerCollision(&ThinkingZombie[i]);
             UpdateThinkingZombieVerticalMovement(&ThinkingZombie[i]);
         }
@@ -185,7 +186,8 @@ void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
     }
     zombie->Y_Cell = (zombie->Markaz.y - CurrentLevelInfo->START_Y) / (RectangleHeight);
 }
-void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight)
+void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int FrameWidth, int FrameHeight,
+                        ZombieInfo *zombieInfo)
 {
     if (zombie->Attack)
     {
@@ -205,13 +207,14 @@ void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int Frame
     }
     ResetAnimatedObject(&zombie->ZombieObj);
 
-    zombie->ZombieObj =
-        GenerateAnimatedObject(ZombieAttackSheet, FrameWidth, FrameHeight, 40, zombie->ZombieObj.posX,
+    zombie->ZombieObj = GenerateAnimatedObject(
+        ZombieAttackSheet, FrameWidth, FrameHeight, 40 /* zombieInfo->BassFrameDelay*/, zombie->ZombieObj.posX,
                                zombie->ZombieObj.posY, 0, 0, zombie->ZombieObj.finalX, zombie->ZombieObj.finalY);
     zombie->ZombieObj.speedX = 0;
     zombie->Attack = true;
 }
-void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWidth, int FrameHeight)
+void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWidth, int FrameHeight,
+                         ZombieInfo *zombieInfo)
 {
 
     if (!zombie->Attack)
@@ -229,8 +232,9 @@ void DisableZombieAttack(Zombies *zombie, Texture2D *ZombieRunSheet, int FrameWi
         ResetAnimatedObject(&zombie->ZombieObj);
 
         zombie->ZombieObj =
-            GenerateAnimatedObject(ZombieRunSheet, FrameWidth, FrameHeight, 40, zombie->ZombieObj.posX,
-                                   zombie->ZombieObj.posY, -20, 0, zombie->ZombieObj.finalX, zombie->ZombieObj.finalY);
+            GenerateAnimatedObject(ZombieRunSheet, FrameWidth, FrameHeight, zombieInfo->BassFrameDelay,
+                                   zombie->ZombieObj.posX, zombie->ZombieObj.posY, zombieInfo->BassSpeedX,
+                                   zombieInfo->BassSpeedY, zombie->ZombieObj.finalX, zombie->ZombieObj.finalY);
 
         zombie->Attack = false;
     }
