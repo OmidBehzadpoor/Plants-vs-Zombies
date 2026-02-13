@@ -191,10 +191,11 @@ void DrawStoreItemsInfo(StoreItems *Items, int ItemsNumber)
     ItemsNumber--;
     char text[10];
     sprintf(text, "%d", Items->Price);
-    DrawText(text, 352 + 290 * ItemsNumber, 550, 25, WHITE);
-    DrawTexture(MiniDiamond, 320 + 290 * ItemsNumber, 550, WHITE);
+    DrawText(text, 362 + 290 * ItemsNumber, 565, 25, WHITE);
+    DrawTexture(MiniDiamond, 330 + 290 * ItemsNumber, 565, WHITE);
     sprintf(text, "x%d", Items->PlayerInventory);
-    DrawText(text, 352 + 290 * ItemsNumber, 660, 25, WHITE);
+    //  DrawText(text, 352 + 290 * ItemsNumber, 660, 25, WHITE);
+    DrawTextCentered(HorrorFont, text, (Vector2){365 + 290 * ItemsNumber, 673}, 25, 1.5, Items->PlayerInventory ? WHITE: RED);
     if (Items->InfiniteInventory)
     {
         float pulse = 0.4f - sinf(GetTime() * 2.0f) * 0.3f;
@@ -209,7 +210,11 @@ void DrawStoreItemsInfo(StoreItems *Items, int ItemsNumber)
         if (Items->StoreInventory != 0)
         {
             sprintf(text, "x%d", Items->StoreInventory);
-            DrawText(text, 352 + 290 * ItemsNumber, 618, 20, WHITE);
+            // DrawText(text, 352 + 290 * ItemsNumber, 625, 20, WHITE);
+            float pulse = 0.4f - sinf(GetTime() * 2.0f) * 0.3f;
+
+            DrawCircleGradient(365 + 290 * ItemsNumber, 629, 30 + pulse * 15, Fade(GREEN, pulse), BLANK);
+            DrawTextCentered(HorrorFont, text, (Vector2){365 + 290 * ItemsNumber, 629}, 20, 1.5, GREEN);
         }
         else
         {

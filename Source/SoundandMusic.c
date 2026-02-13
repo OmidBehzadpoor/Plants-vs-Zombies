@@ -86,9 +86,9 @@ void InitMusicPlayer(void)
     spritesheetgreen = LoadTexture("../assets/MusicPlayer/spritesheetgreen.png");
     MusicPonter = LoadTexture("../assets/MusicPlayer/MusicPonter.png");
     MusicBGpic[0] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
-    MusicBGpic[1] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
-    MusicBGpic[2] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
-    MusicBGpic[3] = LoadTexture("../assets/MusicPlayer/MusicBG.png");
+    MusicBGpic[1] = LoadTexture("../assets/MusicPlayer/MusicBG1.png");
+    MusicBGpic[2] = LoadTexture("../assets/MusicPlayer/MusicBG2.png");
+    MusicBGpic[3] = LoadTexture("../assets/MusicPlayer/MusicBG3.png");
 }
 void InitMusic(void)
 {
