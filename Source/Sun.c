@@ -94,7 +94,7 @@ void UpdateSUNELEMENT(void)
     SunTimer += GetFrameTime();
     if (SunTimer >= CurrentLevelInfo->SunElementInfoLevel.Regenerate)
     {
-        SunTimer = 0;
+        SunTimer = 0 + ((float)rand() / (float)RAND_MAX) * (2.5/12 * CurrentLevelInfo->SunElementInfoLevel.Regenerate);
 
         GenerateSun(&SunElementArray[CurrentSunIndex], GENERATERANDOM, GENERATERANDOM);
         CurrentSunIndex = (CurrentSunIndex + 1) % MAXSUNELEMENT;

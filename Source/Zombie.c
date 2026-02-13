@@ -122,7 +122,25 @@ bool IsZombieSpawnTime(float *timer, float *regenerateTime)
     if (*timer >= *regenerateTime)
     {
         *timer = 0;
-        *regenerateTime = 2.0f + ((float)rand() / (float)RAND_MAX) * 6.0f;
+
+        if (rand() % 100 < 25)
+        {
+            *regenerateTime = 2.0f + ((float)rand() / (float)RAND_MAX) * 2.0f;
+        }
+        else
+        {
+            if (!CurrentLevelInfo->ZombieNormal.InfiniteSpan && !CurrentLevelInfo->ThinkingZombie.InfiniteSpan)
+            {
+                *regenerateTime = 6.0f + ((float)rand() / (float)RAND_MAX) * 3.0f -
+                                  6.0f * (ZombiesSpawned / (CurrentLevelInfo->MaxThinkingZombieAllowed +
+                                                            CurrentLevelInfo->MaxZombieNormalAllowed)) ;
+            }
+            else
+            {
+                *regenerateTime = 6.0f + ((float)rand() / (float)RAND_MAX) * 3.0f;
+            }
+        }
+
         return true;
     }
     return false;
@@ -209,7 +227,7 @@ void EnableZombieAttack(Zombies *zombie, Texture2D *ZombieAttackSheet, int Frame
 
     zombie->ZombieObj = GenerateAnimatedObject(
         ZombieAttackSheet, FrameWidth, FrameHeight, 40 /* zombieInfo->BassFrameDelay*/, zombie->ZombieObj.posX,
-                               zombie->ZombieObj.posY, 0, 0, zombie->ZombieObj.finalX, zombie->ZombieObj.finalY);
+        zombie->ZombieObj.posY, 0, 0, zombie->ZombieObj.finalX, zombie->ZombieObj.finalY);
     zombie->ZombieObj.speedX = 0;
     zombie->Attack = true;
 }

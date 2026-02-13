@@ -182,7 +182,7 @@ void CheckSelect(void)
             case 4:
                 if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable && !CurrentLevelInfo->PotatoMineInfoLevel.Lock)
                 {
-                    if (PotatoMineItems.PlayerInventory > 0) 
+                    if (PotatoMineItems.PlayerInventory > 0)
                     {
                         if (SunBank >= CurrentLevelInfo->PotatoMineInfoLevel.price)
                         {
@@ -436,7 +436,9 @@ void DrawLevelItems(void)
 
     DrawTexture(SunBankPic, 0, 0, WHITE);
     sprintf(text, "%d", SunBank);
-    DrawText(text, 85, 40, 30, GoldOrange);
+    //  DrawText(text, 85, 40, 30, GoldOrange);
+    DrawTextCentered(GetFontDefault(), text, (Vector2){103, 60}, 30, 1, GoldOrange);
+
     for (int i = 0; i < 5; i++)
     {
         DrawTexture(Frame, 300 + i * Frame.width, 0, WHITE);
@@ -820,7 +822,7 @@ void ResetUi(void)
     IsDrawGameOver = false;
     ZombiesSpawned = 0;
     ZombiesKilled = 0;
-    SunBank = 9999;
+    SunBank = 150;
     CurrentSunIndex = 0;
     SunTimer = 0;
     SurvivalTimer = 0;

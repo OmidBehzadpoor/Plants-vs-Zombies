@@ -61,7 +61,7 @@ void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell)
 
     obj->FireTimer = 1;
     obj->EffectiveFireRate = 1.0f;
-    obj->peaDamege = 10;
+    obj->peaDamege = 15;
 
     obj->Firing = false;
     for (int i = 0; i < 10; i++)

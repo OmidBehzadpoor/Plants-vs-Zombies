@@ -68,7 +68,7 @@ void UpdateLevel3(void)
         InitLevel3Animation();
         InitLevel3MapCell();
 
-        SunBank = 3000;
+        SunBank = 1500;
     }
 
     UpdateUI();
@@ -97,10 +97,12 @@ void InitLevel3Info(void)
     Level3Info.RosetInfoLevel.price = 150;
     Level3Info.PotatoMineInfoLevel.price = 25;
 
-    Level3Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
-    Level3Info.PeashooterInfoLevel.Cooldown = 2; // 45;
-    Level3Info.ChompertInfoLevel.Cooldown = 2;   // 60;
-    Level3Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
+    Level3Info.SunFlowertInfoLevel.Cooldown = 11; // 45;
+    Level3Info.PeashooterInfoLevel.Cooldown = 15; // 45;
+    Level3Info.ChompertInfoLevel.Cooldown = 7;    // 60;
+    Level3Info.RosetInfoLevel.Cooldown = 8;       // 70;
+    Level3Info.PotatoMineInfoLevel.Cooldown = 14; // 70;
+
     Level3Info.SunFlowertInfoLevel.Timer = 0;
     Level3Info.PeashooterInfoLevel.Timer = 0;
     Level3Info.ChompertInfoLevel.Timer = 0;
@@ -132,23 +134,23 @@ void InitLevel3Info(void)
     Level3Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level3Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level3Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-        Level3Info.ZombieRegenerateTimer = 5 ;
+    Level3Info.ZombieRegenerateTimer = 25;
 
-  //  Level3Info.ZombieNormal.Regenerate = 5;
-  //  Level3Info.ZombieNormal.Timer = 0;
-    Level3Info.ZombieNormal.BassSpeedX = -20;
+    //  Level3Info.ZombieNormal.Regenerate = 5;
+    //  Level3Info.ZombieNormal.Timer = 0;
+    Level3Info.ZombieNormal.BassSpeedX = -17.5;
     Level3Info.ZombieNormal.BassSpeedY = 0;
     Level3Info.ZombieNormal.BassRunSpeedY = 0;
     Level3Info.ZombieNormal.ZombieSpawned = 0;
-    Level3Info.ZombieNormal.BassFrameDelay = 40.0f;
- //   Level3Info.ThinkingZombie.Timer = 0;
-    Level3Info.ThinkingZombie.BassSpeedX = -20;
+    Level3Info.ZombieNormal.BassFrameDelay = 50.0f;
+    //   Level3Info.ThinkingZombie.Timer = 0;
+    Level3Info.ThinkingZombie.BassSpeedX = -17.5;
     Level3Info.ThinkingZombie.BassSpeedY = 0;
     Level3Info.ThinkingZombie.BassRunSpeedY = 20;
     Level3Info.ThinkingZombie.ZombieSpawned = 0;
     Level3Info.ZombieNormal.InfiniteSpan = false;
     Level3Info.ThinkingZombie.InfiniteSpan = false;
-    Level3Info.ThinkingZombie.BassFrameDelay = 40.0f;
+    Level3Info.ThinkingZombie.BassFrameDelay = 50.0f;
     Level3Info.MaxThinkingZombieAllowed = 15;
     Level3Info.MaxZombieNormalAllowed = 15;
     Level3Info.START_X = 305;

@@ -1,5 +1,6 @@
 #include "Level2.h"
 #include "Chomper.h"
+#include "Debug.h"
 #include "Diamond.h"
 #include "LawnMower.h"
 #include "Level1.h"
@@ -21,7 +22,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Debug.h"
 LevelInfo Level2Info;
 double lvl2Runtime = 0;
 
@@ -84,7 +84,6 @@ void UpdateLevel2(void)
     }
 }
 
-
 void InitLevel2Info(void)
 {
     Level2Info.SunFlowertInfoLevel.price = 50;
@@ -93,10 +92,12 @@ void InitLevel2Info(void)
     Level2Info.RosetInfoLevel.price = 150;
     Level2Info.PotatoMineInfoLevel.price = 25;
 
-    Level2Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
-    Level2Info.PeashooterInfoLevel.Cooldown = 2; // 45;
-    Level2Info.ChompertInfoLevel.Cooldown = 2;   // 60;
-    Level2Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
+    Level2Info.SunFlowertInfoLevel.Cooldown = 10; // 45;
+    Level2Info.PeashooterInfoLevel.Cooldown = 8;  // 45;
+    Level2Info.ChompertInfoLevel.Cooldown = 5;    // 60;
+    Level2Info.RosetInfoLevel.Cooldown = 6;       // 70;
+    Level2Info.PotatoMineInfoLevel.Cooldown = 7;
+
     Level2Info.SunFlowertInfoLevel.Timer = 0;
     Level2Info.PeashooterInfoLevel.Timer = 0;
     Level2Info.ChompertInfoLevel.Timer = 0;
@@ -124,25 +125,25 @@ void InitLevel2Info(void)
 
     Level2Info.SunElementInfoLevel.Value = VALUESUN;
     Level2Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
-    Level2Info.SunElementInfoLevel.Regenerate = GENERATESUN;
+    Level2Info.SunElementInfoLevel.Regenerate = GENERATESUN/2;
     Level2Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level2Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level2Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-        Level2Info.ZombieRegenerateTimer = 5 ;
+    Level2Info.ZombieRegenerateTimer = 25;
 
-//    Level2Info.ZombieNormal.Regenerate = 5;
-//    Level2Info.ZombieNormal.Timer = 0;
-    Level2Info.ZombieNormal.BassSpeedX = -20;
+    //    Level2Info.ZombieNormal.Regenerate = 5;
+    //    Level2Info.ZombieNormal.Timer = 0;
+    Level2Info.ZombieNormal.BassSpeedX = -17.5;
     Level2Info.ZombieNormal.BassSpeedY = 0;
     Level2Info.ZombieNormal.BassRunSpeedY = 0;
     Level2Info.ZombieNormal.ZombieSpawned = 0;
-    Level2Info.ZombieNormal.BassFrameDelay = 40.0f;
-//    Level2Info.ThinkingZombie.Timer = 0;
-    Level2Info.ThinkingZombie.BassSpeedX = -20;
+    Level2Info.ZombieNormal.BassFrameDelay = 50.0f;
+    //    Level2Info.ThinkingZombie.Timer = 0;
+    Level2Info.ThinkingZombie.BassSpeedX = -17.5;
     Level2Info.ThinkingZombie.BassSpeedY = 0;
     Level2Info.ThinkingZombie.BassRunSpeedY = 20;
     Level2Info.ThinkingZombie.ZombieSpawned = 0;
-    Level2Info.ThinkingZombie.BassFrameDelay = 40.0f;
+    Level2Info.ThinkingZombie.BassFrameDelay = 50.0f;
     Level2Info.MaxThinkingZombieAllowed = 30;
     Level2Info.MaxZombieNormalAllowed = 0;
     Level2Info.ZombieNormal.InfiniteSpan = false;
@@ -184,13 +185,12 @@ void InitLevel2MapCell(void)
     }
 }
 
-
 void resartLevel2(void)
 {
-   ResetCellContent();
+    ResetCellContent();
     ResetAllAnimation();
     FirstRun = true;
- 
+
     CurrentLevelInfo = &Level2Info;
     restart = false;
 }

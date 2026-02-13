@@ -17,7 +17,7 @@ SunflowerElement SunFlower[MAXNUMITEMS];
 void GenerateSunFlower(SunflowerElement *obj, int X_Cell, int Y_Cell)
 {
     // * فاصله زمانی بین ساختن نور خورشید
-    obj->Cooldown = 30;
+    obj->Cooldown = GENERATESUN -5;
 
     // * مقداردهی مختصات برای رسم انیمیشن
     obj->SunFlowerObj.posX = obj->SunFlowerObj.finalX = MapCell[Y_Cell][X_Cell].x + 10;
@@ -37,7 +37,16 @@ void UpdateSunFlower(SunflowerElement *SunFlower)
     SunFlower->Cooldown -= GetFrameTime();
     if (SunFlower->Cooldown <= 0)
     {
-        SunFlower->Cooldown = GENERATESUN; //?اصلاح
+        if (!CurrentLevelInfo->ZombieNormal.InfiniteSpan && !CurrentLevelInfo->ThinkingZombie.InfiniteSpan)
+        {
+            SunFlower->Cooldown = GENERATESUN - (((float)rand() / (float)RAND_MAX) * 2.0f) +
+                                 ( 11.0f * (ZombiesSpawned / (CurrentLevelInfo->MaxThinkingZombieAllowed +
+                                                            CurrentLevelInfo->MaxZombieNormalAllowed)));
+        }
+        else
+        {
+            SunFlower->Cooldown = GENERATESUN - ((float)rand() / (float)RAND_MAX) * 2.0f  ;
+        }
         GenerateSun(&SunElementArray[CurrentSunIndex], SunFlower->SunFlowerObj.posX, SunFlower->SunFlowerObj.posY);
         CurrentSunIndex = (CurrentSunIndex + 1) % MAXSUNELEMENT;
     }

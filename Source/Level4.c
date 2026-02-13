@@ -113,7 +113,6 @@ void UpdateLevel4(void)
     }
 }
 
-
 void InitLevel4Info(void)
 {
     Level4Info.SunFlowertInfoLevel.price = 50;
@@ -122,10 +121,12 @@ void InitLevel4Info(void)
     Level4Info.RosetInfoLevel.price = 150;
     Level4Info.PotatoMineInfoLevel.price = 25;
 
-    Level4Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
-    Level4Info.PeashooterInfoLevel.Cooldown = 2; // 45;
-    Level4Info.ChompertInfoLevel.Cooldown = 2;   // 60;
-    Level4Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
+    Level4Info.SunFlowertInfoLevel.Cooldown = 11; // 45;
+    Level4Info.PeashooterInfoLevel.Cooldown = 9;  // 45;
+    Level4Info.ChompertInfoLevel.Cooldown = 6;    // 60;
+    Level4Info.RosetInfoLevel.Cooldown = 7;       // 70;
+    Level4Info.PotatoMineInfoLevel.Cooldown = 8;
+
     Level4Info.SunFlowertInfoLevel.Timer = 0;
     Level4Info.PeashooterInfoLevel.Timer = 0;
     Level4Info.ChompertInfoLevel.Timer = 0;
@@ -157,23 +158,23 @@ void InitLevel4Info(void)
     Level4Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level4Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level4Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level4Info.ZombieRegenerateTimer = 5;
+    Level4Info.ZombieRegenerateTimer = 25;
 
     //   Level4Info.ZombieNormal.Regenerate = 5;
     //   Level4Info.ZombieNormal.Timer = 0;
-    Level4Info.ZombieNormal.BassSpeedX = -20;
+    Level4Info.ZombieNormal.BassSpeedX = -20.0;
     Level4Info.ZombieNormal.BassSpeedY = 0;
     Level4Info.ZombieNormal.BassRunSpeedY = 0;
     Level4Info.ZombieNormal.ZombieSpawned = 0;
-    Level4Info.ZombieNormal.BassFrameDelay = 40.0f;
+    Level4Info.ZombieNormal.BassFrameDelay = 45.0f;
     //  Level4Info.ThinkingZombie.Timer = 0;
-    Level4Info.ThinkingZombie.BassSpeedX = -20;
+    Level4Info.ThinkingZombie.BassSpeedX = -20.0;
     Level4Info.ThinkingZombie.BassSpeedY = 0;
     Level4Info.ThinkingZombie.BassRunSpeedY = 20;
     Level4Info.ThinkingZombie.ZombieSpawned = 0;
     Level4Info.ZombieNormal.InfiniteSpan = true;
     Level4Info.ThinkingZombie.InfiniteSpan = true;
-    Level4Info.ThinkingZombie.BassFrameDelay = 40.0f;
+    Level4Info.ThinkingZombie.BassFrameDelay = 45.0f;
     Level4Info.MaxThinkingZombieAllowed = MAXNUZOMBIES;
     Level4Info.MaxZombieNormalAllowed = MAXNUZOMBIES;
     Level4Info.START_X = 305;

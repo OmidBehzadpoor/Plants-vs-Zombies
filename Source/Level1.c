@@ -94,11 +94,11 @@ void InitLevel1Info(void)
     Level1Info.RosetInfoLevel.price = 150;
     Level1Info.PotatoMineInfoLevel.price = 25;
 
-    Level1Info.SunFlowertInfoLevel.Cooldown = 2; // 45;
-    Level1Info.PeashooterInfoLevel.Cooldown = 2; // 45;
-    Level1Info.ChompertInfoLevel.Cooldown = 2;   // 60;
-    Level1Info.RosetInfoLevel.Cooldown = 0.5;    // 70;
-    Level1Info.PotatoMineInfoLevel.Cooldown = 0.5;
+    Level1Info.SunFlowertInfoLevel.Cooldown = 11; // 45;
+    Level1Info.PeashooterInfoLevel.Cooldown = 9; // 45;
+    Level1Info.ChompertInfoLevel.Cooldown = 6;   // 60;
+    Level1Info.RosetInfoLevel.Cooldown = 7;    // 70;
+    Level1Info.PotatoMineInfoLevel.Cooldown = 8;
     Level1Info.SunFlowertInfoLevel.Timer = 0;
     Level1Info.PeashooterInfoLevel.Timer = 0;
     Level1Info.ChompertInfoLevel.Timer = 0;
@@ -129,23 +129,23 @@ void InitLevel1Info(void)
     Level1Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level1Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level1Info.ZombieRegenerateTimer = 5 ;
+    Level1Info.ZombieRegenerateTimer = 25 ;
     //   //    Level1Info.ZombieNormal.Regenerate = 5;
     //   // Level1Info.ZombieNormal.Timer = 0;
-    Level1Info.ZombieNormal.BassSpeedX = -20;
+    Level1Info.ZombieNormal.BassSpeedX = -17.5;
     Level1Info.ZombieNormal.BassSpeedY = 0;
     Level1Info.ZombieNormal.BassRunSpeedY = 0;
     Level1Info.ZombieNormal.InfiniteSpan = false;
     Level1Info.ZombieNormal.ZombieSpawned = 0;
     Level1Info.ThinkingZombie.InfiniteSpan = false;
     Level1Info.ThinkingZombie.ZombieSpawned = 0;
-    Level1Info.ZombieNormal.BassFrameDelay = 40.0f;
+    Level1Info.ZombieNormal.BassFrameDelay = 50.0f;
     //   //   Level1Info.ThinkingZombie.Timer = 0;
-    Level1Info.ThinkingZombie.BassSpeedX = -20;
+    Level1Info.ThinkingZombie.BassSpeedX = -17.5;
     Level1Info.ThinkingZombie.BassSpeedY = 0;
     Level1Info.ThinkingZombie.BassRunSpeedY = 20;
 
-    Level1Info.ThinkingZombie.BassFrameDelay = 40.0f;
+    Level1Info.ThinkingZombie.BassFrameDelay = 50.0f;
     Level1Info.MaxThinkingZombieAllowed = 0;
     Level1Info.MaxZombieNormalAllowed = 30;
     Level1Info.START_X = 305;
