@@ -121,6 +121,7 @@ void PotatoMineExplosion(PotatoMineElement *PotatoMine)
     {
         finalTarget->isAlive = false; // ! مرگ آنی زامبی
         PotatoMine->Explosion = true;
+        PlaySound(MineFX[rand()%2]);
         ZombiesKilled++;
         CreatingDiamondLuck(DiamondElementArray, finalTarget->Markaz.x, finalTarget->Markaz.y, Chancepercentage);
         CellContent[PotatoMine->Base.Y_Cell][PotatoMine->Base.X_Cell] = EXPLODEDPOTATOMINE;

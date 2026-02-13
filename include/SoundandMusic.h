@@ -9,12 +9,13 @@ typedef struct EatSound
     int CurrentSound;
 } EatSound;
 extern EatSound plantEatSoundPlayed;
-extern bool isMusicPaused ;
+extern bool isMusicPaused;
 
 extern Sound menuOpen, menuSelect, menuHover, BackButtonSoundClick, Clocks, SetupLawnMowerSound, LawnmowerSound,
-    EatPlantsSound[2], StartLevelSound, CollectSound, PlantingSound[3], ZombieSound, EndGameSound, BulletHitSound[4],
-    PeaShootSfx , VictorySound;
-extern Texture2D  MusicPlayerPlay , MusicPlayerPause;
+    EatPlantsSound[2], StartLevelSound, CollectSound, CollectSoundDiamond, PlantingSound[3], ZombieSound, EndGameSound,
+    BulletHitSound[4], PeaShootSfx, VictorySound, MineFX[2], bleep, pause, pop1, pop2, FireFX, FreezeFX, CoinFX,
+    ErrorShopFX, SunPackCollectFX, ErrorItemFX , UiErrorFX , LockErrorFX , UiClickFX;
+extern Texture2D MusicPlayerPlay, MusicPlayerPause;
 extern Music MusicBackgrand[4];
 void InitSound(void);
 void InitMusic(void);

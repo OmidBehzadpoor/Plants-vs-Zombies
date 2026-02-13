@@ -91,7 +91,7 @@ void UpdateLevel4(void)
             {
                 if (DiamondElementArray[i].Available)
                 {
-                    PlaySound(CollectSound);
+                    PlaySound(CollectSoundDiamond);
                     DiamondElementArray[i].IsCollected = true;
                     //   DrawTexture(MapDiamond, 31, 105, WHITE);
                     DiamondElementArray[i].Diamond.finalX = 31;
@@ -213,7 +213,6 @@ void InitLevel4MapCell(void)
         i++;
     }
 }
-//------------------------------------------------------------------------------------------------//
 
 void resartLevel4(void)
 {

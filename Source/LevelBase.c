@@ -152,12 +152,12 @@ void UnloadLevelFont(void)
 }
 void SaveBestTime(void)
 {
-    SaveFileData("../assets/Level1/BestTime.dat", &BestSurvivalTime, sizeof(float));
+    SaveFileData("../Data/BestTime.dat", &BestSurvivalTime, sizeof(float));
 }
 
 void LoadBestTime(void)
 {
-    FILE *file = fopen("../assets/Level1/BestTime.dat", "rb"); // باز کردن فایل برای خواندن
+    FILE *file = fopen("../Data/BestTime.dat", "rb"); // باز کردن فایل برای خواندن
     if (file != NULL)
     {
         fread(&BestSurvivalTime, sizeof(int), 1, file);
@@ -179,7 +179,7 @@ void CalculateSurvivalTimeHMS(void)
 }
 void SaveGame(void)
 {
-    FILE *file = fopen("savegame.bin", "wb");
+    FILE *file = fopen("../Data/savegame.bin", "wb");
     if (file != NULL)
     {
         fwrite(&DiamondBank, sizeof(int), 1, file);
@@ -197,7 +197,7 @@ void SaveGame(void)
 }
 void LoadGame(void)
 {
-    FILE *file = fopen("savegame.bin", "rb"); // باز کردن فایل برای خواندن
+    FILE *file = fopen("../Data/savegame.bin", "rb"); // باز کردن فایل برای خواندن
     if (file != NULL)
     {
         fread(&DiamondBank, sizeof(int), 1, file);
@@ -285,7 +285,7 @@ void CheckWin(void)
         {
             if (DiamondElementArray[i].Available)
             {
-                PlaySound(CollectSound);
+                PlaySound(CollectSoundDiamond);
                 DiamondElementArray[i].IsCollected = true;
                 //   DrawTexture(MapDiamond, 31, 105, WHITE);
                 DiamondElementArray[i].Diamond.finalX = 31;
@@ -324,7 +324,7 @@ void CheckLose(void)
             {
                 if (DiamondElementArray[i].Available)
                 {
-                    PlaySound(CollectSound);
+                    PlaySound(CollectSoundDiamond);
                     DiamondElementArray[i].IsCollected = true;
                     //   DrawTexture(MapDiamond, 31, 105, WHITE);
                     DiamondElementArray[i].Diamond.finalX = 31;
@@ -362,7 +362,7 @@ void CheckLose(void)
             {
                 if (DiamondElementArray[i].Available)
                 {
-                    PlaySound(CollectSound);
+                    PlaySound(CollectSoundDiamond);
                     DiamondElementArray[i].IsCollected = true;
                     //   DrawTexture(MapDiamond, 31, 105, WHITE);
                     DiamondElementArray[i].Diamond.finalX = 31;

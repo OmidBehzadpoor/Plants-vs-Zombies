@@ -81,7 +81,6 @@ void ShowWarning(WarningMessage *Warning, char *text)
     Warning->isActive = true;
     Warning->timer = Warning->duration; // ریست تایمر
 }
-//----------------------------------------------------------------------------//
 // ---------------------- Update Functions-----------------------  //
 
 void CheckSelect(void)
@@ -106,15 +105,18 @@ void CheckSelect(void)
                     {
 
                         Selection = SUNFLOWER;
+                        PlaySound(UiClickFX);
                     }
                     else
                     {
                         ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
+                        PlaySound(UiErrorFX);
                     }
                 }
                 else
                 {
                     ShowWarning(&LockWarning, "Lock!");
+                    PlaySound(LockErrorFX);
                 }
                 break;
             case 1:
@@ -123,15 +125,18 @@ void CheckSelect(void)
                     if (SunBank >= CurrentLevelInfo->PeashooterInfoLevel.price)
                     {
                         Selection = PEASHOOTER;
+                        PlaySound(UiClickFX);
                     }
                     else
                     {
                         ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
+                        PlaySound(UiErrorFX);
                     }
                 }
                 else
                 {
                     ShowWarning(&LockWarning, "Lock!");
+                    PlaySound(LockErrorFX);
                 }
                 break;
             case 2:
@@ -140,15 +145,18 @@ void CheckSelect(void)
                     if (SunBank >= CurrentLevelInfo->ChompertInfoLevel.price)
                     {
                         Selection = CHOMPER;
+                        PlaySound(UiClickFX);
                     }
                     else
                     {
                         ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
+                        PlaySound(UiErrorFX);
                     }
                 }
                 else
                 {
                     ShowWarning(&LockWarning, "Lock!");
+                    PlaySound(LockErrorFX);
                 }
                 break;
             case 3:
@@ -157,33 +165,46 @@ void CheckSelect(void)
                     if (SunBank >= CurrentLevelInfo->RosetInfoLevel.price)
                     {
                         Selection = ROSE;
+                        PlaySound(UiClickFX);
                     }
                     else
                     {
                         ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
+                        PlaySound(UiErrorFX);
                     }
                 }
                 else
                 {
                     ShowWarning(&LockWarning, "Lock!");
+                    PlaySound(LockErrorFX);
                 }
                 break;
             case 4:
                 if (CurrentLevelInfo->PotatoMineInfoLevel.IsAvailable && !CurrentLevelInfo->PotatoMineInfoLevel.Lock)
                 {
-                    if (PotatoMineItems.PlayerInventory > 0) //? اصلاح
+                    if (PotatoMineItems.PlayerInventory > 0) 
                     {
-                        Selection = POTATOMINE;
+                        if (SunBank >= CurrentLevelInfo->PotatoMineInfoLevel.price)
+                        {
+                            Selection = POTATOMINE;
+                            PlaySound(UiClickFX);
+                        }
+                        else
+                        {
+                            ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
+                            PlaySound(UiErrorFX);
+                        }
                     }
                     else
                     {
                         ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
-                        //? اصلاح
+                        PlaySound(UiErrorFX);
                     }
                 }
                 else
                 {
                     ShowWarning(&LockWarning, "Lock!");
+                    PlaySound(LockErrorFX);
                 }
                 break;
             default:
@@ -348,7 +369,7 @@ void UpdateSelectionItems(void)
                         RowStatus[Y_Cell].plantCount++;
                         RowStatus[Y_Cell].rowChanged = true;
                         RowStatus[Y_Cell].WeightChanged = true;
-
+                        SunBank -= CurrentLevelInfo->PotatoMineInfoLevel.price;
                         PotatoMineItems.PlayerInventory--;
                         SaveGame();
 
@@ -635,6 +656,7 @@ void UpdateBottom(void)
             else if (ButtonLevelSelectWIN.hovered)
             {
                 Screen = LEVEL_SELECT;
+                PlayRandomMenuMusic();
                 restart = true; //? اصلاح؟
             }
             else if (ButtonRestartWIN.hovered)
@@ -679,6 +701,8 @@ void UpdateBottom(void)
             else if (ButtonLevelSelectLOSE.hovered)
             {
                 Screen = LEVEL_SELECT;
+                PlayRandomMenuMusic();
+
                 restart = true;
             }
             else if (ButtonRestartLOSE.hovered)
@@ -829,6 +853,7 @@ void UpdateLoseNowButton(void)
         if (CheckCollisionPointRec(mousePos, LoseNowButton))
         {
             CurrentGameState = YesNo;
+            PlaySound(pause);
             return;
         }
     }
@@ -891,11 +916,13 @@ void UpdateSpecialItems(void)
                 FreezeBurstEffect = true;
                 FreezeBurstEffectTimer = 4;
                 FreezeBurst.PlayerInventory--;
+                PlaySound(FreezeFX);
                 SaveGame();
             }
             else
             {
                 ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+                PlaySound(ErrorItemFX);
             }
         }
         if (FireStormButton.IsHover && !FireStormEffect)
@@ -907,11 +934,13 @@ void UpdateSpecialItems(void)
                 FireStormEffectTimer = 4;
                 FireStormEffectTimerSecondsCounter = 1;
                 FireStorm.PlayerInventory--;
+                PlaySound(FireFX);
                 SaveGame();
             }
             else
             {
                 ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+                PlaySound(ErrorItemFX);
             }
         }
         if (SunPackButton.IsHover)
@@ -921,11 +950,13 @@ void UpdateSpecialItems(void)
             {
                 SunPack.PlayerInventory--;
                 SunBank += 250;
+                PlaySound(SunPackCollectFX);
                 SaveGame();
             }
             else
             {
                 ShowWarning(&LackDiamondWarning, "NOT ENOUGH INVENTORY!");
+                PlaySound(ErrorItemFX);
             }
         }
     }

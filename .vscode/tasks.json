@@ -8,12 +8,11 @@
                 "-fdiagnostics-color=always",
                 "-g", 
                 
-                // 1. کامپایل تمام فایل‌های C در پوشه 'build'
-              //     "${workspaceFolder}/build/*.c",
-                                                                                //اگه سورسی بوردی تو بیلد 
-
-                // 2. کامپایل تمام فایل‌های C در پوشه 'Source'
+                // 1. کامپایل تمام فایل‌های C در پوشه 'Source'
                 "${workspaceFolder}/Source/*.c",
+
+                // 2. اضافه کردن فایل ریسورس کامپایل شده از پوشه Data
+                "${workspaceFolder}/Data/resource.o",
                 
                 // 3. افزودن پوشه 'include' به مسیرهای جستجوی هدر
                 "-I${workspaceFolder}/include", 

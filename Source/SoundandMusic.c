@@ -9,8 +9,9 @@
 #include <time.h>
 int CurrentBackgroundMusic = -1;
 Sound menuOpen, menuSelect, menuHover, BackButtonSoundClick, Clocks, SetupLawnMowerSound, LawnmowerSound,
-    EatPlantsSound[2], StartLevelSound, CollectSound, PlantingSound[3], ZombieSound, EndGameSound, BulletHitSound[4],
-    PeaShootSfx, VictorySound;
+    EatPlantsSound[2], StartLevelSound, CollectSound, CollectSoundDiamond, PlantingSound[3], ZombieSound, EndGameSound,
+    BulletHitSound[4], PeaShootSfx, VictorySound, MineFX[2], bleep, pause, pop1, pop2, FireFX, FreezeFX, CoinFX,
+    ErrorShopFX, SunPackCollectFX, ErrorItemFX, UiErrorFX, LockErrorFX, UiClickFX;
 Texture2D MusicPlayerPlay, MusicPlayerPause, spritesheetgreen, MusicPonter, MusicBGpic[4];
 Music MusicBackgrand[4];
 EatSound plantEatSoundPlayed;
@@ -36,6 +37,7 @@ void InitSound(void)
     EatPlantsSound[1] = LoadSound("../assets/Sounds/chomp2.mp3");
     StartLevelSound = LoadSound("../assets/Sounds/awooga.mp3");
     CollectSound = LoadSound("../assets/Sounds/sparkles.mp3");
+    CollectSoundDiamond = LoadSound("../assets/Sounds/chime.mp3");
     PlantingSound[0] = LoadSound("../assets/Sounds/plant1.mp3");
     PlantingSound[1] = LoadSound("../assets/Sounds/plant2.mp3");
     PlantingSound[2] = LoadSound("../assets/Sounds/seedlift.mp3");
@@ -47,6 +49,22 @@ void InitSound(void)
     BulletHitSound[3] = LoadSound("../assets/Sounds/splat3.mp3");
     PeaShootSfx = LoadSound("../assets/Sounds/shoop.ogg");
     VictorySound = LoadSound("../assets/Sounds/Victory.ogg");
+    MineFX[0] = LoadSound("../assets/Sounds/mine1.wav");
+    MineFX[1] = LoadSound("../assets/Sounds/mine2.wav");
+    bleep = LoadSound("../assets/Sounds/bleep.mp3");
+    pause = LoadSound("../assets/Sounds/pause.mp3");
+    pop1 = LoadSound("../assets/Sounds/limbspop.ogg");
+    pop2 = LoadSound("../assets/Sounds/loadingbarflower.mp3");
+    FireFX = LoadSound("../assets/Sounds/Fire.mp3");
+    FreezeFX = LoadSound("../assets/Sounds/Freeze.mp3");
+    CoinFX = LoadSound("../assets/Sounds/coin.mp3");
+    ErrorShopFX = LoadSound("../assets/Sounds/Error.mp3");
+    SunPackCollectFX = LoadSound("../assets/Sounds/SunPackCollect.mp3");
+    ErrorItemFX = LoadSound("../assets/Sounds/ErrorItem.mp3");
+    UiClickFX = LoadSound("../assets/Sounds/uiClick.mp3");
+    UiErrorFX = LoadSound("../assets/Sounds/uierror.mp3");
+    LockErrorFX = LoadSound("../assets/Sounds/lockerror.mp3");
+
     SetSoundVolume(menuHover, 0.25f);
     SetSoundVolume(menuSelect, 0.5f);
 }
@@ -178,7 +196,6 @@ void ChangeMusicTrack(int direction)
     if (CurrentBackgroundMusic != -1)
     {
         StopMusicStream(MusicBackgrand[CurrentBackgroundMusic]);
-        // جهت چرخه: (Current + direction + تعداد کل) % تعداد کل
         CurrentBackgroundMusic = (CurrentBackgroundMusic + direction + 4) % 4;
         PlayMusicStream(MusicBackgrand[CurrentBackgroundMusic]);
         isMusicPaused = false;
@@ -194,7 +211,7 @@ void SeekMusic(float seconds)
         float totalTime = GetMusicTimeLength(MusicBackgrand[CurrentBackgroundMusic]);
         float newTime = currentTime + seconds;
 
-        // محدود کردن زمان بین ۰ و انتهای آهنگ
+        // محدود کردن زمان بین و انتهای آهنگ
         if (newTime < 0)
             newTime = 0;
         if (newTime > totalTime)
@@ -225,21 +242,21 @@ void UpdateMusicPlayerLogic(void)
             else
                 ResumeMusicStream(MusicBackgrand[CurrentBackgroundMusic]);
 
-            PlaySound(BackButtonSoundClick);
+            PlaySound(bleep);
         }
 
         // --- آهنگ بعدی (Next) ---
         if (CheckCollisionPointCircle(mousePos, NextMusic.center, NextMusic.radius))
         {
             ChangeMusicTrack(1);
-            PlaySound(BackButtonSoundClick);
+            PlaySound(bleep);
         }
 
         // --- آهنگ قبلی (Previous) ---
         if (CheckCollisionPointCircle(mousePos, PreviousMusic.center, PreviousMusic.radius))
         {
             ChangeMusicTrack(-1);
-            PlaySound(BackButtonSoundClick);
+            PlaySound(bleep);
         }
 
         // --- ۵ ثانیه جلو رفتن ---
@@ -256,7 +273,7 @@ void UpdateMusicPlayerLogic(void)
 
         if (CheckCollisionPointRec(mousePos, BackButton.ClickArea))
         {
-            PlaySound(BackButtonSoundClick);
+            PlaySound(bleep);
 
             Screen = MENU;
         }
@@ -296,15 +313,12 @@ void DrawMusicAnimationGrid(Texture2D spriteSheet, int rows, int cols, Vector2 p
 
     Vector2 origin = {0, 0};
 
-    // ۷. رسم فریم
     DrawTexturePro(spriteSheet, sourceRec, destRec, origin, 0.0f, WHITE);
     DrawTexture(MusicPonter, position.x + (frameWidth / 100) * currentFrame - 8, position.y - 1, WHITE);
     const char *currentTimeText = TextFormat("%d:%02d", (int)timePlayed / 60, (int)timePlayed % 60);
     const char *totalTimeText = TextFormat("%d:%02d", (int)timeLength / 60, (int)timeLength % 60);
-    // زمان شروع: چند پیکسل قبل از شروع نوار (عقب‌تر)
     int currentTextWidth = MeasureText(currentTimeText, 20);
     DrawText(currentTimeText, position.x - currentTextWidth - 10, position.y, 20, WHITE);
 
-    // زمان پایان: ۵ پیکسل بعد از انتهای نوار (جلوتر)
     DrawText(totalTimeText, position.x + frameWidth + 10, position.y, 20, WHITE);
 }

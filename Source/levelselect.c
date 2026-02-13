@@ -14,6 +14,10 @@ Vector2 CircleLvl1;
 Vector2 CircleLvl2;
 Vector2 CircleLvl3;
 Vector2 CircleLvl4;
+bool HoverCircleL1 = false;
+bool HoverCircleL2 = false;
+bool HoverCircleL3 = false;
+bool HoverCircleL4 = false;
 // Vector2 CircleBackButton;
 float Radius1;
 float Radius2;
@@ -114,13 +118,12 @@ void DrawButton(Button *Button)
     float scaledWidth = Button->ClickArea.width * Button->ScaleNow;
     float scaledHeight = Button->ClickArea.height * Button->ScaleNow;
 
-    // حالا origin واقعاً مرکز بافت میشه
     Vector2 origin = {scaledWidth / 2.0f, scaledHeight / 2.0f};
 
     DrawTexturePro(Button->Picture,
                    (Rectangle){0.0f, 0.0f, (float)Button->Picture.width, (float)Button->Picture.height},
 
-                   // ❗ اینجا باید مختصات مرکز بدی، نه گوشه
+                   //   مختصات مرکز 
                    (Rectangle){Button->CenterPosition.x, Button->CenterPosition.y, scaledWidth, scaledHeight},
 
                    origin, // مرکز واقعی
@@ -149,7 +152,6 @@ void CircleButtonAnimation(CircleButtonAnim *btn)
             btn->rotation = 0;
         }
     }
-    // بررسی برخورد موس با دایره
     if (CheckCollisionPointCircle(GetMousePosition(), btn->CenterPosition, scaledRadius))
     {
         if (btn->ScaleNow < btn->targetScale && btn->scaleSpeed > 0 ||
@@ -194,22 +196,22 @@ void Drawlevelselect(void)
     DrawButton(&BackButton);
 
     //
-    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl1, Radius1))
+    if (HoverCircleL1)
     {
         DrawTexture(LVL1Picture, 557, 285, WHITE);
         DrawText("LEVEL 1", 625, 430, 12, WHITE);
     }
-    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl2, Radius2))
+    if (HoverCircleL2)
     {
         DrawTexture(LVL2Picture, 865, 285, WHITE);
         DrawText("LEVEL 2", 930, 435, 12, WHITE);
     }
-    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl3, Radius3))
+    if (HoverCircleL3)
     {
         DrawTexture(LVL3Picture, 557, 532, WHITE);
         DrawText("LEVEL 3", 625, 680, 12, WHITE);
     }
-    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl4, Radius4))
+    if (HoverCircleL4)
     {
         DrawTexture(LVL4Picture, 895, 560, WHITE);
         DrawText("LEVEL 4", 930, 680, 12, WHITE);
@@ -220,21 +222,75 @@ void Drawlevelselect(void)
 void Updatelevelselect(void)
 {
     ButtonAnimation(&BackButton);
+    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl1, Radius1))
+    {
+        if (!HoverCircleL1)
+        {
+            PlaySound(pop2);
+        }
+        HoverCircleL1 = true;
+    }
+    else
+    {
+        HoverCircleL1 = false;
+    }
+    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl2, Radius2))
+    {
+        if (!HoverCircleL2)
+        {
+            PlaySound(pop2);
+        }
+        HoverCircleL2 = true;
+    }
+    else
+    {
+        HoverCircleL2 = false;
+    }
+    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl3, Radius3))
+    {
+        if (!HoverCircleL3)
+        {
+            PlaySound(pop2);
+        }
+        HoverCircleL3 = true;
+    }
+    else
+    {
+        HoverCircleL3 = false;
+    }
+    if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl4, Radius4))
+    {
+        if (!HoverCircleL4)
+        {
+            PlaySound(pop2);
+        }
+        HoverCircleL4 = true;
+    }
+    else
+    {
+        HoverCircleL4 = false;
+    }
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl1, Radius1))
+        if (HoverCircleL1)
         {
+            PlaySound(pop1);
+
             Screen = LVL1;
         }
-        else if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl2, Radius2))
+        else if (HoverCircleL2)
         {
+            PlaySound(pop1);
+
             Screen = LVL2;
         }
-        else if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl3, Radius3))
+        else if (HoverCircleL3)
         {
+            PlaySound(pop1);
+
             Screen = LVL3;
         }
-        else if (CheckCollisionPointCircle(GetMousePosition(), CircleLvl4, Radius4))
+        else if (HoverCircleL4)
         {
             PlaySound(Clocks);
             Screen = LVL4;

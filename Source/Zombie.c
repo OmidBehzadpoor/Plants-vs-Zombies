@@ -170,8 +170,7 @@ void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
     {
         zombie->ZombieObj.speedX = zombieInfo->BassSpeedX * zombie->slowFactor;
 
-            zombie->ZombieObj.speedY = zombieInfo->BassRunSpeedY * zombie->slowFactor * zombie->signSpeedY;
-
+        zombie->ZombieObj.speedY = zombieInfo->BassRunSpeedY * zombie->slowFactor * zombie->signSpeedY;
     }
     zombie->ZombieObj.frameDelay = zombieInfo->BassFrameDelay / zombie->slowFactor;
     //   if(i==0) printf("zombie[%d] speedX = %f \n ", i, zombie->ZombieObj.speedX);  //debug
@@ -449,7 +448,6 @@ void UpdateThinkingZombieVerticalMovement(Zombies *zombie)
     int currentRow = zombie->Y_Cell;
     int bestRow = currentRow;
     double minWeight = RowStatus[currentRow].RowWeights;
-
     // چک کردن ردیف بالا (اگر وجود دارد)
     if (currentRow > 0)
     {

@@ -68,7 +68,7 @@ void CollectDiamondElement(void)
                     MousePos.y >= DiamondElementArray[i].Diamond.posY &&
                     MousePos.y <= DiamondElementArray[i].Diamond.posY + DiamondElementArray[i].Diamond.frames[0].height)
                 {
-                    PlaySound(CollectSound);
+                    PlaySound(CollectSoundDiamond);
                     DiamondElementArray[i].IsCollected = true;
                     //   DrawTexture(MapDiamond, 31, 105, WHITE);
                     DiamondElementArray[i].Diamond.finalX = 31;

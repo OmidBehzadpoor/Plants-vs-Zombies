@@ -8,17 +8,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # -----------------------------
 # پیدا کردن خودکار تمام فایل‌های سورس و هدر
 # -----------------------------
-# تمام فایل‌های .c در پوشه Source و زیرپوشه‌های آن را پیدا می‌کند
 file(GLOB_RECURSE SOURCES "Source/*.c")
-
-# تمام فایل‌های .h در پوشه include و زیرپوشه‌های آن را پیدا می‌کند (اختیاری برای نمایش در IDE)
 file(GLOB_RECURSE HEADERS "include/*.h")
+
+# اضافه کردن فایل ریسورس آیکون (تغییر جدید برای پوشه Data)
+set(RESOURCE_FILE "Data/resource.rc")
 
 # -----------------------------
 # Executable
 # -----------------------------
-# فایل‌های پیدا شده را به پروژه اضافه می‌کند
-add_executable(PlantsVsZombies ${SOURCES} ${HEADERS})
+# فایل resource.rc را هم در کنار سورس‌ها قرار می‌دهیم
+add_executable(PlantsVsZombies ${SOURCES} ${HEADERS} ${RESOURCE_FILE})
 
 # -----------------------------
 # Include path
@@ -53,5 +53,9 @@ target_link_libraries(PlantsVsZombies PRIVATE raylib)
 # Windows fix (MinGW + raylib)
 # -----------------------------
 if (WIN32)
+    # کتابخانه‌های سیستمی ویندوز
     target_link_libraries(PlantsVsZombies PRIVATE winmm gdi32)
+    
+    # ! نکته مهم: اگر می‌خواهید در زمان اجرا کنسول (CMD) باز نشود
+    # set_target_properties(PlantsVsZombies PROPERTIES WIN32_EXECUTABLE TRUE)
 endif()

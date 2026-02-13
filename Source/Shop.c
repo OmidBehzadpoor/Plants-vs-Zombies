@@ -232,9 +232,11 @@ void BuyingItems(StoreItems *Items, CircleButtonAnim *Button)
     {
         if ((Items->StoreInventory <= 0 && !Items->InfiniteInventory))
         {
+            PlaySound(ErrorShopFX);
             ShowWarning(&LackDiamondWarning, "Low on resources!");
             return;
         }
+        PlaySound(CoinFX);
         DiamondBank -= Items->Price;
         Items->PlayerInventory++;
         Items->StoreInventory--;
@@ -243,6 +245,7 @@ void BuyingItems(StoreItems *Items, CircleButtonAnim *Button)
     else
     {
         ShowWarning(&LackDiamondWarning, "DIAMOND NOT ENOUGH!");
+        PlaySound(ErrorShopFX);
     }
 }
 void UnloadShop(void)
