@@ -19,7 +19,8 @@ typedef enum PlantType
     PLANT_PEASHOOTER,
     PLANT_CHOMPER,
     PLANT_ROSE,
-    PLANT_POTATOMINE
+    PLANT_POTATOMINE ,
+    PLANT_ICEPEASHOOTER
 } PlantType; // ! فعلا استفاده نمیشود
 
 /**

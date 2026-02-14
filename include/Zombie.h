@@ -15,6 +15,8 @@ typedef struct Zombies
     float slowFactor;
     bool isAlive;
     bool Attack;
+    bool IsFrozen;
+    float FrostTimer ; 
 //    bool IsMovedVertically;  // !  منسوخ شد
     float signSpeedY;
     Rectangle CollisionBox;
@@ -43,4 +45,5 @@ void KillAllZombiesInCell(int Row, int Col);
 double UpdateThinkingZombiesDeterminant(int Row);
 void UpdateRowWeights();
 void UpdateThinkingZombieVerticalMovement(Zombies *zombie);
+void UpdateZombieTimer(Zombies *zombie);
 #endif

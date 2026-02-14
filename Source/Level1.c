@@ -91,27 +91,36 @@ void InitLevel1Info(void)
     Level1Info.SunFlowertInfoLevel.price = 50;
     Level1Info.PeashooterInfoLevel.price = 100;
     Level1Info.ChompertInfoLevel.price = 125;
+    Level1Info.IcePeashooterInfoLevel.price = 125;
+
     Level1Info.RosetInfoLevel.price = 150;
     Level1Info.PotatoMineInfoLevel.price = 25;
 
     Level1Info.SunFlowertInfoLevel.Cooldown = 11; // 45;
-    Level1Info.PeashooterInfoLevel.Cooldown = 9; // 45;
-    Level1Info.ChompertInfoLevel.Cooldown = 6;   // 60;
-    Level1Info.RosetInfoLevel.Cooldown = 7;    // 70;
+    Level1Info.PeashooterInfoLevel.Cooldown = 9;
+    Level1Info.IcePeashooterInfoLevel.Cooldown = 9; // 45;
+    Level1Info.ChompertInfoLevel.Cooldown = 6;      // 60;
+    Level1Info.RosetInfoLevel.Cooldown = 7;         // 70;
     Level1Info.PotatoMineInfoLevel.Cooldown = 8;
     Level1Info.SunFlowertInfoLevel.Timer = 0;
     Level1Info.PeashooterInfoLevel.Timer = 0;
+    Level1Info.IcePeashooterInfoLevel.Timer = 0;
+
     Level1Info.ChompertInfoLevel.Timer = 0;
     Level1Info.RosetInfoLevel.Timer = 0;
     Level1Info.PotatoMineInfoLevel.Timer = 0;
-    Level1Info.PotatoMineInfoLevel.ActivationTime = 5;
+    Level1Info.PotatoMineInfoLevel.ActivationTime = 10;
     Level1Info.SunFlowertInfoLevel.BaseHealth = 100;
     Level1Info.PeashooterInfoLevel.BaseHealth = 100;
+    Level1Info.IcePeashooterInfoLevel.BaseHealth = 100;
+
     Level1Info.ChompertInfoLevel.BaseHealth = 100;
     Level1Info.RosetInfoLevel.BaseHealth = 100;
     Level1Info.PotatoMineInfoLevel.BaseHealth = 100;
     Level1Info.SunFlowertInfoLevel.Lock = true;
     Level1Info.PeashooterInfoLevel.Lock = false;
+    Level1Info.IcePeashooterInfoLevel.Lock = false;
+
     Level1Info.ChompertInfoLevel.Lock = false;
 
     Level1Info.RosetInfoLevel.Lock = false;
@@ -119,6 +128,8 @@ void InitLevel1Info(void)
 
     Level1Info.SunFlowertInfoLevel.IsAvailable = true;
     Level1Info.PeashooterInfoLevel.IsAvailable = true;
+    Level1Info.IcePeashooterInfoLevel.IsAvailable = true;
+
     Level1Info.ChompertInfoLevel.IsAvailable = true;
     Level1Info.RosetInfoLevel.IsAvailable = true;
     Level1Info.PotatoMineInfoLevel.IsAvailable = true;
@@ -129,23 +140,33 @@ void InitLevel1Info(void)
     Level1Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level1Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level1Info.ZombieRegenerateTimer = 25 ;
+    Level1Info.ZombieRegenerateTimer = 0;
     //   //    Level1Info.ZombieNormal.Regenerate = 5;
     //   // Level1Info.ZombieNormal.Timer = 0;
     Level1Info.ZombieNormal.BassSpeedX = -17.5;
     Level1Info.ZombieNormal.BassSpeedY = 0;
     Level1Info.ZombieNormal.BassRunSpeedY = 0;
+    Level1Info.ZombieNormal.FreezingSpeedX = Level1Info.ZombieNormal.BassSpeedX / 2;
+    Level1Info.ZombieNormal.FreezingSpeedY = Level1Info.ZombieNormal.BassSpeedY / 2;
+    Level1Info.ZombieNormal.FreezingRunSpeedY = Level1Info.ZombieNormal.BassRunSpeedY / 2;
     Level1Info.ZombieNormal.InfiniteSpan = false;
     Level1Info.ZombieNormal.ZombieSpawned = 0;
     Level1Info.ThinkingZombie.InfiniteSpan = false;
     Level1Info.ThinkingZombie.ZombieSpawned = 0;
     Level1Info.ZombieNormal.BassFrameDelay = 50.0f;
+    Level1Info.ZombieNormal.FreezingFrameDelay = Level1Info.ZombieNormal.BassFrameDelay * 2;
+
     //   //   Level1Info.ThinkingZombie.Timer = 0;
     Level1Info.ThinkingZombie.BassSpeedX = -17.5;
     Level1Info.ThinkingZombie.BassSpeedY = 0;
     Level1Info.ThinkingZombie.BassRunSpeedY = 20;
+    Level1Info.ThinkingZombie.FreezingSpeedX = Level1Info.ThinkingZombie.BassSpeedX / 2;
+    Level1Info.ThinkingZombie.FreezingSpeedY = Level1Info.ThinkingZombie.BassSpeedY / 2;
+    Level1Info.ThinkingZombie.FreezingRunSpeedY = Level1Info.ThinkingZombie.BassRunSpeedY / 2;
 
     Level1Info.ThinkingZombie.BassFrameDelay = 50.0f;
+    Level1Info.ThinkingZombie.FreezingFrameDelay = Level1Info.ThinkingZombie.BassFrameDelay * 2;
+
     Level1Info.MaxThinkingZombieAllowed = 0;
     Level1Info.MaxZombieNormalAllowed = 30;
     Level1Info.START_X = 305;

@@ -25,6 +25,8 @@ void UpdatePlants(void)
     {
         UpdatePeashooterFiring(&Peashooter[i]);
         UpdatePeashooterPeas(&Peashooter[i]);
+        UpdatePeashooterFiring(&ICEPeashooter[i]);
+        UpdatePeashooterPeas(&ICEPeashooter[i]);
     }
 }
 void DrawPlantsUnderZombie(void)
@@ -54,6 +56,15 @@ void CooldownUpdate(void)
         {
             CurrentLevelInfo->PeashooterInfoLevel.Lock = false;
             CurrentLevelInfo->PeashooterInfoLevel.Timer = 0;
+        }
+    }
+    if (CurrentLevelInfo->IcePeashooterInfoLevel.IsAvailable && CurrentLevelInfo->IcePeashooterInfoLevel.Lock)
+    {
+        CurrentLevelInfo->IcePeashooterInfoLevel.Timer += GetFrameTime();
+        if (CurrentLevelInfo->IcePeashooterInfoLevel.Timer >= CurrentLevelInfo->IcePeashooterInfoLevel.Cooldown)
+        {
+            CurrentLevelInfo->IcePeashooterInfoLevel.Lock = false;
+            CurrentLevelInfo->IcePeashooterInfoLevel.Timer = 0;
         }
     }
     if (CurrentLevelInfo->ChompertInfoLevel.IsAvailable && CurrentLevelInfo->ChompertInfoLevel.Lock)
@@ -125,6 +136,11 @@ void DrawPlantsObject(void)
             DrawAnimatedObject(&Peashooter[i].PeashooterObj, WHITE);
             DrawHpBar(&Peashooter[i].Base.HpDisplay);
         }
+        if (ICEPeashooter[i].Base.isAlive)
+        {
+            DrawAnimatedObject(&ICEPeashooter[i].PeashooterObj, WHITE);
+            DrawHpBar(&ICEPeashooter[i].Base.HpDisplay);
+        }
         if (Rose[i].Base.isAlive)
         {
             DrawAnimatedObject(&Rose[i].RoseObj, WHITE);
@@ -178,6 +194,11 @@ void UpdatePlantsAnimation(void)
         {
             UpdateAnimatedObject(&Peashooter[i].PeashooterObj);
             UpdateHpBar(&Peashooter[i].Base, CurrentLevelInfo->PeashooterInfoLevel.BaseHealth);
+        }
+        if (ICEPeashooter[i].Base.isAlive)
+        {
+            UpdateAnimatedObject(&ICEPeashooter[i].PeashooterObj);
+            UpdateHpBar(&ICEPeashooter[i].Base, CurrentLevelInfo->IcePeashooterInfoLevel.BaseHealth);
         }
         if (Chomper[i].Base.isAlive)
         {

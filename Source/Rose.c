@@ -44,6 +44,11 @@ void ApplyRoseFireingEffect(RoseElement *rose)
             // ! تقویت سرعت شلیک 20 درصد
             Peashooter[k].EffectiveFireRate *= 1.2f;
         }
+        if (ICEPeashooter[k].Base.isAlive && ICEPeashooter[k].Base.Y_Cell == rose->Base.Y_Cell)
+        {
+            // ! تقویت سرعت شلیک 20 درصد
+            ICEPeashooter[k].EffectiveFireRate *= 1.2f;
+        }
     }
 }
 void RoseEffect(RoseElement *rose)
@@ -60,6 +65,7 @@ void RoseEffect(RoseElement *rose)
             ApplyRoseHealEffect(rose, &Peashooter[i].Base, CurrentLevelInfo->PeashooterInfoLevel.BaseHealth);
             ApplyRoseHealEffect(rose, &Chomper[i].Base, CurrentLevelInfo->ChompertInfoLevel.BaseHealth);
             ApplyRoseHealEffect(rose, &PotatoMine[i].Base, CurrentLevelInfo->PotatoMineInfoLevel.BaseHealth);
+            ApplyRoseHealEffect(rose, &ICEPeashooter[i].Base, CurrentLevelInfo->IcePeashooterInfoLevel.BaseHealth);
 
             //  TODO: ???  ApplyRoseHealEffect(rose, &Rose[i].Base, CurrentLevelInfo->RosetInfoLevel.BaseHealth);
         }

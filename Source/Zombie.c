@@ -46,6 +46,16 @@ void UpdateZombies(void)
                                   CurrentLevelInfo->MaxZombieNormalAllowed);
         }
     }
+    for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
+
+    {
+        UpdateZombieTimer(&ZombieNormal[i]);
+    }
+    for (int i = 0; i < CurrentLevelInfo->MaxThinkingZombieAllowed; i++)
+
+    {
+        UpdateZombieTimer(&ThinkingZombie[i]);
+    }
     if (!FreezeBurstEffect)
     {
         for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
@@ -94,23 +104,33 @@ void UpdateZombies(void)
 void DrawZombiesObject(Zombies *ZombiesType, int MaxCount)
 {
     Color color;
+    Color colorEffect;
+
     if (FireStormEffect)
     {
-        color = RED;
+        colorEffect = RED;
     }
     else if (FreezeBurstEffect)
     {
-        color = BLUE;
+        colorEffect = BLUE;
     }
     else
     {
-        color = WHITE;
+        colorEffect = WHITE;
     }
 
     for (int i = 0; i < MaxCount; i++)
     {
         if (ZombiesType[i].isAlive)
         {
+            if (ZombiesType[i].IsFrozen)
+            {
+                color = BLUE;
+            }
+            else
+            {
+                color = colorEffect;
+            }
             DrawAnimatedObject(&ZombiesType[i].ZombieObj, color);
         }
     }
@@ -133,7 +153,7 @@ bool IsZombieSpawnTime(float *timer, float *regenerateTime)
             {
                 *regenerateTime = 6.0f + ((float)rand() / (float)RAND_MAX) * 3.0f -
                                   6.0f * (ZombiesSpawned / (CurrentLevelInfo->MaxThinkingZombieAllowed +
-                                                            CurrentLevelInfo->MaxZombieNormalAllowed)) ;
+                                                            CurrentLevelInfo->MaxZombieNormalAllowed));
             }
             else
             {
@@ -178,6 +198,17 @@ bool SpawnZombie(Zombies *ZombiesType, Texture2D *ZombieSheet, struct ZombieInfo
         return true;
     }
 }
+void UpdateZombieTimer(Zombies *zombie)
+{
+    zombie->FrostTimer += GetFrameTime();
+
+    if (zombie->FrostTimer >= 2)
+    {
+        zombie->FrostTimer = 0;
+        zombie->IsFrozen = false;
+    }
+}
+
 void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
 {
     if (!zombie->isAlive)
@@ -185,13 +216,27 @@ void UpdateZombieMovement(Zombies *zombie, ZombieInfo *zombieInfo)
         return;
     }
     UpdateAnimatedObject(&zombie->ZombieObj);
-    if (!zombie->Attack)
-    {
-        zombie->ZombieObj.speedX = zombieInfo->BassSpeedX * zombie->slowFactor;
 
-        zombie->ZombieObj.speedY = zombieInfo->BassRunSpeedY * zombie->slowFactor * zombie->signSpeedY;
+    if (zombie->IsFrozen)
+    {
+        if (!zombie->Attack)
+        {
+            zombie->ZombieObj.speedX = zombieInfo->FreezingSpeedX * zombie->slowFactor;
+
+            zombie->ZombieObj.speedY = zombieInfo->FreezingRunSpeedY * zombie->slowFactor * zombie->signSpeedY;
+        }
+        zombie->ZombieObj.frameDelay = zombieInfo->FreezingFrameDelay / zombie->slowFactor;
     }
-    zombie->ZombieObj.frameDelay = zombieInfo->BassFrameDelay / zombie->slowFactor;
+    else
+    {
+        if (!zombie->Attack)
+        {
+            zombie->ZombieObj.speedX = zombieInfo->BassSpeedX * zombie->slowFactor;
+
+            zombie->ZombieObj.speedY = zombieInfo->BassRunSpeedY * zombie->slowFactor * zombie->signSpeedY;
+        }
+        zombie->ZombieObj.frameDelay = zombieInfo->BassFrameDelay / zombie->slowFactor;
+    }
     //   if(i==0) printf("zombie[%d] speedX = %f \n ", i, zombie->ZombieObj.speedX);  //debug
     zombie->Markaz.x = (zombie->ZombieObj.posX + zombie->ZombieObj.frames[0].width / 2);
     zombie->Markaz.y = (zombie->ZombieObj.posY + zombie->ZombieObj.frames[0].height / 2);
@@ -271,6 +316,7 @@ void ZombiesAttackPlants(Zombies *zombie)
     {
         ApplyZombieDamageToPlant(zombie, &SunFlower[i].Base);
         ApplyZombieDamageToPlant(zombie, &Peashooter[i].Base);
+        ApplyZombieDamageToPlant(zombie, &ICEPeashooter[i].Base);
         ApplyZombieDamageToPlant(zombie, &Chomper[i].Base);
         ApplyZombieDamageToPlant(zombie, &Rose[i].Base);
         ApplyZombieDamageToPlant(zombie, &PotatoMine[i].Base);
@@ -312,6 +358,8 @@ void GenerateZombies(Zombies *obj, Texture2D *ZombieSheet, ZombieInfo *Zombie)
     int Ystart = CurrentLevelInfo->START_Y + Row * RectangleHeight - 10;
     int Yfinal = Ystart;
     obj->Markaz.x = 1600;
+    obj->IsFrozen = false;
+    obj->FrostTimer = 0;
     obj->Y_Cell = Row;
     obj->slowFactor = 1.0f;
     ResetAnimatedObject(&obj->ZombieObj);
@@ -425,6 +473,12 @@ double UpdateThinkingZombiesDeterminant(int Row)
         if (Peashooter[i].Base.isAlive && Peashooter[i].Base.Y_Cell == Row)
         {
             double RelativeHP = Peashooter[i].Base.Health / CurrentLevelInfo->PeashooterInfoLevel.BaseHealth;
+            S += RelativeHP;
+            Q += (RelativeHP * RelativeHP);
+        }
+        if (ICEPeashooter[i].Base.isAlive && ICEPeashooter[i].Base.Y_Cell == Row)
+        {
+            double RelativeHP = ICEPeashooter[i].Base.Health / CurrentLevelInfo->IcePeashooterInfoLevel.BaseHealth;
             S += RelativeHP;
             Q += (RelativeHP * RelativeHP);
         }

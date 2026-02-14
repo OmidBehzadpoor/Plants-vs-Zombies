@@ -212,6 +212,28 @@ void CheckSelect(void)
             }
             return;
         }
+        else if (MousePos.y >= Frame.height - 25 && MousePos.y <= Frame.height - 25 + Frame.height &&
+                 MousePos.x >= 300 && MousePos.x <= 300 + Frame.width)
+        {
+            if (CurrentLevelInfo->IcePeashooterInfoLevel.IsAvailable && !CurrentLevelInfo->IcePeashooterInfoLevel.Lock)
+            {
+                if (SunBank >= CurrentLevelInfo->IcePeashooterInfoLevel.price)
+                {
+                    Selection = ICEPEASHOOTER;
+                    PlaySound(UiClickFX);
+                }
+                else
+                {
+                    ShowWarning(&LackSunWarning, "SUN NOT ENOUGH!");
+                    PlaySound(UiErrorFX);
+                }
+            }
+            else
+            {
+                ShowWarning(&LockWarning, "Lock!");
+                PlaySound(LockErrorFX);
+            }
+        }
         else
         {
             if (!(MousePos.x >= CurrentLevelInfo->START_X && MousePos.x <= CurrentLevelInfo->END_X &&
@@ -238,7 +260,7 @@ void UpdateLevelItems(void)
             }
         }
     }
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
     {
         UpdateAnimatedObject(&icon[i]);
     }
@@ -300,7 +322,8 @@ void UpdateSelectionItems(void)
                 {
                     if (Peashooter[i].Base.isAlive == false)
                     {
-                        GeneratePeashooter(&Peashooter[i], X_Cell, Y_Cell);
+                        GeneratePeashooter(&Peashooter[i], X_Cell, Y_Cell, PLANT_PEASHOOTER,
+                                           &CurrentLevelInfo->PeashooterInfoLevel);
                         CellContent[Y_Cell][X_Cell] = PEASHOOTER;
                         RowStatus[Y_Cell].plantCount++;
                         RowStatus[Y_Cell].rowChanged = true;
@@ -308,6 +331,28 @@ void UpdateSelectionItems(void)
 
                         SunBank -= CurrentLevelInfo->PeashooterInfoLevel.price;
                         CurrentLevelInfo->PeashooterInfoLevel.Lock = true;
+                        Selection = EMPTY;
+                        PlaySound(PlantingSound[rand() % 3]);
+
+                        break;
+                    }
+                }
+            }
+            else if (Selection == ICEPEASHOOTER && CellContent[Y_Cell][X_Cell] == EMPTY)
+            {
+                for (int i = 0; i < MAXNUMITEMS; i++)
+                {
+                    if (ICEPeashooter[i].Base.isAlive == false)
+                    {
+                        GeneratePeashooter(&ICEPeashooter[i], X_Cell, Y_Cell, PLANT_ICEPEASHOOTER,
+                                           &CurrentLevelInfo->IcePeashooterInfoLevel);
+                        CellContent[Y_Cell][X_Cell] = PEASHOOTER;
+                        RowStatus[Y_Cell].plantCount++;
+                        RowStatus[Y_Cell].rowChanged = true;
+                        RowStatus[Y_Cell].WeightChanged = true;
+
+                        SunBank -= CurrentLevelInfo->IcePeashooterInfoLevel.price;
+                        CurrentLevelInfo->IcePeashooterInfoLevel.Lock = true;
                         Selection = EMPTY;
                         PlaySound(PlantingSound[rand() % 3]);
 
@@ -405,6 +450,9 @@ void DrawSelectionTick(void)
     case POTATOMINE:
         DrawTexture(selectpic, 360 + 4 * Frame.width, 30, WHITE);
         break;
+    case ICEPEASHOOTER:
+        DrawTexture(selectpic, 360, Frame.height + 5, WHITE);
+        break;
 
     default:
         break;
@@ -445,6 +493,9 @@ void DrawLevelItems(void)
         DrawAnimatedObject(&icon[i], WHITE);
         DrawTexture(Price[i], 445 + i * Frame.width, 75, WHITE);
     }
+    DrawTexture(Frame, 300, Frame.height - 25, WHITE);
+    DrawAnimatedObject(&icon[5], WHITE);
+    DrawTexture(Price[2], 445, Frame.height - 25 + 75, WHITE);
 
     if (CurrentGameState == PLAYING)
     {
@@ -750,6 +801,23 @@ void DrawLockPicture(void)
         Vector2 Pos = (Vector2){441 + 1 * Frame.width, 71};
         DrawTextureRec(RingBar, FramePic, Pos, WHITE);
     }
+    if (!CurrentLevelInfo->IcePeashooterInfoLevel.IsAvailable || CurrentLevelInfo->IcePeashooterInfoLevel.Lock)
+    {
+        DrawTexture(LockPic, 370, Frame.height + 5, WHITE);
+        int frame =
+            (CurrentLevelInfo->IcePeashooterInfoLevel.Timer / CurrentLevelInfo->IcePeashooterInfoLevel.Cooldown) *
+                100.0f -
+            1;
+
+        if (frame < 0)
+            frame = 0;
+        if (frame > 99)
+            frame = 99;
+
+        Rectangle FramePic = (Rectangle){58 * frame, 0, 58, 58};
+        Vector2 Pos = (Vector2){441, 46 + Frame.height};
+        DrawTextureRec(RingBar, FramePic, Pos, WHITE);
+    }
     if (!CurrentLevelInfo->ChompertInfoLevel.IsAvailable || CurrentLevelInfo->ChompertInfoLevel.Lock)
     {
         DrawTexture(LockPic, 370 + 2 * Frame.width, 30, WHITE);
@@ -820,6 +888,7 @@ void ResetUi(void)
     RectangleHeight = (float)(CurrentLevelInfo->END_Y - CurrentLevelInfo->START_Y) / ROWS;   // 122
     IsDrawVictory = false;
     IsDrawGameOver = false;
+    RestartBattelMusic = true;
     ZombiesSpawned = 0;
     ZombiesKilled = 0;
     SunBank = 150;
@@ -831,6 +900,8 @@ void ResetUi(void)
     CurrentLevelInfo->PeashooterInfoLevel.Timer = 0;
     CurrentLevelInfo->ChompertInfoLevel.Timer = 0;
     CurrentLevelInfo->RosetInfoLevel.Timer = 0;
+    CurrentLevelInfo->IcePeashooterInfoLevel.Timer = 0;
+
     CurrentLevelInfo->ThinkingZombie.ZombieSpawned = 0;
     CurrentLevelInfo->ZombieNormal.ZombieSpawned = 0;
 
@@ -838,6 +909,8 @@ void ResetUi(void)
     CurrentLevelInfo->PeashooterInfoLevel.Lock = false;
     CurrentLevelInfo->ChompertInfoLevel.Lock = false;
     CurrentLevelInfo->RosetInfoLevel.Lock = false;
+    CurrentLevelInfo->IcePeashooterInfoLevel.Lock = false;
+
     ResetRowManager();
     FireStormEffect = false;
     FreezeBurstEffect = false;

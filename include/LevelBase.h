@@ -13,11 +13,16 @@ typedef struct ElementInfo
 
 typedef struct ZombieInfo
 {
-  //  float Regenerate; // ! در حال حاضر از استفاده نمیشود
-   // float Timer;  // ! فعلا در پروژه کاربرد ندارد
+    //  float Regenerate; // ! در حال حاضر از استفاده نمیشود
+    // float Timer;  // ! فعلا در پروژه کاربرد ندارد
     float BassSpeedX;
     float BassSpeedY;
     float BassRunSpeedY;
+    float FreezingSpeedX;
+    float FreezingSpeedY;
+    float FreezingRunSpeedY;
+
+    float FreezingFrameDelay;
     float BassFrameDelay;
     int ZombieSpawned;
     bool InfiniteSpan;
@@ -33,7 +38,8 @@ struct PlantsInfo
     bool Lock;
     bool IsAvailable;
 };
-typedef struct Circle {
+typedef struct Circle
+{
     Vector2 center; // مختصات x و y مرکز
     float radius;   // شعاع دایره
 } Circle;
@@ -41,6 +47,7 @@ typedef struct LevelInfo
 {
     struct PlantsInfo SunFlowertInfoLevel;
     struct PlantsInfo PeashooterInfoLevel;
+    struct PlantsInfo IcePeashooterInfoLevel;
     struct PlantsInfo ChompertInfoLevel;
     struct PlantsInfo RosetInfoLevel;
     struct PlantsInfo PotatoMineInfoLevel;
@@ -60,14 +67,14 @@ typedef struct LevelInfo
 } LevelInfo;
 extern LevelInfo *CurrentLevelInfo;
 extern Font HorrorFont;
-extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[5], GameOver, Victory, ButtonWin,
-    ButtonLose , map_naght;
-extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,
-    ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic,
+extern Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[6], GameOver, Victory, ButtonWin,
+    ButtonLose, map_naght;
+extern Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet,IcePeashooterSheet,
+    ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea , IcePea , IcePeaBulletHit, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic,
     RingBar, ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic, PotatoMineNotReadyPic,
     PotatoMineMashedPic, PotatoMineSheet, ExplosionSpudow;
 extern Color GoldOrange, SaffronYellow;
-extern AnimatedObject icon[5];
+extern AnimatedObject icon[6];
 extern Rectangle LoseNowButton;
 extern Rectangle YesButton;
 extern Rectangle NoButton;
@@ -100,6 +107,5 @@ void InitAllAnimation(void);
 void SetupLawnMowerAnimation(void);
 void DrawTextCentered(Font font, const char *text, Vector2 center, float fontSize, float spacing, Color color);
 void UnloadLevelTexture(void);
-
 
 #endif

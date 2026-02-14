@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 PeashooterElement Peashooter[MAXNUMITEMS];
-
+PeashooterElement ICEPeashooter[MAXNUMITEMS];
 void ResetEffectiveFireRate(void)
 {
     for (int i = 0; i < MAXNUMITEMS; i++)
@@ -25,6 +25,10 @@ void ResetEffectiveFireRate(void)
         if (Peashooter[i].Base.isAlive)
         {
             Peashooter[i].EffectiveFireRate = 1.0f;
+        }
+        if (ICEPeashooter[i].Base.isAlive)
+        {
+            ICEPeashooter[i].EffectiveFireRate = 1.0f;
         }
     }
 }
@@ -43,11 +47,19 @@ void DrawPeashooterBullets(void)
             {
                 DrawAnimatedObject(&Peashooter[i].Pea[k].PeaBulletHit.BulletHitObj, WHITE);
             }
+            if (ICEPeashooter[i].Pea[k].isActive)
+            {
+                DrawAnimatedObject(&ICEPeashooter[i].Pea[k].Pea, WHITE);
+            }
+            if (ICEPeashooter[i].Pea[k].PeaBulletHit.isActive)
+            {
+                DrawAnimatedObject(&ICEPeashooter[i].Pea[k].PeaBulletHit.BulletHitObj, WHITE);
+            }
         }
     }
 }
 
-void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell)
+void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell, PlantType Type, PlantsInfo *Info)
 {
     for (int i = 0; i < 10; i++)
     {
@@ -69,20 +81,29 @@ void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell)
         obj->Pea[i].isActive = false;
     }
 
-    GeneratePlantBase(&obj->Base, PLANT_PEASHOOTER, CurrentLevelInfo->PeashooterInfoLevel.BaseHealth, X_Cell, Y_Cell);
+    GeneratePlantBase(&obj->Base, Type, Info->BaseHealth, X_Cell, Y_Cell);
 
     return;
 }
 
 void GeneratePea(PeashooterElement *obj)
 {
+    Texture2D *peaPIC;
     for (int i = 0; i < 10; i++)
     {
         if (!(obj->Pea[i].isActive))
         {
             ResetAnimatedObject(&obj->Pea[i].Pea);
+            if (obj->Base.Type == PLANT_ICEPEASHOOTER)
+            {
+                peaPIC = &IcePea;
+            }
+            else if (obj->Base.Type == PLANT_PEASHOOTER)
+            {
+                peaPIC = &pea;
+            }
             obj->Pea[i].Pea = GenerateAnimatedObject(
-                &pea, 29, 32, 1000, 385.0f / 305.0f * CurrentLevelInfo->START_X + obj->Base.X_Cell * RectangleWidth,
+                peaPIC, 29, 32, 1000, 385.0f / 305.0f * CurrentLevelInfo->START_X + obj->Base.X_Cell * RectangleWidth,
                 247.0f / 230.0f * CurrentLevelInfo->START_Y + obj->Base.Y_Cell * RectangleHeight, 300, 0,
                 CurrentLevelInfo->END_X, 385);
             obj->Pea[i].Radius = (obj->Pea[i].Pea.frames[0].width / 2.0f) * 0.80f;
@@ -217,17 +238,29 @@ void HandlePeaZombieCollision(PeashooterElement *Peashooter, int PeaNumber)
     {
         finalTarget->Health -= Peashooter->peaDamege;
         PlaySound(BulletHitSound[rand() % 4]);
-
+        if (Peashooter->Base.Type == PLANT_ICEPEASHOOTER)
+        {
+            finalTarget->IsFrozen = true;
+            finalTarget->FrostTimer = 0;
+        }
         // * غیرفعال کردن تیر و فعال کردن افکت انفجار
         Peashooter->Pea[PeaNumber].isActive = false;
         Peashooter->Pea[PeaNumber].PeaBulletHit.isActive = true;
 
         Peashooter->Pea[PeaNumber].PeaBulletHit.DisplayTimer = 0;
         ResetAnimatedObject(&Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj);
-
+        Texture2D *PeaBulletHitPIC;
+        if (Peashooter->Base.Type == PLANT_ICEPEASHOOTER)
+        {
+            PeaBulletHitPIC = &IcePeaBulletHit;
+        }
+        else if (Peashooter->Base.Type == PLANT_PEASHOOTER)
+        {
+            PeaBulletHitPIC = &PeaBulletHit;
+        }
         // * تولید افکت بصری در محل برخورد
         Peashooter->Pea[PeaNumber].PeaBulletHit.BulletHitObj = GenerateAnimatedObject(
-            &PeaBulletHit, 49, 43, 100000, finalTarget->Markaz.x - 20, finalTarget->Markaz.y - 20,
+            PeaBulletHitPIC , 49, 43, 100000, finalTarget->Markaz.x - 20, finalTarget->Markaz.y - 20,
             finalTarget->ZombieObj.speedX, finalTarget->ZombieObj.speedY, finalTarget->ZombieObj.finalX,
             finalTarget->ZombieObj.finalY);
 

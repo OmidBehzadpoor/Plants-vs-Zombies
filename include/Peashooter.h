@@ -9,6 +9,7 @@
 #define PEASHOOTER_H
 #include "Level1.h"
 #include "Plant.h"
+typedef struct PlantsInfo PlantsInfo; // این خط را اضافه کن
 
 /**
  * @struct BulletHit
@@ -57,6 +58,8 @@ typedef struct PeashooterElement
 
 // * آرایه سراسری برای مدیریت تمام لوبیاهای شلیک کننده کاشته شده
 extern PeashooterElement Peashooter[MAXNUMITEMS];
+extern PeashooterElement ICEPeashooter[MAXNUMITEMS];
+
 
 /** @brief ریست کردن ضریب نرخ شلیک تمام گیاهان به مقدار پیش‌فرض (1.0) */
 void ResetEffectiveFireRate(void);
@@ -74,7 +77,7 @@ void DrawPeashooterBullets(void);
  * @note  نکته: مختصات پیکسلی به طور خودکار بر اساس شماره سلول محاسبه
  * می‌شود
  */
-void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell);
+void GeneratePeashooter(PeashooterElement *obj, int X_Cell, int Y_Cell , PlantType Type , PlantsInfo *Info);
 
 /** @brief ایجاد یک تیر جدید در صورت آماده بودن تایمر
  *

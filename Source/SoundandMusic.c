@@ -13,7 +13,7 @@ Sound menuOpen, menuSelect, menuHover, BackButtonSoundClick, Clocks, SetupLawnMo
     BulletHitSound[4], PeaShootSfx, VictorySound, MineFX[2], bleep, pause, pop1, pop2, FireFX, FreezeFX, CoinFX,
     ErrorShopFX, SunPackCollectFX, ErrorItemFX, UiErrorFX, LockErrorFX, UiClickFX;
 Texture2D MusicPlayerPlay, MusicPlayerPause, spritesheetgreen, MusicPonter, MusicBGpic[4];
-Music MusicBackgrand[4];
+Music MusicBackgrand[4], BattleMusic;
 EatSound plantEatSoundPlayed;
 Circle PlayMusicButton1 = {{811, 704}, 50};
 Circle PlayMusicButton2 = {{1032, 422}, 32};
@@ -24,6 +24,7 @@ Circle PreviousMusic = {{652, 702}, 50};
 const char *MusicNames[4] = {"Cerebrawl", "Garden", "Graze The Roof", "Grasswalk"};
 
 bool isMusicPaused = false;
+bool RestartBattelMusic = true;
 void InitSound(void)
 {
     BackButtonSoundClick = LoadSound("../assets/Sounds/buttonclick.mp3");
@@ -96,6 +97,8 @@ void InitMusic(void)
     MusicBackgrand[1] = LoadMusicStream("../assets/Sounds/Garden.ogg");
     MusicBackgrand[2] = LoadMusicStream("../assets/Sounds/GrazeTheRoof2.mp3");
     MusicBackgrand[3] = LoadMusicStream("../assets/Sounds/IZ.mp3");
+    BattleMusic = LoadMusicStream("../assets/Sounds/Day.mp3");
+    SetMusicVolume(BattleMusic, 0.35f);
 
     for (int i = 0; i < 4; i++)
     {
@@ -109,6 +112,17 @@ void UpdateMusic(void)
     {
         UpdateMusicStream(MusicBackgrand[CurrentBackgroundMusic]);
     }
+    // else if (Screen == LVL1 || Screen == LVL2 || Screen == LVL3 || Screen == LVL4)
+    // {
+    //     if (RestartBattelMusic)
+    //     {
+    //         StopMusicStream(BattleMusic);
+    //         BattleMusic.looping = true;
+    //         PlayMusicStream(BattleMusic);
+    //         RestartBattelMusic=false;
+    //     }
+    //     UpdateMusicStream(BattleMusic);
+    // }
 }
 
 void UnloadSoundAndMusic(void)

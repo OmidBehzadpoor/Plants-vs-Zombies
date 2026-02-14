@@ -26,13 +26,13 @@
 #include <string.h>
 
 Font HorrorFont;
-Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[5], GameOver, Victory, ButtonWin,
+Texture2D Map, OFFlawnMowerRow, SunBankPic, Frame, selectpic, Price[5], iconPic[6], GameOver, Victory, ButtonWin,
     ButtonLose, map_naght;
-Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, ZombieNormal1,
-    ZombieNormalAttack1, ZombieNormal2, pea, PeaBulletHit, OverhealBar, LifetimeBar, HpBar, LockPic, RingBar,
-    ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic, TimeFramePic, PotatoMineNotReadyPic,
-    PotatoMineMashedPic, PotatoMineSheet, ExplosionSpudow;
-AnimatedObject icon[5];
+Texture2D SunFlowerSheet, LawnMowerSheet, SunElementSheet, ChomperSheet, RoseSheet, PeashooterSheet, IcePeashooterSheet,
+    ZombieNormal1, ZombieNormalAttack1, ZombieNormal2, pea, IcePea, IcePeaBulletHit, PeaBulletHit, OverhealBar,
+    LifetimeBar, HpBar, LockPic, RingBar, ThinkingZombiePic, ThinkingZombieAttackPic, LoseNowpic, YesOrNopic,
+    TimeFramePic, PotatoMineNotReadyPic, PotatoMineMashedPic, PotatoMineSheet, ExplosionSpudow;
+AnimatedObject icon[6];
 Rectangle LoseNowButton;
 Rectangle YesButton = {900, 560, 305, 95};
 Rectangle NoButton = {500, 560, 290, 95};
@@ -65,12 +65,15 @@ void InitLevelTexture(void)
     ZombieNormal2 = LoadTexture("../assets/Level1/NormalZombieRunSheet.png");
     ZombieNormal1 = LoadTexture("../assets/Level1/ZombieSheet.png");
     ZombieNormalAttack1 = LoadTexture("../assets/Level1/ZombieAttackSheet.png");
+    IcePeashooterSheet = LoadTexture("../assets/Level1/IcePeashooterSheet.png");
     ChomperSheet = LoadTexture("../assets/Level1/ChomperSheet.png");
     RoseSheet = LoadTexture("../assets/Level1/roseSheet.png");
     LawnMowerSheet = LoadTexture("../assets/Level1/lawnMower_Active-Sheet.png");
     SunElementSheet = LoadTexture("../assets/Level1/Sun_Sheet.png");
     Frame = LoadTexture("../assets/Level1/Frame.png");
     pea = LoadTexture("../assets/Level1/PB.png");
+    IcePea = LoadTexture("../assets/Level1/IcePB.png");
+    IcePeaBulletHit = LoadTexture("../assets/Level1/IcePeaBulletHit.png");
     PeaBulletHit = LoadTexture("../assets/Level1/PeaBulletHit.png");
     HpBar = LoadTexture("../assets/Level1/HpBar.png");
     LifetimeBar = LoadTexture("../assets/Level1/LifetimeBar.png");
@@ -102,6 +105,7 @@ void InitLevelTexture(void)
         sprintf(temp, "../assets/Level1/price%d.png", i);
         Price[i] = LoadTexture(temp);
     }
+    iconPic[5] = LoadTexture("../assets/Level1/icon5.png");
 }
 void UnloadLevelTexture(void)
 {
@@ -234,6 +238,7 @@ void ResetAllAnimation(void)
     {
         ResetAnimatedObject(&SunFlower[i].SunFlowerObj);
         ResetAnimatedObject(&Peashooter[i].PeashooterObj);
+        ResetAnimatedObject(&ICEPeashooter[i].PeashooterObj);
         ResetAnimatedObject(&Chomper[i].ChomperObj);
         ResetAnimatedObject(&Rose[i].RoseObj);
         ResetAnimatedObject(&PotatoMine[i].PotatoMineObj);
@@ -242,6 +247,8 @@ void ResetAllAnimation(void)
         {
             ResetAnimatedObject(&Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
             ResetAnimatedObject(&Peashooter[i].Pea[j].Pea);
+            ResetAnimatedObject(&ICEPeashooter[i].Pea[j].PeaBulletHit.BulletHitObj);
+            ResetAnimatedObject(&ICEPeashooter[i].Pea[j].Pea);
         }
     }
     for (int i = 0; i < CurrentLevelInfo->MaxZombieNormalAllowed; i++)
@@ -256,7 +263,7 @@ void ResetAllAnimation(void)
         ThinkingZombie[i].Attack = false;
         ResetAnimatedObject(&ThinkingZombie[i].ZombieObj);
     }
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
     {
         ResetAnimatedObject(&icon[i]);
     }
@@ -388,6 +395,7 @@ void InitAllAnimation(void)
         icon[i] = GenerateAnimatedObject(&iconPic[i], pixel, pixel, 80, 370 - k + Frame.width * i, pixelY, 0, 0,
                                          370 - k + Frame.width * i, 25);
     }
+    icon[5] = GenerateAnimatedObject(&iconPic[5], 71, 71, 80, 370, Frame.height, 0, 0, 370, Frame.height);
     for (int i = 0; i < ROWLAWNMOWER; i++)
     {
         LawnMower[i].LawnMowerObj = GenerateAnimatedObject(
@@ -410,6 +418,12 @@ void InitAllAnimation(void)
         Peashooter[i].Base.isAlive = false;
         Peashooter[i].FireTimer = 0;
         Peashooter[i].Firing = false;
+
+        ICEPeashooter[i].PeashooterObj = GenerateAnimatedObject(&IcePeashooterSheet, 80, 80, 16.75, 0, 0, 0, 0, 0, 0);
+        ICEPeashooter[i].Base.isAlive = false;
+        ICEPeashooter[i].FireTimer = 0;
+        ICEPeashooter[i].Firing = false;
+
         PotatoMine[i].PotatoMineObj = GenerateAnimatedObject(&PotatoMineNotReadyPic, 75, 55, 80, 0, 0, 0, 0, 0, 0);
         PotatoMine[i].Base.isAlive = false;
 
@@ -423,6 +437,14 @@ void InitAllAnimation(void)
             Peashooter[i].Pea[j].PeaBulletHit.isActive = false;
             Peashooter[i].Pea[j].PeaBulletHit.BulletHitObj =
                 GenerateAnimatedObject(&PeaBulletHit, 49, 43, 100000, 0, 0, 0, 0, 0, 0);
+            ICEPeashooter[i].Pea[j].isActive = false;
+            ICEPeashooter[i].Pea[j].Pea = GenerateAnimatedObject(&IcePea, 29, 32, 80, 0, 0, 0, 0, 0, 0);
+            ICEPeashooter[i].Pea[j].isActive = false;
+            ICEPeashooter[i].Pea[j].PeaBulletHit.DisplayTime = 0.1f;
+            ICEPeashooter[i].Pea[j].PeaBulletHit.DisplayTimer = 0.0;
+            ICEPeashooter[i].Pea[j].PeaBulletHit.isActive = false;
+            ICEPeashooter[i].Pea[j].PeaBulletHit.BulletHitObj =
+                GenerateAnimatedObject(&IcePeaBulletHit, 49, 43, 100000, 0, 0, 0, 0, 0, 0);
         }
     }
 

@@ -96,28 +96,36 @@ void InitLevel3Info(void)
     Level3Info.ChompertInfoLevel.price = 125;
     Level3Info.RosetInfoLevel.price = 150;
     Level3Info.PotatoMineInfoLevel.price = 25;
+    Level3Info.IcePeashooterInfoLevel.price = 125;
 
-    Level3Info.SunFlowertInfoLevel.Cooldown = 11; // 45;
-    Level3Info.PeashooterInfoLevel.Cooldown = 15; // 45;
+    Level3Info.SunFlowertInfoLevel.Cooldown = 11;   // 45;
+    Level3Info.PeashooterInfoLevel.Cooldown = 15;   // 45;
+    Level3Info.IcePeashooterInfoLevel.Cooldown = 9; // 45;
     Level3Info.ChompertInfoLevel.Cooldown = 7;    // 60;
     Level3Info.RosetInfoLevel.Cooldown = 8;       // 70;
     Level3Info.PotatoMineInfoLevel.Cooldown = 14; // 70;
 
     Level3Info.SunFlowertInfoLevel.Timer = 0;
     Level3Info.PeashooterInfoLevel.Timer = 0;
+    Level3Info.IcePeashooterInfoLevel.Timer = 0;
+
     Level3Info.ChompertInfoLevel.Timer = 0;
     Level3Info.RosetInfoLevel.Timer = 0;
     Level3Info.PotatoMineInfoLevel.Timer = 0;
-    Level3Info.PotatoMineInfoLevel.ActivationTime = 5;
+    Level3Info.PotatoMineInfoLevel.ActivationTime = 10;
 
     Level3Info.SunFlowertInfoLevel.BaseHealth = 100;
     Level3Info.PeashooterInfoLevel.BaseHealth = 100;
+    Level3Info.IcePeashooterInfoLevel.BaseHealth = 100;
+
     Level3Info.ChompertInfoLevel.BaseHealth = 100;
     Level3Info.RosetInfoLevel.BaseHealth = 100;
     Level3Info.PotatoMineInfoLevel.BaseHealth = 100;
 
     Level3Info.SunFlowertInfoLevel.Lock = false;
     Level3Info.PeashooterInfoLevel.Lock = false;
+    Level3Info.IcePeashooterInfoLevel.Lock = false;
+
     Level3Info.ChompertInfoLevel.Lock = false;
     Level3Info.RosetInfoLevel.Lock = false;
     Level3Info.PotatoMineInfoLevel.Lock = false;
@@ -127,6 +135,7 @@ void InitLevel3Info(void)
     Level3Info.ChompertInfoLevel.IsAvailable = true;
     Level3Info.RosetInfoLevel.IsAvailable = true;
     Level3Info.PotatoMineInfoLevel.IsAvailable = true;
+    Level3Info.IcePeashooterInfoLevel.IsAvailable = true;
 
     Level3Info.SunElementInfoLevel.Value = VALUESUN;
     Level3Info.SunElementInfoLevel.DisplayTime = DISPLAYSUN;
@@ -141,8 +150,13 @@ void InitLevel3Info(void)
     Level3Info.ZombieNormal.BassSpeedX = -17.5;
     Level3Info.ZombieNormal.BassSpeedY = 0;
     Level3Info.ZombieNormal.BassRunSpeedY = 0;
+        Level3Info.ZombieNormal.FreezingSpeedX = Level3Info.ZombieNormal.BassSpeedX / 2;
+    Level3Info.ZombieNormal.FreezingSpeedY = Level3Info.ZombieNormal.BassSpeedY / 2;
+    Level3Info.ZombieNormal.FreezingRunSpeedY = Level3Info.ZombieNormal.BassRunSpeedY / 2;
     Level3Info.ZombieNormal.ZombieSpawned = 0;
     Level3Info.ZombieNormal.BassFrameDelay = 50.0f;
+        Level3Info.ZombieNormal.FreezingFrameDelay = Level3Info.ZombieNormal.BassFrameDelay * 2;
+
     //   Level3Info.ThinkingZombie.Timer = 0;
     Level3Info.ThinkingZombie.BassSpeedX = -17.5;
     Level3Info.ThinkingZombie.BassSpeedY = 0;
@@ -150,8 +164,12 @@ void InitLevel3Info(void)
     Level3Info.ThinkingZombie.ZombieSpawned = 0;
     Level3Info.ZombieNormal.InfiniteSpan = false;
     Level3Info.ThinkingZombie.InfiniteSpan = false;
+    Level3Info.ThinkingZombie.FreezingSpeedX = Level3Info.ThinkingZombie.BassSpeedX / 2;
+    Level3Info.ThinkingZombie.FreezingSpeedY = Level3Info.ThinkingZombie.BassSpeedY / 2;
+    Level3Info.ThinkingZombie.FreezingRunSpeedY = Level3Info.ThinkingZombie.BassRunSpeedY / 2;
+
     Level3Info.ThinkingZombie.BassFrameDelay = 50.0f;
-    Level3Info.MaxThinkingZombieAllowed = 15;
+    Level3Info.ThinkingZombie.FreezingFrameDelay = Level3Info.ThinkingZombie.BassFrameDelay * 2;    Level3Info.MaxThinkingZombieAllowed = 15;
     Level3Info.MaxZombieNormalAllowed = 15;
     Level3Info.START_X = 305;
     Level3Info.START_Y = 230;

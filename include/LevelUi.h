@@ -1,9 +1,9 @@
 #pragma once
 #ifndef LEVELUI_H
 #define LEVELUI_H
+#include "Shop.h"
 #include "raylib.h"
 #include <stdbool.h>
-#include "Shop.h"
 #define ROWS 5
 #define COLUMNS 10
 extern bool IsDrawVictory;
@@ -32,6 +32,7 @@ typedef enum MapContent
     LAWNMOWER,
     SUNFLOWER,
     PEASHOOTER,
+    ICEPEASHOOTER,
     CHOMPER,
     ROSE,
     POTATOMINE,
