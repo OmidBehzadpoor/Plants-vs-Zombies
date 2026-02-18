@@ -41,7 +41,7 @@ void DrawLevel1(void)
     DrawZombies();
     DrawPlantsOverZombie();
     DrawSunElement();
-    DrawDebug();
+   // DrawDebug();
     if (CurrentGameState == LOSE)
     {
 
@@ -140,7 +140,7 @@ void InitLevel1Info(void)
     Level1Info.DiamondElementInfoLevel.Value = VALUESUN;
     Level1Info.DiamondElementInfoLevel.DisplayTime = DISPLAYSUN;
     Level1Info.DiamondElementInfoLevel.Regenerate = GENERATESUN;
-    Level1Info.ZombieRegenerateTimer = 0;
+    Level1Info.ZombieRegenerateTimer = 25;
     //   //    Level1Info.ZombieNormal.Regenerate = 5;
     //   // Level1Info.ZombieNormal.Timer = 0;
     Level1Info.ZombieNormal.BassSpeedX = -17.5;

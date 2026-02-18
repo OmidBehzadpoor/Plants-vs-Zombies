@@ -41,7 +41,7 @@ void DrawLevel2(void)
     DrawPlantsOverZombie();
     DrawSunElement();
 
-    DrawDebug();
+    //DrawDebug();
     if (CurrentGameState == LOSE)
     {
         DrawGameOver();

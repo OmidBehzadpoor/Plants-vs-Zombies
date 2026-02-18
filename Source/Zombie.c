@@ -143,9 +143,9 @@ bool IsZombieSpawnTime(float *timer, float *regenerateTime)
     {
         *timer = 0;
 
-        if (rand() % 100 < 25)
+        if (rand() % 100 < 10)
         {
-            *regenerateTime = 2.0f + ((float)rand() / (float)RAND_MAX) * 2.0f;
+            *regenerateTime = 2.0f + ((float)rand() / (float)RAND_MAX) * 4.0f;
         }
         else
         {

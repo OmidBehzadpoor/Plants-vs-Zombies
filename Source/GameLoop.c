@@ -100,7 +100,7 @@ void Gameloop(void)
         {
             DrawMusicPlayer();
         }
-        MouseSelection();
+       // MouseSelection();
         EndDrawing();
     }
 }
