@@ -39,34 +39,37 @@ A fan-made clone of **Plants vs Zombies** built in **C** using the [raylib](http
 
 ## 🛠️ Build from Source
 
-This project uses **C** and **[raylib](https://www.raylib.com/)**, so it can be built on **Windows, Linux, and macOS**.
+This project uses **C** and **[raylib](https://www.raylib.com/)** and can be built on **Windows, Linux, and macOS**.
 
-### Step 1 — Install raylib
+> **raylib is downloaded automatically** — you don't need to install it manually.  
+> You only need **CMake ≥ 3.16**, a C compiler, and an internet connection for the first build.
 
-Download and install raylib from the official website or package manager:
+### Prerequisites
 
-- **Windows:** Download from [raylib.com](https://www.raylib.com/) or use `winget install raylib`
-- **Linux:** `sudo apt install libraylib-dev` or build from source
-- **macOS:** `brew install raylib`
+| Platform | Requirements                                                                                                   |
+| -------- | -------------------------------------------------------------------------------------------------------------- |
+| Windows  | [CMake](https://cmake.org/download/), [MinGW-w64](https://www.mingw-w64.org/) or MSVC                          |
+| Linux    | `sudo apt install cmake gcc libx11-dev libxrandr-dev libxi-dev libxcursor-dev libxinerama-dev libgl1-mesa-dev` |
+| macOS    | `brew install cmake` + Xcode Command Line Tools (`xcode-select --install`)                                     |
 
-### Step 2 — Clone the repo
+### Step 1 — Clone the repo
 
 ```bash
 git clone https://github.com/OmidBehzadpoor/Plants-vs-Zombies.git
 cd Plants-vs-Zombies
 ```
 
-### Step 3 — Configure CMake with raylib path
+### Step 2 — Build
 
 **Windows (MinGW):**
 
 ```bash
 mkdir build && cd build
-cmake .. -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="C:/path/to/raylib"
-cmake --build . --config Release
+cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build .
 ```
 
-**Linux / macOS:**
+**Windows (MSVC / Visual Studio):**
 
 ```bash
 mkdir build && cd build
@@ -74,16 +77,22 @@ cmake ..
 cmake --build . --config Release
 ```
 
-> Make sure CMake can find raylib headers (`raylib.h`) and the library. If raylib is installed system-wide, CMake will find it automatically.
+**Linux / macOS:**
 
-### Step 4 — Run
-
-After building, the executable is in the `build/` folder. Make sure the `assets/` folder is accessible relative to it:
-
+```bash
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build .
 ```
-build/
-  PlantsVsZombies.exe   ← run this
-../assets/              ← assets are loaded from here automatically
+
+### Step 3 — Run
+
+The executable is placed in the `build/` folder. The `assets/` folder is loaded relative to **where you run the executable from**, so run it from the project root:
+
+```bash
+# from the project root
+./build/PlantsVsZombies        # Linux / macOS
+build\PlantsVsZombies.exe      # Windows
 ```
 
 ---
@@ -102,7 +111,7 @@ Plants-vs-Zombies/
 │   └── ...
 ├── include/         # Header files
 ├── assets/          # Textures, fonts, sounds, GIFs
-├── Data/            # Save data
+├── Data/            # Save data & Windows icon resource
 └── CMakeLists.txt
 ```
 
