@@ -11,13 +11,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 file(GLOB_RECURSE SOURCES "Source/*.c")
 file(GLOB_RECURSE HEADERS "include/*.h")
 
-# اضافه کردن فایل ریسورس آیکون (تغییر جدید برای پوشه Data)
-set(RESOURCE_FILE "Data/resource.rc")
+# -----------------------------
+# فایل ریسورس آیکون — فقط ویندوز
+# -----------------------------
+if (WIN32)
+    set(RESOURCE_FILE "Data/resource.rc")
+endif()
 
 # -----------------------------
 # Executable
 # -----------------------------
-# فایل resource.rc را هم در کنار سورس‌ها قرار می‌دهیم
 add_executable(PlantsVsZombies ${SOURCES} ${HEADERS} ${RESOURCE_FILE})
 
 # -----------------------------
@@ -28,7 +31,7 @@ target_include_directories(PlantsVsZombies PRIVATE
 )
 
 # -----------------------------
-# Raylib
+# Raylib — اگر نصب باشه استفاده می‌کنه، وگرنه خودکار دانلود می‌کنه
 # -----------------------------
 set(RAYLIB_VERSION 5.5)
 
@@ -50,12 +53,20 @@ endif()
 target_link_libraries(PlantsVsZombies PRIVATE raylib)
 
 # -----------------------------
-# Windows fix (MinGW + raylib)
+# تنظیمات هر سیستم‌عامل
 # -----------------------------
 if (WIN32)
-    # کتابخانه‌های سیستمی ویندوز
     target_link_libraries(PlantsVsZombies PRIVATE winmm gdi32)
-    
-    # ! نکته مهم: اگر می‌خواهید در زمان اجرا کنسول (CMD) باز نشود
+    # برای حذف پنجره CMD هنگام اجرا، خط زیر را فعال کن:
     # set_target_properties(PlantsVsZombies PROPERTIES WIN32_EXECUTABLE TRUE)
+
+elseif (APPLE)
+    target_link_libraries(PlantsVsZombies PRIVATE
+        "-framework IOKit"
+        "-framework Cocoa"
+        "-framework OpenGL"
+    )
+
+elseif (UNIX)
+    target_link_libraries(PlantsVsZombies PRIVATE m pthread dl)
 endif()
